@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passion Store - Tu Tienda Íntima de Confianza</title>
+    <meta name="description" content="Descubre nuestra amplia selección de productos íntimos de alta calidad. Discreción y calidad garantizada.">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" fill="%23667eea"><path d="M0,300 Q250,100 500,300 T1000,300 L1000,600 L0,600 Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Categories */
+        .categories-section {
+            background: white;
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            border-radius: 2px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: #e91e63;
+            box-shadow: 0 15px 30px rgba(233, 30, 99, 0.2);
+        }
+
+        .category-card.active {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            border-color: #e91e63;
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Products */
+        .products-section {
+            background: #f8f9fa;
+            padding: 3rem 0;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Product Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-product-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #25d366;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e91e63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Product Link Preview Meta Tags */
+        .meta-preview {
+            display: none;
+        }
+
+        /* Age verification */
+        .age-verification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .age-modal {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+        }
+
+        .age-btn {
+            background: #e91e63;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .age-btn:hover {
+            background: #ad1457;
+        }
+
+        .age-btn.secondary {
+            background: #666;
+        }
+
+        .age-btn.secondary:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Age Verification -->
+    <div class="age-verification" id="ageVerification">
+        <div class="age-modal">
+            <h2>Verificación de Edad</h2>
+            <p style="margin: 1.5rem 0;">Este sitio contiene material para adultos. Debes ser mayor de 18 años para continuar.</p>
+            <button class="age-btn" onclick="confirmAge(true)">Soy mayor de 18</button>
+            <button class="age-btn secondary" onclick="confirmAge(false)">Soy menor de 18</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heart"></i> Passion Store
+                </div>
+                <div class="header-info">
+                    <div><i class="fas fa-shipping-fast"></i> Envío discreto</div>
+                    <div><i class="fas fa-lock"></i> 100% Seguro</div>
+                    <div><i class="fab fa-whatsapp"></i> +1-XXX-XXX-XXXX</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Bienvenido a Passion Store</h1>
+            <p>Tu tienda íntima de confianza con la mejor selección de productos de calidad</p>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Categorías</h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Cargando categorías...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">Nuestros Productos</h2>
+            <div class="products-grid" id="productsGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Cargando productos...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalProductName">Producto</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-product-image" id="modalProductImage">
+                    <i class="fas fa-image"></i>
+                </div>
+                <div id="modalProductPrice" class="product-price">$0</div>
+                <div id="modalProductDescription" class="product-description"></div>
+                <a href="#" class="whatsapp-btn" id="whatsappBtn">
+                    <i class="fab fa-whatsapp"></i>
+                    Pedir por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Passion Store. Todos los derechos reservados. | Envío discreto garantizado</p>
+        </div>
+    </footer>
+
+    <!-- Meta tags for product preview -->
+    <div class="meta-preview">
+        <meta property="og:title" content="" id="metaTitle">
+        <meta property="og:description" content="" id="metaDescription">
+        <meta property="og:image" content="" id="metaImage">
+        <meta property="og:url" content="" id="metaUrl">
+        <meta name="twitter:card" content="summary_large_image">
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            // Aquí debes poner tu configuración de Firebase
+  apiKey: "AIzaSyCWGop8_AWv52SuXHP5loh-caH67waFcJw",
+  authDomain: "santo-shop-ecdc1.firebaseapp.com",
+  projectId: "santo-shop-ecdc1",
+  storageBucket: "santo-shop-ecdc1.firebasestorage.app",
+  messagingSenderId: "427918393457",
+  appId: "1:427918393457:web:c73dcd63c32786f07a9bd0"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Global variables
+        let categories = [];
+        let products = [];
+        let currentCategory = 'all';
+        const whatsappNumber = "+1234567890"; // Cambia por tu número de WhatsApp
+
+        // Age verification
+        function confirmAge(isAdult) {
+            if (isAdult) {
+                document.getElementById('ageVerification').style.display = 'none';
+                sessionStorage.setItem('ageVerified', 'true');
+            } else {
+                window.location.href = 'https://www.google.com';
+            }
+        }
+
+        // Check age verification on load
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('ageVerified') === 'true') {
+                document.getElementById('ageVerification').style.display = 'none';
+            }
+        });
+
+        // Load categories from Firestore
+        async function loadCategories() {
+            try {
+                const snapshot = await db.collection('categoria').get();
+                categories = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                displayCategories();
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                // Fallback categories for demo
+                categories = [
+                    { id: 'all', nombre: 'Todos', icono: 'fas fa-th-large' },
+                    { id: '1', nombre: 'Juguetes', icono: 'fas fa-dice' },
+                    { id: '2', nombre: 'Lencería', icono: 'fas fa-tshirt' },
+                    { id: '3', nombre: 'Aceites', icono: 'fas fa-flask' },
+                    { id: '4', nombre: 'Preservativos', icono: 'fas fa-shield-alt' }
+                ];
+                displayCategories();
+            }
+        }
+
+        // Display categories
+        function displayCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            
+            // Add "Todos" category
+            const allCategory = { id: 'all', nombre: 'Todos los Productos', icono: 'fas fa-th-large' };
+            const categoriesToShow = [allCategory, ...categories];
+            
+            grid.innerHTML = categoriesToShow.map(category => `
+                <div class="category-card ${category.id === currentCategory ? 'active' : ''}" 
+                     onclick="selectCategory('${category.id}')">
+                    <i class="${category.icono} category-icon"></i>
+                    <h3>${category.nombre}</h3>
+                </div>
+            `).join('');
+        }
+
+        // Load products from Firestore
+        async function loadProducts() {
+            try {
+                const snapshot = await db.collection('productos').get();
+                products = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                displayProducts();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                // Fallback products for demo
+                products = [
+                    {
+                        id: '1',
+                        nombre: 'Producto Ejemplo 1',
+                        precio: 29.99,
+                        descripcion: 'Descripción detallada del producto ejemplo 1. Fabricado con materiales de alta calidad.',
+                        categoria: '1',
+                        icono: 'https://via.placeholder.com/200x200/667eea/white?text=Producto+1'
+                    },
+                    {
+                        id: '2',
+                        nombre: 'Producto Ejemplo 2',
+                        precio: 45.99,
+                        descripcion: 'Descripción detallada del producto ejemplo 2. Ideal para principiantes.',
+                        categoria: '2',
+                        icono: 'https://via.placeholder.com/200x200/764ba2/white?text=Producto+2'
+                    },
+                    {
+                        id: '3',
+                        nombre: 'Producto Ejemplo 3',
+                        precio: 19.99,
+                        descripcion: 'Descripción detallada del producto ejemplo 3. Fórmula natural y segura.',
+                        categoria: '3',
+                        icono: 'https://via.placeholder.com/200x200/e91e63/white?text=Producto+3'
+                    }
+                ];
+                displayProducts();
+            }
+        }
+
+        // Display products
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            
+            const filteredProducts = currentCategory === 'all' 
+                ? products 
+                : products.filter(product => product.categoria === currentCategory);
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '<div class="loading">No hay productos disponibles en esta categoría</div>';
+                return;
+            }
+
+            grid.innerHTML = filteredProducts.map(product => `
+                <div class="product-card" onclick="openProductModal('${product.id}')">
+                    <div class="product-image">
+                        ${product.icono && (product.icono.startsWith('http') || product.icono.startsWith('data:')) 
+                            ? `<img src="${product.icono}" alt="${product.nombre}" onerror="this.style.display='none'">` 
+                            : '<i class="fas fa-image"></i>'}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.nombre}</h3>
+                        <div class="product-price">$${product.precio}</div>
+                        <p class="product-description">${product.descripcion.substring(0, 100)}...</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select category
+        function selectCategory(categoryId) {
+            currentCategory = categoryId;
+            displayCategories();
+            displayProducts();
+        }
+
+        // Open product modal
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Update URL for unique product link
+            const productUrl = `${window.location.origin}${window.location.pathname}?producto=${productId}`;
+            window.history.pushState({ productId }, '', productUrl);
+
+            // Update meta tags for social media preview
+            updateMetaTags(product, productUrl);
+
+            // Fill modal content
+            document.getElementById('modalProductName').textContent = product.nombre;
+            document.getElementById('modalProductPrice').textContent = `$${product.precio}`;
+            document.getElementById('modalProductDescription').textContent = product.descripcion;
+
+            const imageContainer = document.getElementById('modalProductImage');
+            if (product.icono && (product.icono.startsWith('http') || product.icono.startsWith('data:'))) {
+                imageContainer.innerHTML = `<img src="${product.icono}" alt="${product.nombre}" onerror="this.innerHTML='<i class=\\"fas fa-image\\"></i>'">`;
+            } else {
+                imageContainer.innerHTML = '<i class="fas fa-image"></i>';
+            }
+
+            // Update WhatsApp button
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            const message = `Hola, me interesa este producto: ${product.nombre} - ${productUrl}`;
+            whatsappBtn.href = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+
+            // Show modal
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+            // Reset URL
+            window.history.pushState({}, '', window.location.pathname);
+        }
+
+        // Update meta tags for social media preview
+        function updateMetaTags(product, url) {
+            const title = `${product.nombre} - Passion Store`;
+            const description = product.descripcion;
+            const image = product.icono || 'https://via.placeholder.com/400x400/667eea/white?text=Passion+Store';
+
+            // Update existing meta tags
+            let titleMeta = document.getElementById('metaTitle');
+            let descMeta = document.getElementById('metaDescription');
+            let imageMeta = document.getElementById('metaImage');
+            let urlMeta = document.getElementById('metaUrl');
+
+            if (!titleMeta) {
+                titleMeta = document.createElement('meta');
+                titleMeta.property = 'og:title';
+                titleMeta.id = 'metaTitle';
+                document.head.appendChild(titleMeta);
+            }
+
+            if (!descMeta) {
+                descMeta = document.createElement('meta');
+                descMeta.property = 'og:description';
+                descMeta.id = 'metaDescription';
+                document.head.appendChild(descMeta);
+            }
+
+            if (!imageMeta) {
+                imageMeta = document.createElement('meta');
+                imageMeta.property = 'og:image';
+                imageMeta.id = 'metaImage';
+                document.head.appendChild(imageMeta);
+            }
+
+            if (!urlMeta) {
+                urlMeta = document.createElement('meta');
+                urlMeta.property = 'og:url';
+                urlMeta.id = 'metaUrl';
+                document.head.appendChild(urlMeta);
+            }
+
+            titleMeta.content = title;
+            descMeta.content = description;
+            imageMeta.content = image;
+            urlMeta.content = url;
+
+            // Also update page title
+            document.title = title;
+        }
+
+        // Handle direct product links
+        function handleDirectProductLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('producto');
+            
+            if (productId) {
+                setTimeout(() => {
+                    openProductModal(productId);
+                }, 1000); // Wait for products to load
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('productModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadProducts();
+            handleDirectProductLink();
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.productId) {
+                openProductModal(e.state.productId);
+            } else {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
