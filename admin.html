@@ -522,17 +522,17 @@
                     
                     <!-- Categories Table -->
                     <div class="table-container">
-<table>
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody id="categoriesTable">
-        <!-- Categories will be loaded here -->
-    </tbody>
-</table>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTable">
+                                <!-- Categories will be loaded here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -580,30 +580,30 @@
                     <textarea id="productDescription" required></textarea>
                 </div>
                 <button type="submit" class="btn">Guardar Producto</button>
-                <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancelar</button>
+                <button type="button" class="btn" style="background: #6c757d;" onclick="closeProductModal()">Cancelar</button>
             </form>
         </div>
     </div>
 
     <!-- Category Modal -->
-<div id="categoryModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeCategoryModal()">&times;</span>
-        <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
-        <form id="categoryForm">
-            <input type="hidden" id="categoryId">
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="categoryName">Nombre</label>
-                    <input type="text" id="categoryName" required>
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCategoryModal()">&times;</span>
+            <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
+            <form id="categoryForm">
+                <input type="hidden" id="categoryId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categoryName">Nombre</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
                 </div>
-            </div>
-            <button type="submit" class="btn">Guardar Categoría</button>
-            <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Cancelar</button>
-        </form>
+                <button type="submit" class="btn">Guardar Categoría</button>
+                <button type="button" class="btn" style="background: #6c757d;" onclick="closeCategoryModal()">Cancelar</button>
+            </form>
+        </div>
     </div>
-</div>
 
     <script>
         // Firebase Configuration
@@ -628,7 +628,6 @@
         let editingProductId = null;
         let editingCategoryId = null;
         let productImageFile = null;
-        let categoryImageFile = null;
 
         // Authentication functions
         function login() {
@@ -734,10 +733,6 @@
             handleImagePreview(e, 'productImagePreview', 'product');
         });
 
-        document.getElementById('categoryImageInput').addEventListener('change', function(e) {
-            handleImagePreview(e, 'categoryImagePreview', 'category');
-        });
-
         function handleImagePreview(event, previewElementId, type) {
             const file = event.target.files[0];
             if (!file) return;
@@ -750,8 +745,6 @@
                 
                 if (type === 'product') {
                     productImageFile = file;
-                } else if (type === 'category') {
-                    categoryImageFile = file;
                 }
             };
             
@@ -780,95 +773,93 @@
         }
 
         // Category functions
-       function loadCategories() {
-    db.collection('categoria').get().then((snapshot) => {
-        categories = [];
-        const categoriesTable = document.getElementById('categoriesTable');
-        const categorySelect = document.getElementById('productCategory');
-        
-        // Clear existing options except the first one
-        while (categorySelect.options.length > 1) {
-            categorySelect.remove(1);
+        function loadCategories() {
+            db.collection('categoria').get().then((snapshot) => {
+                categories = [];
+                const categoriesTable = document.getElementById('categoriesTable');
+                const categorySelect = document.getElementById('productCategory');
+                
+                // Clear existing options except the first one
+                while (categorySelect.options.length > 1) {
+                    categorySelect.remove(1);
+                }
+                
+                categoriesTable.innerHTML = '';
+                
+                snapshot.forEach((doc) => {
+                    const category = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    categories.push(category);
+                    
+                    // Add to table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${category.nombre}</td>
+                        <td class="actions">
+                            <button class="btn btn-sm btn-edit" onclick="editCategory('${doc.id}')">Editar</button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteCategory('${doc.id}')">Eliminar</button>
+                        </td>
+                    `;
+                    categoriesTable.appendChild(row);
+                    
+                    // Add to select
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = category.nombre;
+                    categorySelect.appendChild(option);
+                });
+            }).catch((error) => {
+                console.error("Error loading categories: ", error);
+            });
         }
-        
-        categoriesTable.innerHTML = '';
-        
-        snapshot.forEach((doc) => {
-            const category = {
-                id: doc.id,
-                ...doc.data()
+
+        async function saveCategory(e) {
+            e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            
+            const name = document.getElementById('categoryName').value;
+            
+            const categoryData = {
+                nombre: name
             };
-            categories.push(category);
             
-            // Add to table
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${category.nombre}</td>
-                <td class="actions">
-                    <button class="btn btn-sm btn-edit" onclick="editCategory('${doc.id}')">Editar</button>
-                    <button class="btn btn-sm btn-delete" onclick="deleteCategory('${doc.id}')">Eliminar</button>
-                </td>
-            `;
-            categoriesTable.appendChild(row);
-            
-            // Add to select
-            const option = document.createElement('option');
-            option.value = doc.id;
-            option.textContent = category.nombre;
-            categorySelect.appendChild(option);
-        });
-    }).catch((error) => {
-        console.error("Error loading categories: ", error);
-    });
-}
+            if (editingCategoryId) {
+                // Update existing category
+                db.collection('categoria').doc(editingCategoryId).update(categoryData)
+                    .then(() => {
+                        closeCategoryModal();
+                        resetCategoryForm();
+                        loadCategories();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating category: ", error);
+                    });
+            } else {
+                // Add new category
+                db.collection('categoria').add(categoryData)
+                    .then(() => {
+                        closeCategoryModal();
+                        resetCategoryForm();
+                        loadCategories();
+                    })
+                    .catch((error) => {
+                        console.error("Error adding category: ", error);
+                    });
+            }
+        }
 
-// Modificar la función saveCategory para eliminar la referencia a iconos:
-async function saveCategory(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('categoryName').value;
-    
-    const categoryData = {
-        nombre: name
-    };
-    
-    if (editingCategoryId) {
-        // Update existing category
-        db.collection('categoria').doc(editingCategoryId).update(categoryData)
-            .then(() => {
-                closeCategoryModal();
-                resetCategoryForm();
-                loadCategories();
-            })
-            .catch((error) => {
-                console.error("Error updating category: ", error);
-            });
-    } else {
-        // Add new category
-        db.collection('categoria').add(categoryData)
-            .then(() => {
-                closeCategoryModal();
-                resetCategoryForm();
-                loadCategories();
-            })
-            .catch((error) => {
-                console.error("Error adding category: ", error);
-            });
-    }
-}
-
-// Modificar la función editCategory:
-function editCategory(id) {
-    const category = categories.find(c => c.id === id);
-    if (category) {
-        editingCategoryId = id;
-        document.getElementById('categoryId').value = id;
-        document.getElementById('categoryName').value = category.nombre;
-        
-        document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
-        document.getElementById('categoryModal').style.display = 'block';
-    }
-}
+        function editCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                editingCategoryId = id;
+                document.getElementById('categoryId').value = id;
+                document.getElementById('categoryName').value = category.nombre;
+                
+                document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
+                document.getElementById('categoryModal').style.display = 'block';
+            }
+        }
 
         function deleteCategory(id) {
             if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
@@ -882,13 +873,12 @@ function editCategory(id) {
             }
         }
 
-// Modificar resetCategoryForm:
-function resetCategoryForm() {
-    document.getElementById('categoryForm').reset();
-    document.getElementById('categoryId').value = '';
-    document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
-    editingCategoryId = null;
-}
+        function resetCategoryForm() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
+            editingCategoryId = null;
+        }
 
         // Product functions
         function loadProducts() {
@@ -936,7 +926,7 @@ function resetCategoryForm() {
         }
 
         async function saveProduct(e) {
-            e.preventDefault();
+            e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
             
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
