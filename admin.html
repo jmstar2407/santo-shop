@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Santo Sex Shop</title>
-    
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         * {
             margin: 0;
@@ -32,7 +33,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0.5rem 1rem;
         }
 
         /* Login Section */
@@ -113,7 +114,6 @@
         /* Header */
         .admin-header {
             background: #1e1e1e;
-            padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
@@ -126,7 +126,12 @@
         .admin-logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #e91e63;
+            color: #e50f8e;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: sans-serif;
+            font-weight: bold;
         }
 
         .admin-user {
@@ -138,7 +143,7 @@
         /* Navigation */
         .admin-nav {
             background: #252525;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
         }
 
         .admin-nav ul {
@@ -174,38 +179,89 @@
             padding-bottom: 0.5rem;
         }
 
-        /* Tables */
-        .table-container {
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-card {
             background: #1e1e1e;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
         }
 
-        table {
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
             width: 100%;
-            border-collapse: collapse;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #333;
+            background: #ffffff;
         }
 
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #333;
-        }
-
-        th {
-            background: #252525;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background: #252525;
-        }
-
-        .actions {
+        .product-placeholder {
+            width: 100%;
+            height: 200px;
             display: flex;
-            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+            background: #2c2c2c;
+            border-bottom: 2px solid #333;
+            color: #555;
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 1rem;
+            padding: 0.3rem 0.6rem;
+            background: #252525;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-sm {
@@ -231,11 +287,46 @@
 
         .btn-add {
             background: #4caf50;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .btn-add:hover {
             background: #388e3c;
+        }
+
+        /* Categories Table */
+        .table-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background: #252525;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #252525;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
         /* Forms */
@@ -396,37 +487,19 @@
             display: none;
         }
 
-        .table-icon {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 0.5rem;
-            vertical-align: middle;
-        }
-
-        .table-icon-fa {
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
-            vertical-align: middle;
-            width: 40px;
-            text-align: center;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .form-row {
                 flex-direction: column;
                 gap: 0;
             }
-            
+
             .admin-nav ul {
-                flex-direction: column;
                 gap: 0.5rem;
             }
-            
-            table {
-                display: block;
-                overflow-x: auto;
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
 
             .modal-content {
@@ -435,8 +508,15 @@
                 padding: 1.5rem;
             }
         }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- Login Section -->
     <section class="login-section" id="loginSection">
@@ -462,10 +542,10 @@
             <div class="container">
                 <div class="admin-header-content">
                     <div class="admin-logo">
-                        <i class="fas fa-heart"></i> Santo Sex Shop - Admin
+                        <img src="./img/logo_1.png" style="height: 52px;"> Santo Sex Shop
                     </div>
                     <div class="admin-user">
-                        <span id="userEmail"></span>
+                        <span id="userEmail" style="display: none;"></span>
                         <button class="btn btn-sm" onclick="logout()">Cerrar Sesión</button>
                     </div>
                 </div>
@@ -488,38 +568,25 @@
                 <!-- Products Tab -->
                 <div id="productsTab" class="tab-content active">
                     <h2 class="section-title">Gestión de Productos</h2>
-                    
+
                     <button class="btn btn-add" onclick="openProductModal()">
                         <i class="fas fa-plus"></i> Agregar Producto
                     </button>
-                    
-                    <!-- Products Table -->
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Imagen</th>
-                                    <th>Nombre</th>
-                                    <th>Precio</th>
-                                    <th>Categoría</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTable">
-                                <!-- Products will be loaded here -->
-                            </tbody>
-                        </table>
+
+                    <!-- Products Grid -->
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Products will be loaded here -->
                     </div>
                 </div>
-                
+
                 <!-- Categories Tab -->
                 <div id="categoriesTab" class="tab-content">
                     <h2 class="section-title">Gestión de Categorías</h2>
-                    
+
                     <button class="btn btn-add" onclick="openCategoryModal()">
                         <i class="fas fa-plus"></i> Agregar Categoría
                     </button>
-                    
+
                     <!-- Categories Table -->
                     <div class="table-container">
                         <table>
@@ -546,7 +613,7 @@
             <h3 class="modal-title" id="productModalTitle">Agregar Nuevo Producto</h3>
             <form id="productForm">
                 <input type="hidden" id="productId">
-                
+
                 <div class="image-preview-container">
                     <div class="image-preview" id="productImagePreview">
                         <i class="fas fa-image"></i>
@@ -556,7 +623,7 @@
                     </label>
                     <input type="file" id="productImageInput" class="file-input" accept="image/*">
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="productName">Nombre</label>
@@ -580,7 +647,8 @@
                     <textarea id="productDescription" required></textarea>
                 </div>
                 <button type="submit" class="btn">Guardar Producto</button>
-                <button type="button" class="btn" style="background: #6c757d;" onclick="closeProductModal()">Cancelar</button>
+                <button type="button" class="btn" style="background: #6c757d;"
+                    onclick="closeProductModal()">Cancelar</button>
             </form>
         </div>
     </div>
@@ -592,7 +660,7 @@
             <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
             <form id="categoryForm">
                 <input type="hidden" id="categoryId">
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="categoryName">Nombre</label>
@@ -600,7 +668,8 @@
                     </div>
                 </div>
                 <button type="submit" class="btn">Guardar Categoría</button>
-                <button type="button" class="btn" style="background: #6c757d;" onclick="closeCategoryModal()">Cancelar</button>
+                <button type="button" class="btn" style="background: #6c757d;"
+                    onclick="closeCategoryModal()">Cancelar</button>
             </form>
         </div>
     </div>
@@ -634,7 +703,7 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorElement = document.getElementById('loginError');
-            
+
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Signed in
@@ -642,7 +711,7 @@
                     document.getElementById('userEmail').textContent = user.email;
                     document.getElementById('loginSection').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    
+
                     // Load data
                     loadCategories();
                     loadProducts();
@@ -667,7 +736,7 @@
                 document.getElementById('userEmail').textContent = user.email;
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                
+
                 // Load data
                 loadCategories();
                 loadProducts();
@@ -677,15 +746,23 @@
             }
         });
 
+
+        // Función para formatear precios
+        function formatPrice(price) {
+            if (!price) return '0';
+            return Number(price).toLocaleString('es-DO');
+        }
+
+
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                
+
                 // Update active link
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
-                
+
                 // Show corresponding tab
                 document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                 document.getElementById(link.dataset.tab + 'Tab').classList.add('active');
@@ -716,10 +793,10 @@
         }
 
         // Close modals when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const productModal = document.getElementById('productModal');
             const categoryModal = document.getElementById('categoryModal');
-            
+
             if (event.target === productModal) {
                 closeProductModal();
             }
@@ -729,25 +806,25 @@
         };
 
         // Image preview functions
-        document.getElementById('productImageInput').addEventListener('change', function(e) {
+        document.getElementById('productImageInput').addEventListener('change', function (e) {
             handleImagePreview(e, 'productImagePreview', 'product');
         });
 
         function handleImagePreview(event, previewElementId, type) {
             const file = event.target.files[0];
             if (!file) return;
-            
+
             const previewElement = document.getElementById(previewElementId);
             const reader = new FileReader();
-            
-            reader.onload = function(e) {
+
+            reader.onload = function (e) {
                 previewElement.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                
+
                 if (type === 'product') {
                     productImageFile = file;
                 }
             };
-            
+
             reader.readAsDataURL(file);
         }
 
@@ -758,10 +835,10 @@
                     resolve(null);
                     return;
                 }
-                
+
                 const storageRef = storage.ref();
                 const imageRef = storageRef.child(`${path}/${Date.now()}_${file.name}`);
-                
+
                 imageRef.put(file).then((snapshot) => {
                     snapshot.ref.getDownloadURL().then((downloadURL) => {
                         resolve(downloadURL);
@@ -778,21 +855,21 @@
                 categories = [];
                 const categoriesTable = document.getElementById('categoriesTable');
                 const categorySelect = document.getElementById('productCategory');
-                
+
                 // Clear existing options except the first one
                 while (categorySelect.options.length > 1) {
                     categorySelect.remove(1);
                 }
-                
+
                 categoriesTable.innerHTML = '';
-                
+
                 snapshot.forEach((doc) => {
                     const category = {
                         id: doc.id,
                         ...doc.data()
                     };
                     categories.push(category);
-                    
+
                     // Add to table
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -803,7 +880,7 @@
                         </td>
                     `;
                     categoriesTable.appendChild(row);
-                    
+
                     // Add to select
                     const option = document.createElement('option');
                     option.value = doc.id;
@@ -817,13 +894,13 @@
 
         async function saveCategory(e) {
             e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-            
+
             const name = document.getElementById('categoryName').value;
-            
+
             const categoryData = {
                 nombre: name
             };
-            
+
             if (editingCategoryId) {
                 // Update existing category
                 db.collection('categoria').doc(editingCategoryId).update(categoryData)
@@ -855,7 +932,7 @@
                 editingCategoryId = id;
                 document.getElementById('categoryId').value = id;
                 document.getElementById('categoryName').value = category.nombre;
-                
+
                 document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
                 document.getElementById('categoryModal').style.display = 'block';
             }
@@ -884,41 +961,47 @@
         function loadProducts() {
             db.collection('productos').get().then((snapshot) => {
                 products = [];
-                const productsTable = document.getElementById('productsTable');
-                productsTable.innerHTML = '';
-                
+                const productsGrid = document.getElementById('productsGrid');
+                productsGrid.innerHTML = '';
+
                 snapshot.forEach((doc) => {
                     const product = {
                         id: doc.id,
                         ...doc.data()
                     };
                     products.push(product);
-                    
+
                     // Get category name
                     const category = categories.find(c => c.id === product.categoria);
                     const categoryName = category ? category.nombre : 'Sin categoría';
-                    
-                    // Add to table
-                    const row = document.createElement('tr');
+
+                    // Create product card
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+
                     let imageHtml = '';
-                    
                     if (product.icono) {
-                        imageHtml = `<img src="${product.icono}" class="table-icon" alt="${product.nombre}">`;
+                        imageHtml = `<img src="${product.icono}" class="product-image" alt="${product.nombre}">`;
                     } else {
-                        imageHtml = `<i class="fas fa-image table-icon-fa"></i>`;
+                        imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
                     }
-                    
-                    row.innerHTML = `
-                        <td>${imageHtml}</td>
-                        <td>${product.nombre}</td>
-                        <td>$${product.precio}</td>
-                        <td>${categoryName}</td>
-                        <td class="actions">
-                            <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
-                        </td>
-                    `;
-                    productsTable.appendChild(row);
+
+                    card.innerHTML = `
+    ${imageHtml}
+    <div class="product-info">
+        <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
+            <div class="product-name">${product.nombre}</div>
+        </div>
+        <div class="product-price">RD$${formatPrice(product.precio)}</div>
+        <div class="product-category">${categoryName}</div>
+        <div class="product-description"><strong>Descripción:</strong> ${product.descripcion || 'Sin descripción'}</div>
+        <div class="product-actions">
+            <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
+            <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
+        </div>
+    </div>
+`;
+                    productsGrid.appendChild(card);
                 });
             }).catch((error) => {
                 console.error("Error loading products: ", error);
@@ -927,12 +1010,12 @@
 
         async function saveProduct(e) {
             e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-            
+
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
             const category = document.getElementById('productCategory').value;
             const description = document.getElementById('productDescription').value;
-            
+
             // Subir imagen si existe
             let iconUrl = '';
             if (productImageFile) {
@@ -944,19 +1027,19 @@
                     return;
                 }
             }
-            
+
             const productData = {
                 nombre: name,
                 precio: price,
                 categoria: category,
                 descripcion: description
             };
-            
+
             // Only add icon if provided
             if (iconUrl) {
                 productData.icono = iconUrl;
             }
-            
+
             if (editingProductId) {
                 // Update existing product
                 db.collection('productos').doc(editingProductId).update(productData)
@@ -990,8 +1073,8 @@
                 document.getElementById('productName').value = product.nombre;
                 document.getElementById('productPrice').value = product.precio;
                 document.getElementById('productCategory').value = product.categoria;
-                document.getElementById('productDescription').value = product.descripcion;
-                
+                document.getElementById('productDescription').value = product.descripcion ? product.descripcion.replace(/^Descripción:\s*/, '') : '';
+
                 // Configurar vista previa de imagen
                 const previewElement = document.getElementById('productImagePreview');
                 if (product.icono) {
@@ -999,7 +1082,7 @@
                 } else {
                     previewElement.innerHTML = `<i class="fas fa-image"></i>`;
                 }
-                
+
                 document.getElementById('productModalTitle').textContent = 'Editar Producto';
                 document.getElementById('productModal').style.display = 'block';
             }
@@ -1031,4 +1114,5 @@
         document.getElementById('categoryForm').addEventListener('submit', saveCategory);
     </script>
 </body>
+
 </html>
