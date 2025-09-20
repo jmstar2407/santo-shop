@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Santo Sex Shop</title>
+    <link rel="stylesheet" href="./css/style.css" />
+
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -42,10 +44,11 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #1c213d 0%, #250e21 100%);
         }
 
         .login-form {
+            position: absolute;
             background: #1e1e1e;
             padding: 2.5rem;
             border-radius: 10px;
@@ -73,10 +76,10 @@
         .form-group input {
             width: 100%;
             padding: 0.8rem;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background: #2c2c2c;
-            color: #fff;
+            border: 0px solid #333;
+            border-radius: 14px;
+            background: #fefdffcc;
+            color: #000000;
         }
 
         .btn {
@@ -109,6 +112,7 @@
         /* Admin Panel */
         .admin-panel {
             display: none;
+            position: relative;
         }
 
         /* Header */
@@ -132,6 +136,10 @@
             gap: 1rem;
             font-family: sans-serif;
             font-weight: bold;
+            background: linear-gradient(38deg, #e91e63, #a402bf, #0084d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .admin-user {
@@ -195,9 +203,6 @@
             transition: transform 0.3s ease;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
 
         .product-image {
             width: 100%;
@@ -450,6 +455,10 @@
             font-weight: 600;
             transition: all 0.3s ease;
             border-top: 1px solid rgb(16 16 16);
+            display: inline-flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
         }
 
         .close-modal {
@@ -463,6 +472,10 @@
 
         .close-modal:hover {
             color: #fff;
+        }
+
+        #categoryModal {
+            background: rgb(0 0 0 / 44%);
         }
 
         /* Image Preview */
@@ -552,17 +565,22 @@
 
             .modal-content {
                 max-height: 100%;
-                    border-radius: 0px;
+                border-radius: 0px;
             }
 
 
             .modal-title {
-    border-radius: 0px;
-}
+                border-radius: 0px;
+            }
 
             .modal-footer {
-    border-radius: 0px;
-}
+                border-radius: 0px;
+            }
+
+            #modal-category-style {
+                max-width: 90%;
+                border-radius: 14px;
+            }
 
             .form-row {
                 flex-direction: column;
@@ -618,34 +636,67 @@
             }
 
             .images-preview-grid {
-        grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .image-preview-item {
                 width: 80px;
                 height: 80px;
             }
+
+            .login-form {
+                background: transparent;
+                box-shadow: 0 10px 25px rgb(0 0 0 / 0%);
+                padding-bottom: 7rem;
+            }
         }
     </style>
 </head>
 
 <body>
+
+
+
+    <div class="animation-wrapper">
+        <div class="particle particle-1"></div>
+        <div class="particle particle-2"></div>
+        <div class="particle particle-3"></div>
+        <div class="particle particle-4"></div>
+    </div>
+
+
     <!-- Login Section -->
     <section class="login-section" id="loginSection">
+
+
+
         <div class="login-form">
-            <h2>Admin - Santo Sex Shop</h2>
+            <h2 style="margin-bottom: 3rem;color: #d3d3d3;">Bienvenido!</h2>
+
+            <div style="width: 100%;display: inline-flex;justify-content: center;">
+                <img src="./img/logo_1.png" style="height: 124px;">
+            </div>
+            <h2
+                style=" margin-bottom: 0px;font-family: sans-serif;font-weight: bold;background: linear-gradient(38deg, #e91e63, #a402bf, #0084d1);-webkit-background-clip: text;-webkit-text-fill-color: transparent;background-clip: text;">
+                Santo Sex Shop</h2>
+            <p id="subtit" style="margin-bottom: 20px;text-align: center;font-size: 0.7rem;color: #c3c3c3;">Sistema de
+                Administración</p>
             <div class="form-group">
-                <label for="email">Email</label>
+                <!-- <label for="email">Email</label> -->
                 <input type="email" id="email" placeholder="Ingresa tu email">
             </div>
             <div class="form-group">
-                <label for="password">Contraseña</label>
+                <!-- <label for="password">Contraseña</label> -->
                 <input type="password" id="password" placeholder="Ingresa tu contraseña">
             </div>
-            <button class="btn btn-block" onclick="login()">Iniciar Sesión</button>
+            <button class="btn btn-block" onclick="login()" style="margin-top: 4rem;border-radius: 17px;">Iniciar
+                Sesión</button>
             <div id="loginError" class="error-message"></div>
         </div>
     </section>
+
+
+
 
     <!-- Admin Panel -->
     <div class="admin-panel" id="adminPanel">
@@ -658,7 +709,8 @@
                     </div>
                     <div class="admin-user">
                         <span id="userEmail" style="display: none;"></span>
-                        <button class="btn btn-sm" onclick="logout()">Cerrar Sesión</button>
+                        <button class="btn btn-sm" onclick="logout()" style="background: #e91e6300;"><img
+                                src="./img/icons/cerrar_sesion_1.png" style="height: 34px;"></button>
                     </div>
                 </div>
             </div>
@@ -770,9 +822,9 @@
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn">Guardar Producto</button>
                 <button type="button" class="btn" style="background: #6c757d;"
                     onclick="closeProductModal()">Cancelar</button>
+                <button type="submit" class="btn">Guardar Producto</button>
             </div>
             </form>
         </div>
@@ -780,22 +832,33 @@
 
     <!-- Category Modal -->
     <div id="categoryModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeCategoryModal()">&times;</span>
-            <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
-            <form id="categoryForm">
-                <input type="hidden" id="categoryId">
+        <div class="modal-content" id="modal-category-style">
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="categoryName">Nombre</label>
-                        <input type="text" id="categoryName" required>
+            <div class="modal-title">
+                <span class="close-modal" onclick="closeCategoryModal()" style="display: none;">&times;</span>
+                <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
+            </div>
+
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoryName">Nombre</label>
+                            <input type="text" id="categoryName" required>
+                        </div>
                     </div>
-                </div>
-                <button type="submit" class="btn">Guardar Categoría</button>
+            </div>
+
+            <div class="modal-footer">
                 <button type="button" class="btn" style="background: #6c757d;"
                     onclick="closeCategoryModal()">Cancelar</button>
-            </form>
+
+                <button type="submit" class="btn">Guardar Categoría</button>
+                </form>
+            </div>
+
         </div>
     </div>
 
@@ -897,7 +960,7 @@
         function openProductModal() {
             resetProductForm();
             document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
-            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('productModal').style.display = 'flex';
         }
 
         function closeProductModal() {
@@ -908,7 +971,7 @@
         function openCategoryModal() {
             resetCategoryForm();
             document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
-            document.getElementById('categoryModal').style.display = 'block';
+            document.getElementById('categoryModal').style.display = 'flex';
         }
 
         function closeCategoryModal() {
@@ -1116,7 +1179,7 @@
                 document.getElementById('categoryName').value = category.nombre;
 
                 document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
-                document.getElementById('categoryModal').style.display = 'block';
+                document.getElementById('categoryModal').style.display = 'flex';
             }
         }
 

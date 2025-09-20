@@ -242,9 +242,9 @@
             transform: translate(-50%, -50%);
             background: white;
             border-radius: 20px;
-            max-width: 600px;
+            max-width: 800px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
             animation: modalSlideIn 0.3s ease;
         }
@@ -285,24 +285,107 @@
             padding: 2rem;
         }
 
-        .modal-product-image {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 5rem;
+        /* Galería de imágenes */
+        .modal-product-gallery {
+            position: relative;
             margin-bottom: 1.5rem;
         }
 
-        .modal-product-image img {
+        .gallery-main {
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-main img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .gallery-thumbnails {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        .gallery-thumbnail {
+            width: 70px;
+            height: 70px;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            flex-shrink: 0;
+            border: 2px solid transparent;
+        }
+
+        .gallery-thumbnail:hover,
+        .gallery-thumbnail.active {
+            opacity: 1;
+            border-color: #e91e63;
+        }
+
+        .gallery-thumbnail img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 10px;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .gallery-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .gallery-prev {
+            left: 10px;
+        }
+
+        .gallery-next {
+            right: 10px;
+        }
+
+        .modal-product-info {
+            margin-top: 1.5rem;
+        }
+
+        #modalProductPrice {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        #modalProductDescription {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 1.5rem;
         }
 
         .whatsapp-btn {
@@ -381,6 +464,21 @@
             .header-content {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            
+            .gallery-main {
+                height: 250px;
+            }
+            
+            .gallery-thumbnail {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .gallery-nav {
+                width: 35px;
+                height: 35px;
+                padding: 10px;
             }
         }
 
@@ -506,15 +604,24 @@
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="modal-product-image" id="modalProductImage">
-                    <i class="fas fa-image"></i>
+                <div class="modal-product-gallery" id="modalProductGallery">
+                    <div class="gallery-main">
+                        <img id="galleryMainImage" src="" alt="Product image">
+                    </div>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Las miniaturas se agregarán aquí -->
+                    </div>
+                    <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
+                    <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
                 </div>
-                <div id="modalProductPrice" class="product-price">$0</div>
-                <div id="modalProductDescription" class="product-description"></div>
-                <a href="#" class="whatsapp-btn" id="whatsappBtn">
-                    <i class="fab fa-whatsapp"></i>
-                    Pedir por WhatsApp
-                </a>
+                <div class="modal-product-info">
+                    <div id="modalProductPrice" class="product-price">$0</div>
+                    <div id="modalProductDescription" class="product-description"></div>
+                    <a href="#" class="whatsapp-btn" id="whatsappBtn">
+                        <i class="fab fa-whatsapp"></i>
+                        Pedir por WhatsApp
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -538,13 +645,12 @@
     <script>
         // Firebase Configuration
         const firebaseConfig = {
-            // Aquí debes poner tu configuración de Firebase
-  apiKey: "AIzaSyCWGop8_AWv52SuXHP5loh-caH67waFcJw",
-  authDomain: "santo-shop-ecdc1.firebaseapp.com",
-  projectId: "santo-shop-ecdc1",
-  storageBucket: "santo-shop-ecdc1.firebasestorage.app",
-  messagingSenderId: "427918393457",
-  appId: "1:427918393457:web:c73dcd63c32786f07a9bd0"
+            apiKey: "AIzaSyCWGop8_AWv52SuXHP5loh-caH67waFcJw",
+            authDomain: "santo-shop-ecdc1.firebaseapp.com",
+            projectId: "santo-shop-ecdc1",
+            storageBucket: "santo-shop-ecdc1.firebasestorage.app",
+            messagingSenderId: "427918393457",
+            appId: "1:427918393457:web:c73dcd63c32786f07a9bd0"
         };
 
         // Initialize Firebase
@@ -555,7 +661,11 @@
         let categories = [];
         let products = [];
         let currentCategory = 'all';
-        const whatsappNumber = "+1234567890"; // Cambia por tu número de WhatsApp
+        const whatsappNumber = "+18296386767"; // Número de WhatsApp actualizado
+        
+        // Variables para la galería de imágenes
+        let currentProductImages = [];
+        let currentImageIndex = 0;
 
         // Age verification
         function confirmAge(isAdult) {
@@ -635,7 +745,12 @@
                         precio: 29.99,
                         descripcion: 'Descripción detallada del producto ejemplo 1. Fabricado con materiales de alta calidad.',
                         categoria: '1',
-                        icono: 'https://via.placeholder.com/200x200/667eea/white?text=Producto+1'
+                        icono: 'https://via.placeholder.com/200x200/667eea/white?text=Producto+1',
+                        imagenes: [
+                            'https://via.placeholder.com/600x600/667eea/white?text=Imagen+1',
+                            'https://via.placeholder.com/600x600/764ba2/white?text=Imagen+2',
+                            'https://via.placeholder.com/600x600/e91e63/white?text=Imagen+3'
+                        ]
                     },
                     {
                         id: '2',
@@ -643,7 +758,11 @@
                         precio: 45.99,
                         descripcion: 'Descripción detallada del producto ejemplo 2. Ideal para principiantes.',
                         categoria: '2',
-                        icono: 'https://via.placeholder.com/200x200/764ba2/white?text=Producto+2'
+                        icono: 'https://via.placeholder.com/200x200/764ba2/white?text=Producto+2',
+                        imagenes: [
+                            'https://via.placeholder.com/600x600/764ba2/white?text=Imagen+1',
+                            'https://via.placeholder.com/600x600/e91e63/white?text=Imagen+2'
+                        ]
                     },
                     {
                         id: '3',
@@ -651,7 +770,10 @@
                         precio: 19.99,
                         descripcion: 'Descripción detallada del producto ejemplo 3. Fórmula natural y segura.',
                         categoria: '3',
-                        icono: 'https://via.placeholder.com/200x200/e91e63/white?text=Producto+3'
+                        icono: 'https://via.placeholder.com/200x200/e91e63/white?text=Producto+3',
+                        imagenes: [
+                            'https://via.placeholder.com/600x600/e91e63/white?text=Imagen+1'
+                        ]
                     }
                 ];
                 displayProducts();
@@ -699,6 +821,11 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
 
+            // Obtener las imágenes del producto (nuevo campo o compatibilidad con icono)
+            const images = product.imagenes || (product.icono ? [product.icono] : []);
+            currentProductImages = images;
+            currentImageIndex = 0;
+
             // Update URL for unique product link
             const productUrl = `${window.location.origin}${window.location.pathname}?producto=${productId}`;
             window.history.pushState({ productId }, '', productUrl);
@@ -711,12 +838,8 @@
             document.getElementById('modalProductPrice').textContent = `$${product.precio}`;
             document.getElementById('modalProductDescription').textContent = product.descripcion;
 
-            const imageContainer = document.getElementById('modalProductImage');
-            if (product.icono && (product.icono.startsWith('http') || product.icono.startsWith('data:'))) {
-                imageContainer.innerHTML = `<img src="${product.icono}" alt="${product.nombre}" onerror="this.innerHTML='<i class=\\"fas fa-image\\"></i>'">`;
-            } else {
-                imageContainer.innerHTML = '<i class="fas fa-image"></i>';
-            }
+            // Configurar galería de imágenes
+            setupImageGallery(images);
 
             // Update WhatsApp button
             const whatsappBtn = document.getElementById('whatsappBtn');
@@ -727,18 +850,86 @@
             document.getElementById('productModal').style.display = 'block';
         }
 
+        // Función para configurar la galería de imágenes
+        function setupImageGallery(images) {
+            const mainImage = document.getElementById('galleryMainImage');
+            const thumbnailsContainer = document.getElementById('galleryThumbnails');
+            
+            // Limpiar miniaturas existentes
+            thumbnailsContainer.innerHTML = '';
+            
+            if (images.length === 0) {
+                // Mostrar placeholder si no hay imágenes
+                mainImage.src = '';
+                mainImage.alt = 'Imagen no disponible';
+                mainImage.parentElement.innerHTML = '<i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>';
+                document.querySelector('.gallery-prev').style.display = 'none';
+                document.querySelector('.gallery-next').style.display = 'none';
+                return;
+            }
+            
+            // Configurar imagen principal
+            mainImage.src = images[0];
+            mainImage.alt = 'Product image';
+            mainImage.style.display = 'block';
+            
+            // Crear miniaturas
+            images.forEach((imageUrl, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = `gallery-thumbnail ${index === 0 ? 'active' : ''}`;
+                thumbnail.innerHTML = `<img src="${imageUrl}" alt="Thumbnail ${index + 1}">`;
+                thumbnail.onclick = () => changeToImage(index);
+                thumbnailsContainer.appendChild(thumbnail);
+            });
+            
+            // Mostrar/ocultar botones de navegación según sea necesario
+            document.querySelector('.gallery-prev').style.display = images.length > 1 ? 'flex' : 'none';
+            document.querySelector('.gallery-next').style.display = images.length > 1 ? 'flex' : 'none';
+        }
+
+        // Función para cambiar a una imagen específica
+        function changeToImage(index) {
+            if (index < 0 || index >= currentProductImages.length) return;
+            
+            currentImageIndex = index;
+            const mainImage = document.getElementById('galleryMainImage');
+            mainImage.src = currentProductImages[index];
+            
+            // Actualizar miniaturas activas
+            document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        // Función para navegar entre imágenes
+        function changeImage(direction) {
+            let newIndex = currentImageIndex + direction;
+            
+            // Navegación circular
+            if (newIndex < 0) {
+                newIndex = currentProductImages.length - 1;
+            } else if (newIndex >= currentProductImages.length) {
+                newIndex = 0;
+            }
+            
+            changeToImage(newIndex);
+        }
+
         // Close modal
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
             // Reset URL
             window.history.pushState({}, '', window.location.pathname);
+            // Limpiar galería
+            currentProductImages = [];
+            currentImageIndex = 0;
         }
 
         // Update meta tags for social media preview
         function updateMetaTags(product, url) {
-            const title = `${product.nombre} - Passion Store`;
+            const title = `${product.nombre} - Santo Sex Shop`;
             const description = product.descripcion;
-            const image = product.icono || 'https://via.placeholder.com/400x400/667eea/white?text=Passion+Store';
+            const image = product.icono || 'https://via.placeholder.com/400x400/667eea/white?text=Santo+Sex+Shop';
 
             // Update existing meta tags
             let titleMeta = document.getElementById('metaTitle');
