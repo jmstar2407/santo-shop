@@ -444,28 +444,60 @@
             margin-bottom: 1rem;
         }
 
-        .image-preview {
-            width: 150px;
-            height: 150px;
+        .images-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
             border: 2px dashed #555;
             border-radius: 5px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            margin-bottom: 1rem;
             background-color: #2c2c2c;
         }
 
-        .image-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .image-preview i {
-            font-size: 3rem;
-            color: #555;
+        .image-preview-item.empty {
+            grid-column: 1 / -1;
+            width: 100%;
+            height: 150px;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-count {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #aaa;
         }
 
         .file-input-label {
@@ -498,7 +530,8 @@
             }
 
             .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+                gap: 0.5rem;
             }
 
             .modal-content {
@@ -506,9 +539,6 @@
                 margin: 10% auto;
                 padding: 1.5rem;
             }
-
-
-
 
             .section-title {
                 font-size: 1.2rem;
@@ -546,6 +576,15 @@
                 background: #252525;
                 border-radius: 15px;
                 display: inline-block;
+            }
+
+            .images-preview-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .image-preview-item {
+                width: 80px;
+                height: 80px;
             }
         }
     </style>
@@ -649,13 +688,17 @@
                 <input type="hidden" id="productId">
 
                 <div class="image-preview-container">
-                    <div class="image-preview" id="productImagePreview">
-                        <i class="fas fa-image"></i>
+                    <div class="images-preview-grid" id="productImagesPreview">
+                        <div class="image-preview-item empty">
+                            <i class="fas fa-image"></i>
+                            <span>Sin imágenes</span>
+                        </div>
                     </div>
-                    <label for="productImageInput" class="file-input-label">
-                        <i class="fas fa-upload"></i> Seleccionar Imagen
+                    <label for="productImagesInput" class="file-input-label">
+                        <i class="fas fa-plus"></i> Agregar Imágenes (Máx. 10)
                     </label>
-                    <input type="file" id="productImageInput" class="file-input" accept="image/*">
+                    <input type="file" id="productImagesInput" class="file-input" accept="image/*" multiple>
+                    <div class="image-count">0/10 imágenes seleccionadas</div>
                 </div>
 
                 <div class="form-row">
@@ -711,12 +754,12 @@
     <script>
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCWGop8_AWv52SuXHP5loh-caH67waFcJw",
-            authDomain: "santo-shop-ecdc1.firebaseapp.com",
-            projectId: "santo-shop-ecdc1",
-            storageBucket: "santo-shop-ecdc1.firebasestorage.app",
-            messagingSenderId: "427918393457",
-            appId: "1:427918393457:web:c73dcd63c32786f07a9bd0"
+  apiKey: "AIzaSyCWGop8_AWv52SuXHP5loh-caH67waFcJw",
+  authDomain: "santo-shop-ecdc1.firebaseapp.com",
+  projectId: "santo-shop-ecdc1",
+  storageBucket: "santo-shop-ecdc1.firebasestorage.app",
+  messagingSenderId: "427918393457",
+  appId: "1:427918393457:web:c73dcd63c32786f07a9bd0"
         };
 
         // Initialize Firebase
@@ -730,7 +773,8 @@
         let products = [];
         let editingProductId = null;
         let editingCategoryId = null;
-        let productImageFile = null;
+        let productImageFiles = [];
+        let existingProductImages = [];
 
         // Authentication functions
         function login() {
@@ -780,13 +824,11 @@
             }
         });
 
-
         // Función para formatear precios
         function formatPrice(price) {
             if (!price) return '0';
             return Number(price).toLocaleString('es-DO');
         }
-
 
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -840,47 +882,105 @@
         };
 
         // Image preview functions
-        document.getElementById('productImageInput').addEventListener('change', function (e) {
-            handleImagePreview(e, 'productImagePreview', 'product');
+        document.getElementById('productImagesInput').addEventListener('change', function (e) {
+            handleMultipleImageSelection(e, 'productImagesPreview', 'product');
         });
 
-        function handleImagePreview(event, previewElementId, type) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+        function handleMultipleImageSelection(event, previewElementId, type) {
+            const files = Array.from(event.target.files);
             const previewElement = document.getElementById(previewElementId);
-            const reader = new FileReader();
+            
+            // Verificar límite de imágenes
+            const totalImages = productImageFiles.length + files.length;
+            if (totalImages > 10) {
+                alert('Solo puedes subir un máximo de 10 imágenes');
+                event.target.value = '';
+                return;
+            }
+            
+            // Limpiar mensaje de "sin imágenes" si existe
+            if (previewElement.querySelector('.empty')) {
+                previewElement.innerHTML = '';
+            }
+            
+// Filtrar solo imágenes primero
+const imageFiles = files.filter(file => file.type.match('image.*'));
 
-            reader.onload = function (e) {
-                previewElement.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-
-                if (type === 'product') {
-                    productImageFile = file;
-                }
-            };
-
-            reader.readAsDataURL(file);
+imageFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imageItem = document.createElement('div');
+        imageItem.className = 'image-preview-item';
+        imageItem.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button type="button" class="remove-image" onclick="removeSelectedImage(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        previewElement.appendChild(imageItem);
+        
+        if (type === 'product') {
+            productImageFiles.push(file);
+        }
+    };
+    reader.readAsDataURL(file);
+});
+            
+            // Actualizar contador
+            updateImageCount();
+            event.target.value = '';
         }
 
-        // Upload image to Firebase Storage
-        function uploadImage(file, path) {
-            return new Promise((resolve, reject) => {
-                if (!file) {
-                    resolve(null);
-                    return;
-                }
+        // Función para eliminar imagen seleccionada
+        function removeSelectedImage(button) {
+            const imageItem = button.parentElement;
+            const index = Array.from(imageItem.parentElement.children).indexOf(imageItem);
+            
+            // Eliminar del array de archivos
+            productImageFiles.splice(index, 1);
+            
+            // Eliminar elemento del DOM
+            imageItem.remove();
+            
+            // Si no quedan imágenes, mostrar mensaje
+            const previewElement = document.getElementById('productImagesPreview');
+            if (previewElement.children.length === 0) {
+                previewElement.innerHTML = `
+                    <div class="image-preview-item empty">
+                        <i class="fas fa-image"></i>
+                        <span>Sin imágenes</span>
+                    </div>
+                `;
+            }
+            
+            // Actualizar contador
+            updateImageCount();
+        }
 
-                const storageRef = storage.ref();
-                const imageRef = storageRef.child(`${path}/${Date.now()}_${file.name}`);
+        // Función para actualizar contador de imágenes
+        function updateImageCount() {
+            const totalImages = productImageFiles.length + existingProductImages.length;
+            document.querySelector('.image-count').textContent = `${totalImages}/10 imágenes`;
+        }
 
-                imageRef.put(file).then((snapshot) => {
-                    snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        resolve(downloadURL);
+        // Función para subir múltiples imágenes
+        async function uploadImages(files, path) {
+            const uploadPromises = files.map(file => {
+                return new Promise((resolve, reject) => {
+                    const storageRef = storage.ref();
+                    const imageRef = storageRef.child(`${path}/${Date.now()}_${file.name}`);
+                    
+                    imageRef.put(file).then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            resolve(downloadURL);
+                        });
+                    }).catch((error) => {
+                        reject(error);
                     });
-                }).catch((error) => {
-                    reject(error);
                 });
             });
+            
+            return Promise.all(uploadPromises);
         }
 
         // Category functions
@@ -1009,32 +1109,37 @@
                     const category = categories.find(c => c.id === product.categoria);
                     const categoryName = category ? category.nombre : 'Sin categoría';
 
+                    // Get first image for thumbnail
+                    const images = product.imagenes || (product.icono ? [product.icono] : []);
+                    const firstImage = images.length > 0 ? images[0] : null;
+
                     // Create product card
                     const card = document.createElement('div');
                     card.className = 'product-card';
 
                     let imageHtml = '';
-                    if (product.icono) {
-                        imageHtml = `<img src="${product.icono}" class="product-image" alt="${product.nombre}">`;
+                    if (firstImage) {
+                        imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}">`;
                     } else {
                         imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
                     }
 
                     card.innerHTML = `
-    ${imageHtml}
-    <div class="product-info">
-        <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
-            <div class="product-name">${product.nombre}</div>
-        </div>
-        <div class="product-price">RD$${formatPrice(product.precio)}</div>
-        <div class="product-category">${categoryName}</div>
-        <div class="product-description"><strong>Descripción:</strong> ${product.descripcion || 'Sin descripción'}</div>
-        <div class="product-actions">
-            <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
-            <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
-        </div>
-    </div>
-`;
+                        ${imageHtml}
+                        <div class="product-info">
+                            <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
+                                <div class="product-name">${product.nombre}</div>
+                                <span class="image-badge">${images.length} img</span>
+                            </div>
+                            <div class="product-price">RD$${formatPrice(product.precio)}</div>
+                            <div class="product-category">${categoryName}</div>
+                            <div class="product-description"><strong>Descripción:</strong> ${product.descripcion || 'Sin descripción'}</div>
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
+                                <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
                     productsGrid.appendChild(card);
                 });
             }).catch((error) => {
@@ -1050,28 +1155,32 @@
             const category = document.getElementById('productCategory').value;
             const description = document.getElementById('productDescription').value;
 
-            // Subir imagen si existe
-            let iconUrl = '';
-            if (productImageFile) {
+            // Subir nuevas imágenes si existen
+            let newImageUrls = [];
+            if (productImageFiles.length > 0) {
                 try {
-                    iconUrl = await uploadImage(productImageFile, 'product-images');
+                    newImageUrls = await uploadImages(productImageFiles, 'product-images');
                 } catch (error) {
-                    console.error("Error uploading product image: ", error);
-                    alert("Error al subir la imagen del producto");
+                    console.error("Error uploading product images: ", error);
+                    alert("Error al subir las imágenes del producto");
                     return;
                 }
             }
-
+            
+            // Combinar imágenes existentes con las nuevas
+            const allImageUrls = [...existingProductImages, ...newImageUrls];
+            
             const productData = {
                 nombre: name,
                 precio: price,
                 categoria: category,
-                descripcion: description
+                descripcion: description,
+                imagenes: allImageUrls  // Nuevo campo para múltiples imágenes
             };
-
-            // Only add icon if provided
-            if (iconUrl) {
-                productData.icono = iconUrl;
+            
+            // Mantener compatibilidad con versión anterior (icono)
+            if (allImageUrls.length > 0) {
+                productData.icono = allImageUrls[0]; // Primera imagen como icono
             }
 
             if (editingProductId) {
@@ -1107,19 +1216,76 @@
                 document.getElementById('productName').value = product.nombre;
                 document.getElementById('productPrice').value = product.precio;
                 document.getElementById('productCategory').value = product.categoria;
-                document.getElementById('productDescription').value = product.descripcion ? product.descripcion.replace(/^Descripción:\s*/, '') : '';
-
-                // Configurar vista previa de imagen
-                const previewElement = document.getElementById('productImagePreview');
-                if (product.icono) {
-                    previewElement.innerHTML = `<img src="${product.icono}" alt="Preview">`;
+                document.getElementById('productDescription').value = product.descripcion || '';
+                
+                // Configurar vista previa de imágenes
+                const previewElement = document.getElementById('productImagesPreview');
+                previewElement.innerHTML = '';
+                
+                // Usar el nuevo campo 'imagenes' o mantener compatibilidad con 'icono'
+                const images = product.imagenes || (product.icono ? [product.icono] : []);
+                existingProductImages = images;
+                
+                if (images.length > 0) {
+                    images.forEach((imageUrl, index) => {
+                        const imageItem = document.createElement('div');
+                        imageItem.className = 'image-preview-item';
+                        imageItem.innerHTML = `
+                            <img src="${imageUrl}" alt="Preview">
+                            <button type="button" class="remove-image" onclick="removeExistingImage(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        previewElement.appendChild(imageItem);
+                    });
                 } else {
-                    previewElement.innerHTML = `<i class="fas fa-image"></i>`;
+                    previewElement.innerHTML = `
+                        <div class="image-preview-item empty">
+                            <i class="fas fa-image"></i>
+                            <span>Sin imágenes</span>
+                        </div>
+                    `;
                 }
-
+                
+                // Actualizar contador
+                updateImageCount();
+                
                 document.getElementById('productModalTitle').textContent = 'Editar Producto';
                 document.getElementById('productModal').style.display = 'block';
             }
+        }
+
+        // Función para eliminar imagen existente
+        function removeExistingImage(index) {
+            existingProductImages.splice(index, 1);
+            
+            // Recargar vista previa
+            const previewElement = document.getElementById('productImagesPreview');
+            previewElement.innerHTML = '';
+            
+            if (existingProductImages.length > 0) {
+                existingProductImages.forEach((imageUrl, idx) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'image-preview-item';
+                    imageItem.innerHTML = `
+                        <img src="${imageUrl}" alt="Preview">
+                        <button type="button" class="remove-image" onclick="removeExistingImage(${idx})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    previewElement.appendChild(imageItem);
+                });
+            } else {
+                previewElement.innerHTML = `
+                    <div class="image-preview-item empty">
+                        <i class="fas fa-image"></i>
+                        <span>Sin imágenes</span>
+                    </div>
+                `;
+            }
+            
+            // Actualizar contador
+            updateImageCount();
         }
 
         function deleteProduct(id) {
@@ -1137,10 +1303,17 @@
         function resetProductForm() {
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
-            document.getElementById('productImagePreview').innerHTML = '<i class="fas fa-image"></i>';
+            document.getElementById('productImagesPreview').innerHTML = `
+                <div class="image-preview-item empty">
+                    <i class="fas fa-image"></i>
+                    <span>Sin imágenes</span>
+                </div>
+            `;
             document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
             editingProductId = null;
-            productImageFile = null;
+            productImageFiles = [];
+            existingProductImages = [];
+            updateImageCount();
         }
 
         // Event listeners
