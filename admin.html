@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Santo Sex Shop</title>
+    <link rel="icon" href="./img/logo_1.png" type="image/png">
     <link rel="stylesheet" href="./css/style.css" />
 
 
@@ -30,22 +31,32 @@
             background-color: #000000;
         }
 
+      /* Añadido: Evitar scroll en el body cuando está visible el login */
+        body.login-active {
+            overflow: hidden;
+            height: 100vh;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0.5rem 1rem;
         }
 
-        /* Login Section */
-.login-section {
-    display: flex
-;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #141937 0%, #070a16 50%, #2d1128 100%);
-    overflow: hidden;
-}
+        /* Login Section - Modificado */
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #141937 0%, #070a16 50%, #2d1128 100%);
+            overflow: hidden; /* Asegura que no haya scroll interno */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
 
         .login-form {
             position: absolute;
@@ -55,6 +66,8 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 400px;
+            max-height: 90vh; /* Limitar altura máxima */
+            overflow-y: auto; /* Permitir scroll solo dentro del formulario si es necesario */
         }
 
         .login-form h2 {
@@ -645,10 +658,10 @@
             }
 
             .login-form {
-background: transparent;
-        box-shadow: 0 10px 25px rgb(0 0 0 / 0%);
-        padding-bottom: 5rem;
-        padding-top: 0.5rem;
+                background: transparent;
+                box-shadow: 0 10px 25px rgb(0 0 0 / 0%);
+                padding-bottom: 5rem;
+                padding-top: 0.5rem;
             }
         }
     </style>
