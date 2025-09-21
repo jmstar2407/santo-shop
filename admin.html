@@ -31,7 +31,7 @@
             background-color: #000000;
         }
 
-      /* Añadido: Evitar scroll en el body cuando está visible el login */
+        /* Añadido: Evitar scroll en el body cuando está visible el login */
         body.login-active {
             overflow: hidden;
             height: 100vh;
@@ -49,8 +49,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #141937 0%, #070a16 50%, #2d1128 100%);
-            overflow: hidden; /* Asegura que no haya scroll interno */
+            overflow: hidden;
             position: fixed;
             top: 0;
             left: 0;
@@ -66,8 +65,10 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 400px;
-            max-height: 90vh; /* Limitar altura máxima */
-            overflow-y: auto; /* Permitir scroll solo dentro del formulario si es necesario */
+            max-height: 90vh;
+            /* Limitar altura máxima */
+            overflow-y: auto;
+            /* Permitir scroll solo dentro del formulario si es necesario */
         }
 
         .login-form h2 {
@@ -661,7 +662,7 @@
                 background: transparent;
                 box-shadow: 0 10px 25px rgb(0 0 0 / 0%);
                 padding-bottom: 5rem;
-                padding-top: 0.5rem;
+                padding-top: 0rem;
             }
         }
     </style>
