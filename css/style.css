@@ -502,18 +502,18 @@
             position: relative;
         }
 
-        .gallery-main {
-            width: 100%;
-            height: 350px;
-            overflow: hidden;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            position: relative;
-            background: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.gallery-main {
+    position: relative; /* Asegúrate de que esto esté presente */
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
         .gallery-main img {
             max-width: 100%;
@@ -554,36 +554,38 @@
             object-fit: cover;
         }
 
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 15px;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-        }
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+    z-index: 10; /* Añade esto */
+}
 
-        .gallery-nav:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
+.gallery-prev {
+    left: 15px; /* Aumenta el espacio */
+}
 
-        .gallery-prev {
-            left: 10px;
-        }
+.gallery-next {
+    right: 15px; /* Aumenta el espacio */
+}
 
-        .gallery-next {
-            right: 10px;
-        }
+.gallery-nav:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
 
         .modal-product-info {
             margin-top: 0.5rem;
