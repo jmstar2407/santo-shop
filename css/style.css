@@ -446,6 +446,8 @@
             flex: 1;
             padding: 1rem;
             text-align: left;
+            scrollbar-width: thin;
+            scrollbar-color: #b5b5b5 #f1f1f100;
         }
 
         .modal-footer {
@@ -964,7 +966,3 @@
             }
 
         }
-
-        
-
-        
