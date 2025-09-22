@@ -36,7 +36,8 @@
         select,
         .menu-toggle,
         .scroll-down-arrow,
-        .scroll-down {
+        .scroll-down,
+        .filter-toggle {
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -128,7 +129,7 @@
 
         .content-master {
             position: relative;
-            background: #1a1a21ed;
+            background: #1a1a21b4;
             margin-top: 164px;
             border-radius: 24px 24px 0px 0px;
             backdrop-filter: blur(34px);
@@ -311,7 +312,7 @@
             transform: scale(1.05);
         }
 
-                .view-btn img {
+        .view-btn img {
             height: 100%;
         }
 
@@ -383,7 +384,7 @@
 
         /* Estilos para vista compacta */
         .products-grid.compact .product-card {
-            border-radius: 10px;
+            border-radius: 14px;
         }
 
         .products-grid.compact .product-image {
@@ -426,14 +427,62 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 20px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
             animation: modalSlideIn 0.3s ease;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            text-align: center;
+            /* animation: modalFadeIn 0.3s; */
+            max-height: 90%;
+            width: 100%;
+            max-width: 800px;
         }
+
+
+        .modal-title {
+            width: 100%;
+            min-height: 40px;
+            border-bottom: 1px solid rgb(201 213 243);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px 10px 0px 0px;
+            color: #e91e63;
+        }
+
+        .modal-title h3 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 0px 55px;
+        }
+
+        .modal-body {
+            background: rgb(255 255 255);
+            overflow: auto;
+            flex: 1;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .modal-footer {
+            color: white;
+            border: none;
+            padding: 8px 8px;
+            border-radius: 0px 0px 10px 10px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-top: 1px solid rgb(201 213 243);
+            display: inline-flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+
 
         @keyframes modalSlideIn {
             from {
@@ -447,30 +496,24 @@
             }
         }
 
-        .modal-header {
-            position: sticky;
-            top: 0;
-            background: white;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            border-radius: 20px 20px 0 0;
-        }
 
         .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
+            position: absolute;
+            right: 0px;
+            margin: 7px;
+            font-family: math;
+            font-size: 22px;
+            font-weight: bold;
             cursor: pointer;
-            color: #666;
-            margin-left: auto;
+            transition: all 0.3s ease;
+            background: #ff2a2a;
+            color: #ffd8d8;
+            padding: 0px 12px;
+            border-radius: 7px;
+            pointer-events: auto;
+            border: none;
         }
 
-        .modal-body {
-            padding: 2rem;
-        }
 
         /* Galería de imágenes */
         .modal-product-gallery {
@@ -514,12 +557,14 @@
             transition: opacity 0.3s;
             flex-shrink: 0;
             border: 2px solid transparent;
+            filter: brightness(0.9);
         }
 
         .gallery-thumbnail:hover,
         .gallery-thumbnail.active {
             opacity: 1;
             border-color: #e91e63;
+            filter: brightness(1);
         }
 
         .gallery-thumbnail img {
@@ -576,25 +621,23 @@
         }
 
         .whatsapp-btn {
+            font-family: system-ui;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             background: #25d366;
             color: white;
-            padding: 1rem 2rem;
+            padding: 0.5rem 1rem;
             border: none;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            margin-top: 1rem;
         }
 
         .whatsapp-btn:hover {
             background: #128c7e;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
         }
 
         /* Loading */
@@ -650,8 +693,8 @@
             }
 
             .modal-content {
-                width: 95%;
-                margin: 20px;
+                max-height: 100%;
+                border-radius: 0px;
             }
 
             .gallery-main {
@@ -770,7 +813,7 @@
             background: #00000000;
             border: none;
             height: 36px;
-            margin: 0.5rem;
+            margin: 0.7rem;
         }
 
         .social-icon img {
@@ -778,12 +821,42 @@
         }
 
         .social-icon a {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-}
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Botón flotante de WhatsApp */
+        .whatsapp-float {
+            text-decoration: none;
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 20px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            /*box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);*/
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #128c7e;
+            transform: scale(1.1);
+        }
+
+        .whatsapp-float i {
+            color: white;
+        }
     </style>
 </head>
 
@@ -798,6 +871,12 @@
             <button class="age-btn secondary" onclick="confirmAge(false)">Soy menor de 18</button>
         </div>
     </div>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/18296386767?text=Saludos,%20me%20gustaría%20comunicarme%20con%20servicio%20al%20cliente."
+        class="whatsapp-float" target="_blank" id="whatsappFloatBtn">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <!-- Header -->
     <header>
@@ -861,7 +940,7 @@
                 </button>
                 <button class="view-btn" id="viewSmall" title="Vista compacta">
                     <!-- <i class="fas fa-th"></i> -->
-                     <img src="./img/icons/icon_small_1.png">
+                    <img src="./img/icons/icon_small_1.png">
                 </button>
             </div>
 
@@ -877,10 +956,12 @@
     <!-- Product Modal -->
     <div class="modal" id="productModal">
         <div class="modal-content">
-            <div class="modal-header">
+
+            <div class="modal-title">
                 <h3 id="modalProductName">Producto</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
+
             <div class="modal-body">
                 <div class="modal-product-gallery" id="modalProductGallery">
                     <div class="gallery-main">
@@ -892,15 +973,20 @@
                     <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
                     <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
                 </div>
+
                 <div class="modal-product-info">
-                    <div id="modalProductPrice" class="product-price">$0</div>
+                    <div id="modalProductPrice" class="product-price">RD$0</div>
                     <div id="modalProductDescription" class="product-description"></div>
-                    <a href="#" class="whatsapp-btn" id="whatsappBtn">
-                        <i class="fab fa-whatsapp"></i>
-                        Pedir por WhatsApp
-                    </a>
                 </div>
             </div>
+
+            <div class="modal-footer">
+                <a href="#" class="whatsapp-btn" id="whatsappBtn">
+                    <i class="fab fa-whatsapp" style="font-size: 2.5rem;"></i>
+                    Pedir por WhatsApp
+                </a>
+            </div>
+
         </div>
     </div>
 
@@ -945,6 +1031,18 @@
         // Variables para la galería de imágenes
         let currentProductImages = [];
         let currentImageIndex = 0;
+
+        // Función para formatear precios en formato RD$
+        function formatPrice(price) {
+            // Convertir a número si es string
+            const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+
+            // Formatear con separadores de miles y decimales
+            return `RD$${numPrice.toLocaleString('es-DO', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            })}`;
+        }
 
         // Age verification
         function confirmAge(isAdult) {
@@ -1114,29 +1212,25 @@
         // Display products
         function displayProducts() {
             const grid = document.getElementById('productsGrid');
-
             const filteredProducts = currentCategory === 'all'
                 ? products
                 : products.filter(product => product.categoria === currentCategory);
 
             if (filteredProducts.length === 0) {
-                grid.innerHTML = '<div class="loading">No hay productos disponibles en esta categoría</div>';
+                grid.innerHTML = '<div class="loading"><p>No hay productos en esta categoría</p></div>';
                 return;
             }
 
             grid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card" onclick="openProductModal('${product.id}')">
                     <div class="product-image">
-                        ${product.icono && (product.icono.startsWith('http') || product.icono.startsWith('data:'))
-                    ? `<img src="${product.icono}" alt="${product.nombre}" onerror="this.style.display='none'">`
-                    : '<i class="fas fa-image"></i>'}
-                    <div class="shadow-img"></div>
+                        <img src="${product.icono}" alt="${product.nombre}">
+                        <div class="shadow-img"></div>
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">${product.nombre}</h3>
-
-                        <p class="product-description">${product.descripcion.substring(0, 90)}...</p>
-                                                <div class="product-price">$${product.precio}</div>
+                        <div class="product-price">${formatPrice(product.precio)}</div>
+                        <p class="product-description">${product.descripcion.substring(0, 60)}...</p>
                     </div>
                 </div>
             `).join('');
@@ -1145,9 +1239,20 @@
         // Select category
         function selectCategory(categoryId) {
             currentCategory = categoryId;
-            displayCategories();
+
+            // Update active class
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.category-item[onclick="selectCategory('${categoryId}')"]`).classList.add('active');
+
+            // Display products for selected category
             displayProducts();
-            closeCategoriesPanel();
+
+            // Close panel on mobile
+            if (window.innerWidth <= 768) {
+                closeCategoriesPanel();
+            }
         }
 
         // Open product modal
@@ -1155,115 +1260,77 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
 
-            // Obtener las imágenes del producto (nuevo campo o compatibilidad con icono)
-            const images = product.imagenes || (product.icono ? [product.icono] : []);
-            currentProductImages = images;
-            currentImageIndex = 0;
-
-            // Update URL for unique product link
-            const productUrl = `${window.location.origin}${window.location.pathname}?producto=${productId}`;
-            window.history.pushState({ productId }, '', productUrl);
-
-            // Update meta tags for social media preview
-            updateMetaTags(product, productUrl);
-
-            // Fill modal content
+            // Update modal content
             document.getElementById('modalProductName').textContent = product.nombre;
-            document.getElementById('modalProductPrice').textContent = `$${product.precio}`;
+            document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
             document.getElementById('modalProductDescription').textContent = product.descripcion;
-
-            // Configurar galería de imágenes
-            setupImageGallery(images);
 
             // Update WhatsApp button
             const whatsappBtn = document.getElementById('whatsappBtn');
-            const message = `Hola, me interesa este producto: ${product.nombre} - ${productUrl}`;
-            whatsappBtn.href = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+            const message = encodeURIComponent(`Hola, me interesa el producto: ${product.nombre} - ${formatPrice(product.precio)}. ¿Podrían darme más información?`);
+            whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
+
+            // Update meta tags for social sharing
+            document.getElementById('metaTitle').content = product.nombre;
+            document.getElementById('metaDescription').content = product.descripcion;
+            document.getElementById('metaImage').content = product.icono;
+            document.getElementById('metaUrl').content = window.location.href + '?product=' + product.id;
+
+            // Setup gallery
+            setupProductGallery(product);
 
             // Show modal
             document.getElementById('productModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
-        // Función para configurar la galería de imágenes
-        function setupImageGallery(images) {
-            const mainImage = document.getElementById('galleryMainImage');
+        // Setup product gallery
+        function setupProductGallery(product) {
+            currentProductImages = product.imagenes || [product.icono];
+            currentImageIndex = 0;
+
+            const galleryMain = document.getElementById('galleryMainImage');
             const thumbnailsContainer = document.getElementById('galleryThumbnails');
 
-            // Limpiar miniaturas existentes
-            thumbnailsContainer.innerHTML = '';
+            // Set main image
+            galleryMain.src = currentProductImages[0];
+            galleryMain.alt = product.nombre;
 
-            if (images.length === 0) {
-                // Mostrar placeholder si no hay imágenes
-                mainImage.src = '';
-                mainImage.alt = 'Imagen no disponible';
-                mainImage.style.display = 'none';
-                mainImage.parentElement.innerHTML = '<i class="fas fa-image" style="font-size: 4rem; color: #ccc;"></i>';
-                return;
-            }
+            // Create thumbnails
+            thumbnailsContainer.innerHTML = currentProductImages.map((image, index) => `
+                <div class="gallery-thumbnail ${index === 0 ? 'active' : ''}" onclick="setCurrentImage(${index})">
+                    <img src="${image}" alt="Thumbnail ${index + 1}">
+                </div>
+            `).join('');
+        }
 
-            // Mostrar primera imagen
-            mainImage.src = images[0];
-            mainImage.alt = 'Imagen del producto';
-            mainImage.style.display = 'block';
+        // Set current image in gallery
+        function setCurrentImage(index) {
+            currentImageIndex = index;
+            const galleryMain = document.getElementById('galleryMainImage');
+            galleryMain.src = currentProductImages[index];
 
-            // Crear miniaturas
-            images.forEach((image, index) => {
-                const thumbnail = document.createElement('div');
-                thumbnail.className = 'gallery-thumbnail';
-                if (index === 0) thumbnail.classList.add('active');
-                thumbnail.innerHTML = `<img src="${image}" alt="Miniatura ${index + 1}">`;
-                thumbnail.onclick = () => {
-                    changeImageToIndex(index);
-                };
-                thumbnailsContainer.appendChild(thumbnail);
-            });
-
-            // Mostrar u ocultar botones de navegación según la cantidad de imágenes
-            document.querySelectorAll('.gallery-nav').forEach(nav => {
-                nav.style.display = images.length > 1 ? 'flex' : 'none';
+            // Update active thumbnail
+            document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
             });
         }
 
-        // Función para cambiar imagen en la galería
+        // Change image in gallery
         function changeImage(direction) {
-            if (currentProductImages.length <= 1) return;
-
             let newIndex = currentImageIndex + direction;
+
+            // Wrap around
             if (newIndex < 0) newIndex = currentProductImages.length - 1;
             if (newIndex >= currentProductImages.length) newIndex = 0;
 
-            changeImageToIndex(newIndex);
-        }
-
-        // Función para cambiar a una imagen específica
-        function changeImageToIndex(index) {
-            currentImageIndex = index;
-            const mainImage = document.getElementById('galleryMainImage');
-            mainImage.src = currentProductImages[index];
-
-            // Actualizar miniaturas activas
-            document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
-                if (i === index) {
-                    thumb.classList.add('active');
-                } else {
-                    thumb.classList.remove('active');
-                }
-            });
+            setCurrentImage(newIndex);
         }
 
         // Close modal
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
-            // Restore original URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
-        // Update meta tags for social media preview
-        function updateMetaTags(product, url) {
-            document.getElementById('metaTitle').content = product.nombre;
-            document.getElementById('metaDescription').content = product.descripcion.substring(0, 160);
-            document.getElementById('metaImage').content = product.imagenes && product.imagenes.length > 0 ? product.imagenes[0] : product.icono;
-            document.getElementById('metaUrl').content = url;
+            document.body.style.overflow = 'auto';
         }
 
         // Initialize
@@ -1273,11 +1340,11 @@
             document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
             document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
 
-            // Event listeners para botones de vista
+            // View toggle buttons
             document.getElementById('viewLarge').addEventListener('click', () => toggleView('large'));
             document.getElementById('viewSmall').addEventListener('click', () => toggleView('small'));
 
-            // Cargar preferencia de vista guardada
+            // Load saved view preference
             const savedView = localStorage.getItem('productView');
             if (savedView) {
                 toggleView(savedView);
@@ -1287,20 +1354,12 @@
             loadCategories();
             loadProducts();
 
-            // Check if a product is specified in the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('producto');
-            if (productId) {
-                openProductModal(productId);
-            }
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
         });
     </script>
 </body>
