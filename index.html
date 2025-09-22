@@ -857,6 +857,133 @@
         .whatsapp-float i {
             color: white;
         }
+
+
+
+
+
+
+
+
+         /* Nueva sección de productos destacados */
+        .featured-section {
+            width: 100%;
+            padding: 2rem 0;
+            margin: 2rem 0;
+        }
+
+        .featured-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0 20px;
+        }
+
+        .featured-title {
+            font-size: 1.5rem;
+            color: #fff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .featured-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            border-radius: 2px;
+        }
+
+        .featured-products-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .featured-products-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+
+        .featured-products {
+            display: inline-flex;
+            gap: 1.5rem;
+            padding: 0 20px;
+        }
+
+        .featured-product-card {
+            flex: 0 0 auto;
+            width: 250px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .featured-product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .featured-product-image {
+            width: 100%;
+            height: 180px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .featured-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-product-info {
+            padding: 1rem;
+        }
+
+        .featured-product-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .featured-product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e91e63;
+        }
+
+        .no-featured {
+            text-align: center;
+            padding: 2rem;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .featured-product-card {
+                width: 200px;
+            }
+            
+            .featured-product-image {
+                height: 140px;
+            }
+            
+            .featured-title {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 
@@ -927,6 +1054,23 @@
             <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos de
                 calidad.</p>
         </section>
+
+          <!-- Nueva sección de productos destacados -->
+        <section class="featured-section">
+            <div class="featured-header">
+                <h2 class="featured-title">Productos Destacados</h2>
+            </div>
+            <div class="featured-products-container">
+                <div class="featured-products" id="featuredProducts">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Cargando destacados...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
 
         <!-- Products Section -->
         <section class="products-section">
@@ -1209,6 +1353,62 @@
             }
         }
 
+
+
+
+         // Función para cargar y mostrar productos destacados
+        async function loadFeaturedProducts() {
+            try {
+                const snapshot = await db.collection('productos')
+                    .where('destacado', '==', 'yes')
+                    .get();
+                    
+                const featuredProducts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                displayFeaturedProducts(featuredProducts);
+            } catch (error) {
+                console.error('Error loading featured products:', error);
+                // Mostrar mensaje si no hay productos destacados
+                document.getElementById('featuredProducts').innerHTML = `
+                    <div class="no-featured">
+                        No hay productos destacados en este momento
+                    </div>
+                `;
+            }
+        }
+
+        // Mostrar productos destacados
+        function displayFeaturedProducts(products) {
+            const container = document.getElementById('featuredProducts');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="no-featured">
+                        No hay productos destacados en este momento
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = products.map(product => `
+                <div class="featured-product-card" onclick="openProductModal('${product.id}')">
+                    <div class="featured-product-image">
+                        <img src="${product.icono}" alt="${product.nombre}">
+                        <div class="shadow-img"></div>
+                    </div>
+                    <div class="featured-product-info">
+                        <h3 class="featured-product-name">${product.nombre}</h3>
+                        <div class="featured-product-price">${formatPrice(product.precio)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+
         // Display products
         function displayProducts() {
             const grid = document.getElementById('productsGrid');
@@ -1353,6 +1553,8 @@
             // Load data
             loadCategories();
             loadProducts();
+                        loadFeaturedProducts(); // Cargar productos destacados
+
 
             // Close modal on escape key
             document.addEventListener('keydown', (e) => {

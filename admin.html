@@ -457,6 +457,7 @@
             border-radius: 10px 10px 0px 0px;
             color: #e91e63;
         }
+        
 
         .modal-body {
             background: rgb(28 28 28);
@@ -692,6 +693,62 @@
         }
 
 
+
+
+          /* Estilo para el toggle de destacado */
+        .featured-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .featured-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .featured-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .featured-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .featured-slider {
+            background-color: #e91e63;
+        }
+
+        input:checked + .featured-slider:before {
+            transform: translateX(26px);
+        }
+
+        .featured-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+
     </style>
 </head>
 
@@ -861,6 +918,18 @@
                         <label for="productDescription">Descripción</label>
                         <textarea id="productDescription" required></textarea>
                     </div>
+
+                      <!-- Nuevo campo para destacado -->
+                    <div class="form-group">
+                        <label class="featured-label">
+                            <span>Producto Destacado:</span>
+                            <label class="featured-toggle">
+                                <input type="checkbox" id="productFeatured">
+                                <span class="featured-slider"></span>
+                            </label>
+                        </label>
+                    </div>
+
             </div>
 
             <div class="modal-footer">
@@ -1245,7 +1314,7 @@
         }
 
         // Product functions
-        function loadProducts() {
+ function loadProducts() {
             db.collection('productos').get().then((snapshot) => {
                 products = [];
                 const productsGrid = document.getElementById('productsGrid');
@@ -1266,6 +1335,10 @@
                     const images = product.imagenes || (product.icono ? [product.icono] : []);
                     const firstImage = images.length > 0 ? images[0] : null;
 
+                    // Check if product is featured
+                    const isFeatured = product.destacado === 'yes';
+                    const featuredBadge = isFeatured ? '<span class="product-featured-badge" style="color: #e9c81e; font-size: 0.8rem; margin-left: 5px;"><br><i class="fas fa-star"></i> Destacado</span>' : '';
+
                     // Create product card
                     const card = document.createElement('div');
                     card.className = 'product-card';
@@ -1281,12 +1354,11 @@
                         ${imageHtml}
                         <div class="product-info">
                             <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
-                                <div class="product-name">${product.nombre}</div>
+                                <div class="product-name">${product.nombre} ${featuredBadge}</div>
                                 <span class="image-badge">${images.length} img</span>
                             </div>
                             <div class="product-price">RD$${formatPrice(product.precio)}</div>
                             <div class="product-category">${categoryName}</div>
-                            <!-- <div class="product-description"><strong>Descripción:</strong> ${product.descripcion || 'Sin descripción'}</div> -->
                             <div class="product-actions">
                                 <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
                                 <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
@@ -1301,12 +1373,13 @@
         }
 
         async function saveProduct(e) {
-            e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            e.preventDefault();
 
             const name = document.getElementById('productName').value;
             const price = parseFloat(document.getElementById('productPrice').value);
             const category = document.getElementById('productCategory').value;
             const description = document.getElementById('productDescription').value;
+            const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
 
             // Subir nuevas imágenes si existen
             let newImageUrls = [];
@@ -1328,7 +1401,8 @@
                 precio: price,
                 categoria: category,
                 descripcion: description,
-                imagenes: allImageUrls  // Nuevo campo para múltiples imágenes
+                destacado: featured, // Nuevo campo para destacado
+                imagenes: allImageUrls
             };
 
             // Mantener compatibilidad con versión anterior (icono)
@@ -1370,6 +1444,7 @@
                 document.getElementById('productPrice').value = product.precio;
                 document.getElementById('productCategory').value = product.categoria;
                 document.getElementById('productDescription').value = product.descripcion || '';
+                document.getElementById('productFeatured').checked = product.destacado === 'yes';
 
                 // Configurar vista previa de imágenes
                 const previewElement = document.getElementById('productImagesPreview');
