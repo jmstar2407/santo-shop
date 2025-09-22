@@ -271,7 +271,8 @@
                 <div class="modal-product-info">
                     <div id="modalProductName2" class="product-name"></div>
                     <div id="modalProductPrice" class="product-price">RD$0</div>
-                    <div id="modalProductDescription" class="product-description"></div>
+                    <div id="modalProductDescription" class="product-description html-content"></div>
+
                 </div>
             </div>
 
@@ -555,7 +556,7 @@
                         <div class="shadow-img"></div>
                     </div>
                     <div class="featured-product-info">
-                        <h3 class="featured-product-name">${product.nombre}</h3>
+                        <h3 class="featured-product-name" style="font-size: 1.1rem;">${product.nombre}</h3>
                         <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
                         <div class="featured-product-price">${formatPrice(product.precio)}</div>
                     </div>
@@ -585,8 +586,8 @@
                         <div class="shadow-img"></div>
                     </div>
                     <div class="product-info">
-                        <h3 class="product-name">${product.nombre}</h3>
-                        <p class="product-description">${product.descripcion.substring(0, 60)}...</p>
+                        <h3 class="product-name" style="font-size: 1.3rem;">${product.nombre}</h3>
+                        <div class="product-description">${product.descripcion.substring(0, 60)}...</div>
                                                 <div class="product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
@@ -621,7 +622,8 @@
             document.getElementById('modalProductName').textContent = product.nombre;
             document.getElementById('modalProductName2').textContent = product.nombre;
             document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
-            document.getElementById('modalProductDescription').textContent = product.descripcion;
+            document.getElementById('modalProductDescription').innerHTML = product.descripcion;
+
 
             // Update WhatsApp button
             const whatsappBtn = document.getElementById('whatsappBtn');
