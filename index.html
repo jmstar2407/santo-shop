@@ -24,8 +24,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* line-height: 1.6; */
-            /* color: #333; */
             background: black;
             min-height: 100vh;
         }
@@ -124,16 +122,134 @@
             backdrop-filter: blur(34px);
         }
 
-        /* Categories */
-        .categories-section {
-            padding: 3rem 0;
+        /* Botón de filtro fijo */
+        .filter-toggle {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e91e63;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .filter-toggle:hover {
+            background: #ad1457;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Panel lateral de categorías */
+        .categories-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 1500;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .categories-panel.open {
+            right: 0;
+        }
+
+        .categories-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .categories-header h3 {
+            color: #333;
+            margin: 0;
+        }
+
+        .close-categories {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .categories-list {
+            list-style: none;
+        }
+
+        .category-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-item:hover {
+            background: #f5f5f5;
+        }
+
+        .category-item.active {
+            background: #e91e63;
+            color: white;
+        }
+
+        .product-count {
+            background: #eee;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .category-item.active .product-count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1400;
+            display: none;
+        }
+
+        /* Products */
+        .products-section {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            text-align: center;
+            color: aliceblue;
+            padding-bottom: 2rem;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 1.4rem;
             margin-bottom: 3rem;
-            color: #333;
+            color: #fff;
             position: relative;
         }
 
@@ -147,47 +263,6 @@
             height: 4px;
             background: linear-gradient(45deg, #e91e63, #9c27b0);
             border-radius: 2px;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .category-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px);
-            border-color: #e91e63;
-            box-shadow: 0 15px 30px rgba(233, 30, 99, 0.2);
-        }
-
-        .category-card.active {
-            background: linear-gradient(135deg, #e91e63, #9c27b0);
-            color: white;
-            border-color: #e91e63;
-        }
-
-        .category-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        /* Products */
-        .products-section {
-            padding: 3rem 0;
         }
 
         .products-grid {
@@ -206,14 +281,13 @@
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: scale(0.98);
         }
 
         .product-image {
             width: 100%;
             height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -229,7 +303,7 @@
         }
 
         .product-info {
-            padding: 1.5rem;
+            padding: 0.5rem;
         }
 
         .product-name {
@@ -243,14 +317,12 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #e91e63;
-            margin-bottom: 1rem;
         }
 
         .product-description {
             color: #666;
             font-size: 0.9rem;
             line-height: 1.5;
-            margin-bottom: 1rem;
         }
 
         /* Product Modal */
@@ -485,10 +557,6 @@
                 font-size: 1.4rem;
             }
 
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .products-grid {
                 grid-template-columns: 1fr;
             }
@@ -497,8 +565,6 @@
                 width: 95%;
                 margin: 20px;
             }
-
-
 
             .gallery-main {
                 height: 250px;
@@ -513,6 +579,18 @@
                 width: 35px;
                 height: 35px;
                 padding: 10px;
+            }
+
+            .categories-panel {
+                width: 74%;
+                right: -85%;
+            }
+
+            .filter-toggle {
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
             }
         }
 
@@ -585,6 +663,14 @@
             position: relative;
             top: -7px;
         }
+
+        .shadow-img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ff000000;
+    box-shadow: inset 0px -17px 33px -22px rgb(0 0 0 / 74%);
+      }
     </style>
 </head>
 
@@ -613,47 +699,46 @@
                 <div class="logo"><img src="./img/logo_1.png">
                     <h2 id="titleanim" style="font-size: 1.5rem;">Santo Sex Shop</h2>
                 </div>
-                <!-- <div class="header-info">
-                    <div><i class="fas fa-shipping-fast"></i> Envío discreto</div>
-                    <div><i class="fas fa-lock"></i> 100% Seguro</div>
-                    <div><i class="fab fa-whatsapp"></i> +1-829-638-6767</div>
-                </div> -->
             </div>
         </div>
     </header>
 
+    <!-- Botón de filtro fijo -->
+    <div class="filter-toggle" id="filterToggle">
+        <i class="fas fa-filter"></i>
+    </div>
+
+    <!-- Panel lateral de categorías -->
+    <div class="overlay" id="categoriesOverlay"></div>
+    <div class="categories-panel" id="categoriesPanel">
+        <div class="categories-header">
+            <h3>Filtrar por Categoría</h3>
+            <button class="close-categories" id="closeCategories">&times;</button>
+        </div>
+        <ul class="categories-list" id="categoriesList">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Cargando categorías...</div>
+            </div>
+        </ul>
+    </div>
+
     <div class="content-master">
         <!-- Hero Section -->
         <section class="hero">
-
             <div class="line01"></div>
             <h1>Bienvenido</h1>
-            <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.</p>
-
-        </section>
-
-        <!-- Categories Section -->
-        <section class="categories-section">
-            <div class="container">
-                <h2 class="section-title">Categorías</h2>
-                <div class="categories-grid" id="categoriesGrid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <div>Cargando categorías...</div>
-                    </div>
-                </div>
-            </div>
+            <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos de
+                calidad.</p>
         </section>
 
         <!-- Products Section -->
         <section class="products-section">
-            <div class="container">
-                <h2 class="section-title">Nuestros Productos</h2>
-                <div class="products-grid" id="productsGrid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <div>Cargando productos...</div>
-                    </div>
+            <h2 class="section-title">Nuestros Productos</h2>
+            <div class="products-grid" id="productsGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Cargando productos...</div>
                 </div>
             </div>
         </section>
@@ -747,6 +832,21 @@
             }
         });
 
+        // Toggle categories panel
+        function toggleCategoriesPanel() {
+            const panel = document.getElementById('categoriesPanel');
+            const overlay = document.getElementById('categoriesOverlay');
+
+            panel.classList.toggle('open');
+            overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+        }
+
+        // Close categories panel
+        function closeCategoriesPanel() {
+            document.getElementById('categoriesPanel').classList.remove('open');
+            document.getElementById('categoriesOverlay').style.display = 'none';
+        }
+
         // Load categories from Firestore
         async function loadCategories() {
             try {
@@ -757,6 +857,7 @@
                 }));
 
                 displayCategories();
+                updateCategoryCounts();
             } catch (error) {
                 console.error('Error loading categories:', error);
                 // Fallback categories for demo
@@ -768,24 +869,37 @@
                     { id: '4', nombre: 'Preservativos', icono: 'fas fa-shield-alt' }
                 ];
                 displayCategories();
+                updateCategoryCounts();
             }
         }
 
-        // Display categories
+        // Display categories in the side panel
         function displayCategories() {
-            const grid = document.getElementById('categoriesGrid');
+            const list = document.getElementById('categoriesList');
 
             // Add "Todos" category
             const allCategory = { id: 'all', nombre: 'Todos los Productos', icono: 'fas fa-th-large' };
             const categoriesToShow = [allCategory, ...categories];
 
-            grid.innerHTML = categoriesToShow.map(category => `
-                <div class="category-card ${category.id === currentCategory ? 'active' : ''}" 
+            list.innerHTML = categoriesToShow.map(category => `
+                <li class="category-item ${category.id === currentCategory ? 'active' : ''}" 
                      onclick="selectCategory('${category.id}')">
-                    <i class="${category.icono} category-icon"></i>
-                    <h3>${category.nombre}</h3>
-                </div>
+                    <span><i class="${category.icono}"></i> ${category.nombre}</span>
+                    <span class="product-count" id="count-${category.id}">0</span>
+                </li>
             `).join('');
+        }
+
+        // Update product counts for each category
+        function updateCategoryCounts() {
+            // Count products for "all" category
+            document.getElementById('count-all').textContent = `(${products.length})`;
+
+            // Count products for each category
+            categories.forEach(category => {
+                const count = products.filter(product => product.categoria === category.id).length;
+                document.getElementById(`count-${category.id}`).textContent = `(${count})`;
+            });
         }
 
         // Load products from Firestore
@@ -798,6 +912,7 @@
                 }));
 
                 displayProducts();
+                updateCategoryCounts();
             } catch (error) {
                 console.error('Error loading products:', error);
                 // Fallback products for demo
@@ -840,6 +955,7 @@
                     }
                 ];
                 displayProducts();
+                updateCategoryCounts();
             }
         }
 
@@ -862,11 +978,13 @@
                         ${product.icono && (product.icono.startsWith('http') || product.icono.startsWith('data:'))
                     ? `<img src="${product.icono}" alt="${product.nombre}" onerror="this.style.display='none'">`
                     : '<i class="fas fa-image"></i>'}
+                    <div class="shadow-img"></div>
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">${product.nombre}</h3>
-                        <div class="product-price">$${product.precio}</div>
-                        <p class="product-description">${product.descripcion.substring(0, 100)}...</p>
+
+                        <p class="product-description">${product.descripcion.substring(0, 90)}...</p>
+                                                <div class="product-price">$${product.precio}</div>
                     </div>
                 </div>
             `).join('');
@@ -877,6 +995,7 @@
             currentCategory = categoryId;
             displayCategories();
             displayProducts();
+            closeCategoriesPanel();
         }
 
         // Open product modal
@@ -1002,29 +1121,29 @@
 
             if (!titleMeta) {
                 titleMeta = document.createElement('meta');
-                titleMeta.property = 'og:title';
                 titleMeta.id = 'metaTitle';
+                titleMeta.setAttribute('property', 'og:title');
                 document.head.appendChild(titleMeta);
             }
 
             if (!descMeta) {
                 descMeta = document.createElement('meta');
-                descMeta.property = 'og:description';
                 descMeta.id = 'metaDescription';
+                descMeta.setAttribute('property', 'og:description');
                 document.head.appendChild(descMeta);
             }
 
             if (!imageMeta) {
                 imageMeta = document.createElement('meta');
-                imageMeta.property = 'og:image';
                 imageMeta.id = 'metaImage';
+                imageMeta.setAttribute('property', 'og:image');
                 document.head.appendChild(imageMeta);
             }
 
             if (!urlMeta) {
                 urlMeta = document.createElement('meta');
-                urlMeta.property = 'og:url';
                 urlMeta.id = 'metaUrl';
+                urlMeta.setAttribute('property', 'og:url');
                 document.head.appendChild(urlMeta);
             }
 
@@ -1033,52 +1152,38 @@
             imageMeta.content = image;
             urlMeta.content = url;
 
-            // Also update page title
+            // Update page title too
             document.title = title;
         }
 
-        // Handle direct product links
-        function handleDirectProductLink() {
+        // Initialize the app
+        function initApp() {
+            // Event listeners
+            document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
+            document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
+            document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === document.getElementById('productModal')) {
+                    closeModal();
+                }
+            });
+
+            // Load data
+            loadCategories();
+            loadProducts();
+
+            // Check if a product ID is in the URL
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('producto');
-
             if (productId) {
-                setTimeout(() => {
-                    openProductModal(productId);
-                }, 1000); // Wait for products to load
+                openProductModal(productId);
             }
         }
 
-        // Close modal when clicking outside
-        document.addEventListener('click', (e) => {
-            const modal = document.getElementById('productModal');
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCategories();
-            loadProducts();
-            handleDirectProductLink();
-        });
-
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', (e) => {
-            if (e.state && e.state.productId) {
-                openProductModal(e.state.productId);
-            } else {
-                closeModal();
-            }
-        });
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 
