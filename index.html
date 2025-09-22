@@ -306,13 +306,13 @@
     </footer>
 
     <!-- Meta tags for product preview -->
-    <div class="meta-preview">
+    <!-- <div class="meta-preview">
         <meta property="og:title" content="" id="metaTitle">
         <meta property="og:description" content="" id="metaDescription">
         <meta property="og:image" content="" id="metaImage">
         <meta property="og:url" content="" id="metaUrl">
         <meta name="twitter:card" content="summary_large_image">
-    </div>
+    </div> -->
 
     <script>
         // Firebase Configuration
@@ -643,10 +643,10 @@
             whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
 
             // Update meta tags for social sharing
-            document.getElementById('metaTitle').content = product.nombre;
+            /*document.getElementById('metaTitle').content = product.nombre;
             document.getElementById('metaDescription').content = product.descripcion;
             document.getElementById('metaImage').content = product.icono;
-            document.getElementById('metaUrl').content = window.location.href + '?product=' + product.id;
+            document.getElementById('metaUrl').content = window.location.href + '?product=' + product.id;*/
 
             // Setup gallery
             setupProductGallery(product);
