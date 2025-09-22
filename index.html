@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santo Sex Shop - Tu Tienda Íntima de Confianza</title>
     <link rel="icon" href="./img/logo_1.png" type="image/png">
-        <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
 
     <meta name="description"
         content="Descubre nuestra amplia selección de productos íntimos de alta calidad. Discreción y calidad garantizada.">
@@ -17,6 +17,79 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Estilos para la sección de textos dinámicos */
+        .dynamic-text-section {
+            width: 100%;
+            text-align: center;
+            padding: 0.2rem 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            color: #e1e1e1;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+        }
+
+        .dynamic-text-container {
+            position: relative;
+            height: 60px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .dynamic-texts-wrapper {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dynamic-text {
+            flex: 0 0 100%;
+            text-align: center;
+            padding: 0 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dynamic-indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 4px;
+            gap: 8px;
+
+        }
+
+        .indicator {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background-color: #fff;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .dynamic-text {
+                font-size: 0.95rem;
+            }
+
+            .dynamic-text-container {
+                height: 70px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -87,6 +160,25 @@
                 calidad.</p>
         </section>
 
+        <!-- Sección de textos dinámicos -->
+        <section class="dynamic-text-section">
+            <div class="dynamic-text-container" id="dynamicTextContainer">
+                <div class="dynamic-texts-wrapper" id="dynamicTextsWrapper">
+                    <div class="dynamic-text">Envíos 100% discretos 🚚📦 | Calidad garantizada 💯 | Atención
+                        personalizada 💬</div>
+                    <div class="dynamic-text">Pequeños detalles… grandes travesuras 😈🔥🎁 | Disfruta con discreción 🤫
+                    </div>
+                    <div class="dynamic-text">Explora tus fantasías 💭✨ | Atrévete a más 🔥😈 | Compra con confianza 😉
+                    </div>
+                    <div class="dynamic-text">Porque tu placer y tu privacidad son nuestra prioridad ❤️‍🔥🔒</div>
+                    <div class="dynamic-text">Más que un sex shop… tu cómplice en cada travesura 😏✨</div>
+                </div>
+            </div>
+            <div class="dynamic-indicators" id="dynamicIndicators">
+                <!-- Los indicadores se generarán con JavaScript -->
+            </div>
+        </section>
+
         <!-- Nueva sección de productos destacados -->
         <section class="featured-section">
 
@@ -101,8 +193,6 @@
                 </div>
             </div>
         </section>
-
-
 
         <!-- Products Section -->
         <section class="products-section">
@@ -142,11 +232,11 @@
                 <div class="modal-product-gallery" id="modalProductGallery">
                     <div class="gallery-main">
                         <img id="galleryMainImage" src="" alt="Product image">
-                                            <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
-                    <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
+                        <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
+                        <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
 
                     </div>
-                    
+
                     <div class="gallery-thumbnails" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
@@ -211,6 +301,12 @@
         // Variables para la galería de imágenes
         let currentProductImages = [];
         let currentImageIndex = 0;
+
+        // Variables para el carrusel de textos
+        let currentTextIndex = 0;
+        let textInterval;
+        let startX, currentX;
+        let isDragging = false;
 
         // Función para formatear precios en formato RD$
         function formatPrice(price) {
@@ -389,9 +485,6 @@
             }
         }
 
-
-
-
         // Función para cargar y mostrar productos destacados
         async function loadFeaturedProducts() {
             try {
@@ -443,8 +536,6 @@
                 </div>
             `).join('');
         }
-
-
 
         // Display products
         function displayProducts() {
@@ -571,6 +662,90 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Función para mostrar texto específico en el carrusel
+        function showText(index) {
+            const wrapper = document.getElementById('dynamicTextsWrapper');
+            const indicators = document.querySelectorAll('.indicator');
+            const totalTexts = document.querySelectorAll('.dynamic-text').length;
+
+            // Asegurarse de que el índice esté dentro del rango
+            if (index >= totalTexts) index = 0;
+            if (index < 0) index = totalTexts - 1;
+
+            // Actualizar el índice actual
+            currentTextIndex = index;
+
+            // Mover el carrusel
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+
+            // Actualizar indicadores
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+
+            // Reiniciar el temporizador
+            clearInterval(textInterval);
+            textInterval = setInterval(() => {
+                showText(currentTextIndex + 1);
+            }, 7000); // 7 segundos
+        }
+
+        // Inicializar el carrusel de textos
+        function initDynamicTexts() {
+            const texts = document.querySelectorAll('.dynamic-text');
+            const indicatorsContainer = document.getElementById('dynamicIndicators');
+            const wrapper = document.getElementById('dynamicTextsWrapper');
+
+            // Crear indicadores
+            indicatorsContainer.innerHTML = '';
+            texts.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
+                indicator.addEventListener('click', () => showText(index));
+                indicatorsContainer.appendChild(indicator);
+            });
+
+            // Configurar eventos táctiles
+            let startX, currentX, isDragging = false;
+
+            wrapper.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+                clearInterval(textInterval); // Pausar animación automática durante el arrastre
+            });
+
+            wrapper.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].clientX;
+            });
+
+            wrapper.addEventListener('touchend', () => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                const diffX = startX - currentX;
+                const threshold = 50; // Mínimo desplazamiento para cambiar de texto
+
+                if (Math.abs(diffX) > threshold) {
+                    if (diffX > 0) {
+                        // Deslizar hacia la izquierda - siguiente texto
+                        showText(currentTextIndex + 1);
+                    } else {
+                        // Deslizar hacia la derecha - texto anterior
+                        showText(currentTextIndex - 1);
+                    }
+                } else {
+                    // Si no se superó el umbral, volver al texto actual
+                    showText(currentTextIndex);
+                }
+            });
+
+            // Iniciar la rotación automática
+            textInterval = setInterval(() => {
+                showText(currentTextIndex + 1);
+            }, 7000); // 7 segundos
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             // Event listeners
@@ -593,6 +768,8 @@
             loadProducts();
             loadFeaturedProducts(); // Cargar productos destacados
 
+            // Iniciar carrusel de textos
+            initDynamicTexts();
 
             // Close modal on escape key
             document.addEventListener('keydown', (e) => {

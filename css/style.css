@@ -93,7 +93,7 @@
             flex-direction: column;
             position: relative;
             align-items: center;
-            color: #b5b5b5;
+            color: #e1e1e1;
             text-align: center;
             padding: 0 1rem;
         }
@@ -105,7 +105,6 @@
 
         .hero p {
             font-size: 1rem;
-            margin-bottom: 2rem;
         }
 
         .content-master {
@@ -889,7 +888,7 @@
 
         .featured-products {
             display: inline-flex;
-            gap: 1.5rem;
+            gap: 1rem;
             padding: 0 20px;
         }
 
@@ -965,5 +964,7 @@
             }
 
         }
+
+        
 
         
