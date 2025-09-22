@@ -90,148 +90,30 @@
             }
         }
 
-        /* Estilos para la sección de productos destacados */
-        .featured-section {
-            padding: 1rem 0 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .featured-title {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            color: #fff;
-        }
-
-        .featured-products-container {
-            position: relative;
-            overflow: hidden;
-            padding: 0 1rem;
-        }
-
+        /* Estilos para la animación de productos destacados */
         .featured-products-track {
             display: flex;
-            transition: transform 0.5s ease;
+            animation: scrollFeatured 30s linear infinite;
+            width: max-content;
         }
 
         .featured-product-card {
             flex: 0 0 auto;
-            width: 220px;
-            margin: 0 0.8rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 180px;
+            margin-right: 1rem;
         }
 
-        .featured-product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .featured-products-container:hover .featured-products-track {
+            animation-play-state: paused;
         }
 
-        .featured-product-image {
-            position: relative;
-            width: 100%;
-            height: 180px;
-            overflow: hidden;
-        }
-
-        .featured-product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .featured-product-card:hover .featured-product-image img {
-            transform: scale(1.05);
-        }
-
-        .featured-product-info {
-            padding: 1rem;
-        }
-
-        .featured-product-name {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .featured-product-description {
-            font-size: 0.85rem;
-            color: #ccc;
-            margin-bottom: 0.8rem;
-            line-height: 1.4;
-        }
-
-        .featured-product-price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #ff6b6b;
-        }
-
-        .shadow-img {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-        }
-
-        .featured-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s ease;
-        }
-
-        .featured-nav:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-
-        .featured-nav.prev {
-            left: 0;
-        }
-
-        .featured-nav.next {
-            right: 0;
-        }
-
-        .no-featured {
-            text-align: center;
-            padding: 2rem;
-            color: #ccc;
-            font-style: italic;
-        }
-
-        @media (max-width: 768px) {
-            .featured-product-card {
-                width: 200px;
+        @keyframes scrollFeatured {
+            0% {
+                transform: translateX(0);
             }
 
-            .featured-product-image {
-                height: 160px;
-            }
-
-            .featured-nav {
-                width: 35px;
-                height: 35px;
+            100% {
+                transform: translateX(-50%);
             }
         }
     </style>
@@ -330,22 +212,13 @@
 
         <!-- Nueva sección de productos destacados -->
         <section class="featured-section">
+
             <h2 class="featured-title">Productos Destacados 👑</h2>
-            
+
             <div class="featured-products-container">
-                <button class="featured-nav prev" id="featuredPrev">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                <div class="featured-products-wrapper">
-                    <div class="featured-products-track" id="featuredProductsTrack">
-                        <!-- Los productos destacados se cargarán aquí -->
-                    </div>
+                <div class="featured-products-track" id="featuredProductsTrack">
+                    <!-- Los productos destacados se cargarán aquí -->
                 </div>
-                
-                <button class="featured-nav next" id="featuredNext">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
             </div>
         </section>
 
@@ -462,16 +335,7 @@
         let currentTextIndex = 0;
         let textInterval;
         let startX, currentX;
-
-        // Variables para el carrusel de productos destacados
-        let featuredProducts = [];
-        let featuredInterval;
-        let isDraggingFeatured = false;
-        let startPos = 0;
-        let currentTranslate = 0;
-        let prevTranslate = 0;
-        let animationID = null;
-        let currentIndex = 0;
+        let isDragging = false;
 
         // Función para formatear precios en formato RD$
         function formatPrice(price) {
@@ -657,13 +521,12 @@
                     .where('destacado', '==', 'yes')
                     .get();
 
-                featuredProducts = snapshot.docs.map(doc => ({
+                const featuredProducts = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                displayFeaturedProducts();
-                initFeaturedCarousel();
+                displayFeaturedProducts(featuredProducts);
             } catch (error) {
                 console.error('Error loading featured products:', error);
                 // Mostrar mensaje si no hay productos destacados
@@ -675,11 +538,11 @@
             }
         }
 
-        // Mostrar productos destacados
-        function displayFeaturedProducts() {
+        // Mostrar productos destacados con animación infinita
+        function displayFeaturedProducts(products) {
             const container = document.getElementById('featuredProductsTrack');
 
-            if (featuredProducts.length === 0) {
+            if (products.length === 0) {
                 container.innerHTML = `
                     <div class="no-featured">
                         No hay productos destacados en este momento
@@ -689,210 +552,22 @@
             }
 
             // Crear HTML para los productos
-            const productsHTML = featuredProducts.map(product => `
-                <div class="featured-product-card" data-id="${product.id}">
+            const productsHTML = products.map(product => `
+                <div class="featured-product-card" onclick="openProductModal('${product.id}')">
                     <div class="featured-product-image">
                         <img src="${product.icono}" alt="${product.nombre}">
                         <div class="shadow-img"></div>
                     </div>
                     <div class="featured-product-info">
                         <h4 class="featured-product-name">${product.nombre}</h4>
-                        <div class="featured-product-description">${product.descripcion.substring(0, 60)}...</div>
+                        <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
                         <div class="featured-product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
             `).join('');
 
-            container.innerHTML = productsHTML;
-            
-            // Agregar event listeners a las tarjetas
-            document.querySelectorAll('.featured-product-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const productId = card.getAttribute('data-id');
-                    openProductModal(productId);
-                });
-            });
-        }
-
-        // Inicializar el carrusel de productos destacados
-        function initFeaturedCarousel() {
-            if (featuredProducts.length === 0) return;
-            
-            const track = document.getElementById('featuredProductsTrack');
-            const cards = track.querySelectorAll('.featured-product-card');
-            const cardCount = cards.length;
-            
-            // Clonar tarjetas para efecto infinito
-            const cloneCount = Math.max(3, Math.ceil(track.offsetWidth / 240) + 2); // Calcular cuántos clones necesitamos
-            for (let i = 0; i < cloneCount; i++) {
-                cards.forEach(card => {
-                    const clone = card.cloneNode(true);
-                    track.appendChild(clone);
-                });
-            }
-            
-            // Configurar navegación
-            setupFeaturedNavigation();
-            
-            // Configurar eventos táctiles y de ratón
-            setupFeaturedTouchEvents();
-            
-            // Iniciar animación automática
-            startAutoSlide();
-        }
-
-        // Configurar navegación del carrusel
-        function setupFeaturedNavigation() {
-            const track = document.getElementById('featuredProductsTrack');
-            const prevBtn = document.getElementById('featuredPrev');
-            const nextBtn = document.getElementById('featuredNext');
-            const cards = track.querySelectorAll('.featured-product-card');
-            const cardWidth = cards[0].offsetWidth + 16; // Ancho + margen
-            
-            prevBtn.addEventListener('click', () => {
-                stopAutoSlide();
-                navigateFeatured(-1);
-                startAutoSlide();
-            });
-            
-            nextBtn.addEventListener('click', () => {
-                stopAutoSlide();
-                navigateFeatured(1);
-                startAutoSlide();
-            });
-        }
-
-        // Navegar en el carrusel
-        function navigateFeatured(direction) {
-            const track = document.getElementById('featuredProductsTrack');
-            const cards = track.querySelectorAll('.featured-product-card');
-            const cardCount = featuredProducts.length;
-            const cardWidth = cards[0].offsetWidth + 16; // Ancho + margen
-            
-            currentIndex += direction;
-            
-            // Ajustar para efecto infinito
-            if (currentIndex < 0) {
-                currentIndex = cardCount - 1;
-                // Saltar al final (área de clones)
-                track.style.transition = 'none';
-                track.style.transform = `translateX(-${cardCount * cardWidth}px)`;
-                // Forzar reflow
-                track.offsetHeight;
-                // Mover al índice correcto con transición
-                track.style.transition = 'transform 0.5s ease';
-                currentIndex = cardCount - 1;
-            } else if (currentIndex >= cardCount) {
-                currentIndex = 0;
-                // Saltar al inicio (área de clones)
-                track.style.transition = 'none';
-                track.style.transform = `translateX(${cardCount * cardWidth}px)`;
-                // Forzar reflow
-                track.offsetHeight;
-                // Mover al índice correcto con transición
-                track.style.transition = 'transform 0.5s ease';
-                currentIndex = 0;
-            }
-            
-            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-        }
-
-        // Configurar eventos táctiles para el carrusel
-        function setupFeaturedTouchEvents() {
-            const track = document.getElementById('featuredProductsTrack');
-            let startX, movedX, isDragging = false;
-            
-            // Eventos táctiles
-            track.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                isDragging = true;
-                stopAutoSlide();
-                track.style.transition = 'none';
-            });
-            
-            track.addEventListener('touchmove', (e) => {
-                if (!isDragging) return;
-                movedX = e.touches[0].clientX;
-                const diff = movedX - startX;
-                track.style.transform = `translateX(calc(-${currentIndex * (track.querySelector('.featured-product-card').offsetWidth + 16)}px + ${diff}px))`;
-            });
-            
-            track.addEventListener('touchend', () => {
-                if (!isDragging) return;
-                isDragging = false;
-                
-                const cardWidth = track.querySelector('.featured-product-card').offsetWidth + 16;
-                const diff = movedX - startX;
-                const threshold = cardWidth / 4; // 25% del ancho de una tarjeta
-                
-                track.style.transition = 'transform 0.5s ease';
-                
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
-                        navigateFeatured(-1); // Deslizar hacia la derecha - anterior
-                    } else {
-                        navigateFeatured(1); // Deslizar hacia la izquierda - siguiente
-                    }
-                } else {
-                    // Volver a la posición actual si no se superó el umbral
-                    track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-                }
-                
-                startAutoSlide();
-            });
-            
-            // Eventos de ratón para desktop
-            track.addEventListener('mousedown', (e) => {
-                startX = e.clientX;
-                isDragging = true;
-                stopAutoSlide();
-                track.style.transition = 'none';
-                e.preventDefault();
-            });
-            
-            window.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                movedX = e.clientX;
-                const diff = movedX - startX;
-                track.style.transform = `translateX(calc(-${currentIndex * (track.querySelector('.featured-product-card').offsetWidth + 16)}px + ${diff}px))`;
-            });
-            
-            window.addEventListener('mouseup', () => {
-                if (!isDragging) return;
-                isDragging = false;
-                
-                const cardWidth = track.querySelector('.featured-product-card').offsetWidth + 16;
-                const diff = movedX - startX;
-                const threshold = cardWidth / 4; // 25% del ancho de una tarjeta
-                
-                track.style.transition = 'transform 0.5s ease';
-                
-                if (Math.abs(diff) > threshold) {
-                    if (diff > 0) {
-                        navigateFeatured(-1); // Deslizar hacia la derecha - anterior
-                    } else {
-                        navigateFeatured(1); // Deslizar hacia la izquierda - siguiente
-                    }
-                } else {
-                    // Volver a la posición actual si no se superó el umbral
-                    track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-                }
-                
-                startAutoSlide();
-            });
-        }
-
-        // Iniciar desplazamiento automático
-        function startAutoSlide() {
-            stopAutoSlide();
-            featuredInterval = setInterval(() => {
-                navigateFeatured(1);
-            }, 5000); // Cambiar cada 5 segundos
-        }
-
-        // Detener desplazamiento automático
-        function stopAutoSlide() {
-            clearInterval(featuredInterval);
+            // Duplicar los productos para crear el efecto de scroll infinito
+            container.innerHTML = productsHTML + productsHTML;
         }
 
         // Display products
@@ -916,7 +591,7 @@
                     <div class="product-info">
                         <h4 class="product-name">${product.nombre}</h4>
                         <div class="product-description">${product.descripcion.substring(0, 80)}...</div>
-                        <div class="product-price">${formatPrice(product.precio)}</div>
+                                                <div class="product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
             `).join('');
@@ -952,6 +627,7 @@
             document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
             document.getElementById('modalProductDescription').innerHTML = product.descripcion;
 
+
             // Update WhatsApp button
             const whatsappBtn = document.getElementById('whatsappBtn');
             const message = encodeURIComponent(`Hola, me interesa el producto: ${product.nombre} - ${formatPrice(product.precio)}. ¿Podrían darme más información?`);
@@ -984,38 +660,34 @@
             galleryMain.alt = product.nombre;
 
             // Create thumbnails
-            thumbnailsContainer.innerHTML = currentProductImages.map((img, index) => `
-                <img src="${img}" alt="Thumbnail ${index + 1}" 
-                     class="${index === 0 ? 'active' : ''}" 
-                     onclick="setImage(${index})">
+            thumbnailsContainer.innerHTML = currentProductImages.map((image, index) => `
+                <div class="gallery-thumbnail ${index === 0 ? 'active' : ''}" onclick="setCurrentImage(${index})">
+                    <img src="${image}" alt="Thumbnail ${index + 1}">
+                </div>
             `).join('');
+        }
+
+        // Set current image in gallery
+        function setCurrentImage(index) {
+            currentImageIndex = index;
+            const galleryMain = document.getElementById('galleryMainImage');
+            galleryMain.src = currentProductImages[index];
+
+            // Update active thumbnail
+            document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
         }
 
         // Change image in gallery
         function changeImage(direction) {
-            currentImageIndex += direction;
+            let newIndex = currentImageIndex + direction;
 
-            if (currentImageIndex < 0) {
-                currentImageIndex = currentProductImages.length - 1;
-            } else if (currentImageIndex >= currentProductImages.length) {
-                currentImageIndex = 0;
-            }
+            // Wrap around
+            if (newIndex < 0) newIndex = currentProductImages.length - 1;
+            if (newIndex >= currentProductImages.length) newIndex = 0;
 
-            setImage(currentImageIndex);
-        }
-
-        // Set specific image in gallery
-        function setImage(index) {
-            currentImageIndex = index;
-            const galleryMain = document.getElementById('galleryMainImage');
-            const thumbnails = document.querySelectorAll('.gallery-thumbnails img');
-
-            galleryMain.src = currentProductImages[index];
-            galleryMain.alt = `Product image ${index + 1}`;
-
-            thumbnails.forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
-            });
+            setCurrentImage(newIndex);
         }
 
         // Close modal
@@ -1024,108 +696,121 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Initialize text carousel
-        function initTextCarousel() {
-            const textsWrapper = document.getElementById('dynamicTextsWrapper');
-            const texts = textsWrapper.querySelectorAll('.dynamic-text');
-            const indicatorsContainer = document.getElementById('dynamicIndicators');
-            const textCount = texts.length;
-
-            // Create indicators
-            indicatorsContainer.innerHTML = Array.from({ length: textCount }, (_, i) =>
-                `<div class="indicator ${i === 0 ? 'active' : ''}" onclick="showText(${i})"></div>`
-            ).join('');
-
-            // Start auto rotation
-            textInterval = setInterval(() => {
-                currentTextIndex = (currentTextIndex + 1) % textCount;
-                showText(currentTextIndex);
-            }, 5000);
-
-            // Add touch events for mobile swipe
-            let touchStartX = 0;
-            const container = document.getElementById('dynamicTextContainer');
-
-            container.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-                clearInterval(textInterval);
-            });
-
-            container.addEventListener('touchend', (e) => {
-                const touchEndX = e.changedTouches[0].clientX;
-                const diff = touchEndX - touchStartX;
-
-                if (Math.abs(diff) > 50) { // Minimum swipe distance
-                    if (diff > 0) {
-                        // Swipe right - previous text
-                        currentTextIndex = (currentTextIndex - 1 + textCount) % textCount;
-                    } else {
-                        // Swipe left - next text
-                        currentTextIndex = (currentTextIndex + 1) % textCount;
-                    }
-                    showText(currentTextIndex);
-                }
-
-                // Restart auto rotation
-                textInterval = setInterval(() => {
-                    currentTextIndex = (currentTextIndex + 1) % textCount;
-                    showText(currentTextIndex);
-                }, 5000);
-            });
-        }
-
-        // Show specific text in carousel
+        // Función para mostrar texto específico en el carrusel
         function showText(index) {
-            currentTextIndex = index;
-            const textsWrapper = document.getElementById('dynamicTextsWrapper');
+            const wrapper = document.getElementById('dynamicTextsWrapper');
             const indicators = document.querySelectorAll('.indicator');
+            const totalTexts = document.querySelectorAll('.dynamic-text').length;
 
-            textsWrapper.style.transform = `translateX(-${index * 100}%)`;
+            // Asegurarse de que el índice esté dentro del rango
+            if (index >= totalTexts) index = 0;
+            if (index < 0) index = totalTexts - 1;
 
+            // Actualizar el índice actual
+            currentTextIndex = index;
+
+            // Mover el carrusel
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+
+            // Actualizar indicadores
             indicators.forEach((indicator, i) => {
                 indicator.classList.toggle('active', i === index);
             });
+
+            // Reiniciar el temporizador
+            clearInterval(textInterval);
+            textInterval = setInterval(() => {
+                showText(currentTextIndex + 1);
+            }, 7000); // 7 segundos
         }
 
-        // Initialize everything when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load saved view preference
-            const savedView = localStorage.getItem('productView') || 'large';
-            toggleView(savedView);
+        // Inicializar el carrusel de textos
+        function initDynamicTexts() {
+            const texts = document.querySelectorAll('.dynamic-text');
+            const indicatorsContainer = document.getElementById('dynamicIndicators');
+            const wrapper = document.getElementById('dynamicTextsWrapper');
 
-            // Setup event listeners
+            // Crear indicadores
+            indicatorsContainer.innerHTML = '';
+            texts.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = `indicator ${index === 0 ? 'active' : ''}`;
+                indicator.addEventListener('click', () => showText(index));
+                indicatorsContainer.appendChild(indicator);
+            });
+
+            // Configurar eventos táctiles
+            let startX, currentX, isDragging = false;
+
+            wrapper.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+                clearInterval(textInterval); // Pausar animación automática durante el arrastre
+            });
+
+            wrapper.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].clientX;
+            });
+
+            wrapper.addEventListener('touchend', () => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                const diffX = startX - currentX;
+                const threshold = 50; // Mínimo desplazamiento para cambiar de texto
+
+                if (Math.abs(diffX) > threshold) {
+                    if (diffX > 0) {
+                        // Deslizar hacia la izquierda - siguiente texto
+                        showText(currentTextIndex + 1);
+                    } else {
+                        // Deslizar hacia la derecha - texto anterior
+                        showText(currentTextIndex - 1);
+                    }
+                } else {
+                    // Si no se superó el umbral, volver al texto actual
+                    showText(currentTextIndex);
+                }
+            });
+
+            // Iniciar la rotación automática
+            textInterval = setInterval(() => {
+                showText(currentTextIndex + 1);
+            }, 7000); // 7 segundos
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Event listeners
             document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
             document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
             document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
+
+            // View toggle buttons
             document.getElementById('viewLarge').addEventListener('click', () => toggleView('large'));
             document.getElementById('viewSmall').addEventListener('click', () => toggleView('small'));
 
-            // Close modal when clicking outside
-            document.getElementById('productModal').addEventListener('click', (e) => {
-                if (e.target.id === 'productModal') {
-                    closeModal();
-                }
-            });
+            // Load saved view preference
+            const savedView = localStorage.getItem('productView');
+            if (savedView) {
+                toggleView(savedView);
+            }
 
             // Load data
             loadCategories();
             loadProducts();
-            loadFeaturedProducts();
-            initTextCarousel();
+            loadFeaturedProducts(); // Cargar productos destacados
 
-            // Initialize WhatsApp button
-            const whatsappFloatBtn = document.getElementById('whatsappFloatBtn');
-            whatsappFloatBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, me gustaría comunicarme con servicio al cliente.')}`;
-        });
+            // Iniciar carrusel de textos
+            initDynamicTexts();
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            // Reinitialize featured carousel on resize
-            if (featuredProducts.length > 0) {
-                const track = document.getElementById('featuredProductsTrack');
-                track.style.transition = 'none';
-                track.style.transform = `translateX(-${currentIndex * (track.querySelector('.featured-product-card').offsetWidth + 16)}px)`;
-            }
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
         });
     </script>
 </body>
