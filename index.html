@@ -22,31 +22,31 @@
             box-sizing: border-box;
         }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* line-height: 1.6; */
-    /* color: #333; */
-    background: black;
-    min-height: 100vh;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* line-height: 1.6; */
+            /* color: #333; */
+            background: black;
+            min-height: 100vh;
+        }
 
-.container {
-    width: 100%;
-    max-width: 1200px;
-    padding: 0 20px;
-    text-align: center;
-    color: aliceblue;
-}
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            text-align: center;
+            color: aliceblue;
+        }
 
         /* Header */
-header {
-    background: rgb(0 0 0 / 95%);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
+        header {
+            background: rgb(0 0 0 / 95%);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
 
         .header-content {
             display: inline-flex;
@@ -96,30 +96,33 @@ header {
 
         /* Hero Section */
         .hero {
+            display: inline-flex;
+            width: 100%;
+            flex-direction: column;
             position: relative;
-            margin-top: 135px;
-            border-radius: 14px 14px 0px 0px;
+            align-items: center;
+            color: #b5b5b5;
+            text-align: center;
+            padding: 0 1rem;
         }
 
         .hero h1 {
             font-size: 2rem;
             margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             margin-bottom: 2rem;
-            opacity: 0.9;
         }
 
-.content-master {
-    position: relative;
-    background: #211620;
-    margin-top: 164px;
-    border-radius: 24px 24px 0px 0px;
-    backdrop-filter: blur(14px);
-}
+        .content-master {
+            position: relative;
+            background: #1a1a21ed;
+            margin-top: 164px;
+            border-radius: 24px 24px 0px 0px;
+            backdrop-filter: blur(34px);
+        }
 
         /* Categories */
         .categories-section {
@@ -565,14 +568,23 @@ header {
             background: #555;
         }
 
-.video-fondo {
-    position: fixed;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
+        .video-fondo {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .line01 {
+            height: 3px;
+            width: 85px;
+            border-radius: 15px;
+            background: #d72fc1;
+            position: relative;
+            top: -7px;
+        }
     </style>
 </head>
 
@@ -613,10 +625,11 @@ header {
     <div class="content-master">
         <!-- Hero Section -->
         <section class="hero">
-            <div class="container">
-                <h1>Bienvenido</h1>
-                <p>Tu tienda íntima de confianza con la mejor selección de productos de calidad</p>
-            </div>
+
+            <div class="line01"></div>
+            <h1>Bienvenido</h1>
+            <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.</p>
+
         </section>
 
         <!-- Categories Section -->
