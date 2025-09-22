@@ -374,6 +374,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #e91e63;
+            margin-top: 0.2rem;
         }
 
         .product-description {
@@ -398,7 +399,7 @@
 
         .products-grid.compact .product-name {
             font-size: 1rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
         }
 
         .products-grid.compact .product-price {
@@ -835,7 +836,7 @@
             width: 60px;
             height: 60px;
             bottom: 40px;
-            right: 20px;
+            right: 10px;
             background-color: #25d366;
             color: #FFF;
             border-radius: 50px;
@@ -865,33 +866,27 @@
 
 
 
-         /* Nueva sección de productos destacados */
+        /* Nueva sección de productos destacados */
         .featured-section {
             width: 100%;
-            padding: 2rem 0;
-            margin: 2rem 0;
+            margin-bottom: 2rem;
         }
 
-        .featured-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 0 20px;
-        }
 
         .featured-title {
-            font-size: 1.5rem;
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
             color: #fff;
             position: relative;
-            display: inline-block;
         }
 
         .featured-title::after {
             content: '';
             position: absolute;
             bottom: -10px;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100px;
             height: 4px;
             background: linear-gradient(45deg, #e91e63, #9c27b0);
@@ -903,11 +898,13 @@
             overflow-x: auto;
             padding: 10px 0;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
+            /* Firefox */
         }
 
         .featured-products-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Edge */
+            display: none;
+            /* Chrome, Safari, Edge */
         }
 
         .featured-products {
@@ -918,7 +915,7 @@
 
         .featured-product-card {
             flex: 0 0 auto;
-            width: 250px;
+            width: 180px;
             background: white;
             border-radius: 15px;
             overflow: hidden;
@@ -928,7 +925,7 @@
         }
 
         .featured-product-card:hover {
-            transform: translateY(-5px);
+            transform: scale(0.98);
         }
 
         .featured-product-image {
@@ -948,20 +945,29 @@
         }
 
         .featured-product-info {
-            padding: 1rem;
+            padding: 0.5rem;
         }
 
         .featured-product-name {
             font-size: 1.1rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
             color: #333;
+            text-align: center;
+        }
+
+        .featured-product-description {
+            color: #666;
+            font-size: 0.6rem;
+            font-weight: 400;
         }
 
         .featured-product-price {
             font-size: 1.3rem;
             font-weight: bold;
             color: #e91e63;
+            text-align: center;
+            margin-top: 0.2rem;
         }
 
         .no-featured {
@@ -972,17 +978,12 @@
         }
 
         @media (max-width: 768px) {
-            .featured-product-card {
-                width: 200px;
-            }
-            
+
+
             .featured-product-image {
                 height: 140px;
             }
-            
-            .featured-title {
-                font-size: 1.3rem;
-            }
+
         }
     </style>
 </head>
@@ -1055,11 +1056,11 @@
                 calidad.</p>
         </section>
 
-          <!-- Nueva sección de productos destacados -->
+        <!-- Nueva sección de productos destacados -->
         <section class="featured-section">
-            <div class="featured-header">
-                <h2 class="featured-title">Productos Destacados</h2>
-            </div>
+
+            <h2 class="featured-title">Productos Destacados 👑</h2>
+
             <div class="featured-products-container">
                 <div class="featured-products" id="featuredProducts">
                     <div class="loading">
@@ -1356,18 +1357,18 @@
 
 
 
-         // Función para cargar y mostrar productos destacados
+        // Función para cargar y mostrar productos destacados
         async function loadFeaturedProducts() {
             try {
                 const snapshot = await db.collection('productos')
                     .where('destacado', '==', 'yes')
                     .get();
-                    
+
                 const featuredProducts = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-                
+
                 displayFeaturedProducts(featuredProducts);
             } catch (error) {
                 console.error('Error loading featured products:', error);
@@ -1383,7 +1384,7 @@
         // Mostrar productos destacados
         function displayFeaturedProducts(products) {
             const container = document.getElementById('featuredProducts');
-            
+
             if (products.length === 0) {
                 container.innerHTML = `
                     <div class="no-featured">
@@ -1392,7 +1393,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = products.map(product => `
                 <div class="featured-product-card" onclick="openProductModal('${product.id}')">
                     <div class="featured-product-image">
@@ -1401,6 +1402,7 @@
                     </div>
                     <div class="featured-product-info">
                         <h3 class="featured-product-name">${product.nombre}</h3>
+                        <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
                         <div class="featured-product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
@@ -1429,8 +1431,8 @@
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">${product.nombre}</h3>
-                        <div class="product-price">${formatPrice(product.precio)}</div>
                         <p class="product-description">${product.descripcion.substring(0, 60)}...</p>
+                                                <div class="product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
             `).join('');
@@ -1553,7 +1555,7 @@
             // Load data
             loadCategories();
             loadProducts();
-                        loadFeaturedProducts(); // Cargar productos destacados
+            loadFeaturedProducts(); // Cargar productos destacados
 
 
             // Close modal on escape key
