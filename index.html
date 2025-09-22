@@ -519,7 +519,6 @@
         /* Galería de imágenes */
         .modal-product-gallery {
             position: relative;
-            margin-bottom: 1.5rem;
         }
 
         .gallery-main {
@@ -606,7 +605,7 @@
         }
 
         .modal-product-info {
-            margin-top: 1.5rem;
+            margin-top: 0.5rem;
         }
 
         #modalProductPrice {
@@ -631,7 +630,7 @@
             padding: 0.5rem 1rem;
             border: none;
             border-radius: 50px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
@@ -1111,15 +1110,19 @@
                 <div class="modal-product-gallery" id="modalProductGallery">
                     <div class="gallery-main">
                         <img id="galleryMainImage" src="" alt="Product image">
+                                            <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
+                    <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
+
                     </div>
+                    
                     <div class="gallery-thumbnails" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
-                    <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
-                    <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
+
                 </div>
 
                 <div class="modal-product-info">
+                    <div id="modalProductName2" class="product-name"></div>
                     <div id="modalProductPrice" class="product-price">RD$0</div>
                     <div id="modalProductDescription" class="product-description"></div>
                 </div>
@@ -1127,7 +1130,7 @@
 
             <div class="modal-footer">
                 <a href="#" class="whatsapp-btn" id="whatsappBtn">
-                    <i class="fab fa-whatsapp" style="font-size: 2.5rem;"></i>
+                    <i class="fab fa-whatsapp" style="font-size: 2rem;"></i>
                     Pedir por WhatsApp
                 </a>
             </div>
@@ -1464,6 +1467,7 @@
 
             // Update modal content
             document.getElementById('modalProductName').textContent = product.nombre;
+            document.getElementById('modalProductName2').textContent = product.nombre;
             document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
             document.getElementById('modalProductDescription').textContent = product.descripcion;
 
