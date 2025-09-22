@@ -89,6 +89,32 @@
                 height: 70px;
             }
         }
+
+        /* Estilos para la animación de productos destacados */
+        .featured-products-track {
+            display: flex;
+            animation: scrollFeatured 30s linear infinite;
+            width: max-content;
+        }
+
+        .featured-product-card {
+            flex: 0 0 auto;
+            width: 180px;
+            margin-right: 1rem;
+        }
+
+        .featured-products-container:hover .featured-products-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollFeatured {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
     </style>
 </head>
 
@@ -187,11 +213,8 @@
             <h2 class="featured-title">Productos Destacados 👑</h2>
 
             <div class="featured-products-container">
-                <div class="featured-products" id="featuredProducts">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <div>Cargando destacados...</div>
-                    </div>
+                <div class="featured-products-track" id="featuredProductsTrack">
+                    <!-- Los productos destacados se cargarán aquí -->
                 </div>
             </div>
         </section>
@@ -503,7 +526,7 @@
             } catch (error) {
                 console.error('Error loading featured products:', error);
                 // Mostrar mensaje si no hay productos destacados
-                document.getElementById('featuredProducts').innerHTML = `
+                document.getElementById('featuredProductsTrack').innerHTML = `
                     <div class="no-featured">
                         No hay productos destacados en este momento
                     </div>
@@ -511,9 +534,9 @@
             }
         }
 
-        // Mostrar productos destacados
+        // Mostrar productos destacados con animación infinita
         function displayFeaturedProducts(products) {
-            const container = document.getElementById('featuredProducts');
+            const container = document.getElementById('featuredProductsTrack');
 
             if (products.length === 0) {
                 container.innerHTML = `
@@ -524,7 +547,8 @@
                 return;
             }
 
-            container.innerHTML = products.map(product => `
+            // Crear HTML para los productos
+            const productsHTML = products.map(product => `
                 <div class="featured-product-card" onclick="openProductModal('${product.id}')">
                     <div class="featured-product-image">
                         <img src="${product.icono}" alt="${product.nombre}">
@@ -537,6 +561,9 @@
                     </div>
                 </div>
             `).join('');
+
+            // Duplicar los productos para crear el efecto de scroll infinito
+            container.innerHTML = productsHTML + productsHTML;
         }
 
         // Display products
