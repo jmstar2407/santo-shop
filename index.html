@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santo Sex Shop - Tu Tienda Íntima de Confianza</title>
     <link rel="icon" href="./img/logo_1.png" type="image/png">
+    <link rel="stylesheet" href="./css/style.css" />
+
     <meta name="description"
         content="Descubre nuestra amplia selección de productos íntimos de alta calidad. Discreción y calidad garantizada.">
 
@@ -127,7 +129,7 @@
         </section>
     </div>
 
-  <!-- Product Modal -->
+    <!-- Product Modal -->
     <div class="modal" id="productModal">
         <div class="modal-content">
 
@@ -143,12 +145,12 @@
                         <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
                         <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
                     </div>
-                    
+
                     <!-- Indicadores de posición -->
                     <div class="gallery-indicators" id="galleryIndicators">
                         <!-- Los indicadores se agregarán aquí -->
                     </div>
-                    
+
                     <div class="gallery-thumbnails" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
@@ -212,8 +214,8 @@
         // Variables para la galería de imágenes
         let currentProductImages = [];
         let currentImageIndex = 0;
-        
-                // Variables para el carrusel táctil
+
+        // Variables para el carrusel táctil
         let touchStartX = 0;
         let touchEndX = 0;
         let isSwiping = false;
@@ -529,7 +531,7 @@
         }
 
         // Setup product gallery
- // Setup product gallery
+        // Setup product gallery
         function setupProductGallery(product) {
             currentProductImages = product.imagenes || [product.icono];
             currentImageIndex = 0;
@@ -564,7 +566,7 @@
             element.addEventListener('touchstart', handleTouchStart, false);
             element.addEventListener('touchmove', handleTouchMove, false);
             element.addEventListener('touchend', handleTouchEnd, false);
-            
+
             // También para compatibilidad con ratón
             element.addEventListener('mousedown', handleMouseDown, false);
             element.addEventListener('mousemove', handleMouseMove, false);
@@ -590,13 +592,13 @@
         // Manejar fin de toque
         function handleTouchEnd() {
             if (!isSwiping) return;
-            
+
             document.getElementById('galleryMain').classList.remove('swiping');
             isSwiping = false;
-            
+
             const diffX = touchEndX - touchStartX;
             const threshold = 50; // Mínimo desplazamiento para cambiar de imagen
-            
+
             if (Math.abs(diffX) > threshold) {
                 if (diffX > 0) {
                     // Deslizamiento a la derecha -> imagen anterior
@@ -626,13 +628,13 @@
 
         function handleMouseUp() {
             if (!mouseDown) return;
-            
+
             document.getElementById('galleryMain').classList.remove('swiping');
             mouseDown = false;
-            
+
             const diffX = mouseEndX - mouseStartX;
             const threshold = 50; // Mínimo desplazamiento para cambiar de imagen
-            
+
             if (Math.abs(diffX) > threshold) {
                 if (diffX > 0) {
                     // Deslizamiento a la derecha -> imagen anterior
@@ -654,7 +656,7 @@
             document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
                 thumb.classList.toggle('active', i === index);
             });
-            
+
             // Update active indicator
             document.querySelectorAll('.gallery-indicator').forEach((indicator, i) => {
                 indicator.classList.toggle('active', i === index);
