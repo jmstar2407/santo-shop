@@ -53,10 +53,18 @@
             align-items: center;
             padding: 1.2rem 2rem;
             margin-bottom: 4rem;
+            gap: 5px;
         }
 
         .logo img {
             height: 95px;
+        }
+
+        .tex-background {
+            /*background: #1a1a21b4;*/
+             padding: 0px 10px 3px 10px;
+            /* backdrop-filter: blur(34px); */
+            border-radius: 30px;
         }
 
         #titleanim {
@@ -110,7 +118,7 @@
         .content-master {
             position: relative;
             background: #1a1a21b4;
-            margin-top: 164px;
+            margin-top: 170px;
             border-radius: 24px 24px 0px 0px;
             backdrop-filter: blur(34px);
         }
