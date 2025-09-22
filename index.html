@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Santo Sex Shop - Tu Tienda Íntima de Confianza</title>
+    <link rel="icon" href="./img/logo_1.png" type="image/png">
     <meta name="description"
         content="Descubre nuestra amplia selección de productos íntimos de alta calidad. Discreción y calidad garantizada.">
 
@@ -26,6 +27,17 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: black;
             min-height: 100vh;
+        }
+
+        button,
+        a,
+        input,
+        textarea,
+        select,
+        .menu-toggle,
+        .scroll-down-arrow,
+        .scroll-down {
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -248,7 +260,7 @@
         .section-title {
             text-align: center;
             font-size: 1.4rem;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
             color: #fff;
             position: relative;
         }
@@ -265,10 +277,54 @@
             border-radius: 2px;
         }
 
+        /* Botones de vista */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 0px solid #e91e63;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: #e91e63;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #e91e63;
+            transform: scale(1.05);
+        }
+
+                .view-btn img {
+            height: 100%;
+        }
+
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
+        }
+
+        /* Vista compacta */
+        .products-grid.compact {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.2rem;
         }
 
         .product-card {
@@ -323,6 +379,33 @@
             color: #666;
             font-size: 0.9rem;
             line-height: 1.5;
+        }
+
+        /* Estilos para vista compacta */
+        .products-grid.compact .product-card {
+            border-radius: 10px;
+        }
+
+        .products-grid.compact .product-image {
+            height: 114px;
+            font-size: 3rem;
+        }
+
+        .products-grid.compact .product-info {
+            padding: 0.4rem;
+        }
+
+        .products-grid.compact .product-name {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .products-grid.compact .product-price {
+            font-size: 1.2rem;
+        }
+
+        .products-grid.compact .product-description {
+            font-size: 0.6rem;
         }
 
         /* Product Modal */
@@ -561,6 +644,11 @@
                 grid-template-columns: 1fr;
             }
 
+            .products-grid.compact {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
             .modal-content {
                 width: 95%;
                 margin: 20px;
@@ -664,13 +752,38 @@
             top: -7px;
         }
 
-        .shadow-img{
+        .shadow-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ff000000;
+            box-shadow: inset 0px -17px 33px -22px rgb(0 0 0 / 74%);
+        }
+
+        .social-icon {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .social-icon button {
+            background: #00000000;
+            border: none;
+            height: 36px;
+            margin: 0.5rem;
+        }
+
+        .social-icon img {
+            height: 100%;
+        }
+
+        .social-icon a {
     position: absolute;
-    width: 100%;
+    top: 0;
+    left: 0;
     height: 100%;
-    background: #ff000000;
-    box-shadow: inset 0px -17px 33px -22px rgb(0 0 0 / 74%);
-      }
+    width: 100%;
+}
     </style>
 </head>
 
@@ -699,6 +812,10 @@
                 <div class="logo"><img src="./img/logo_1.png">
                     <h2 id="titleanim" style="font-size: 1.5rem;">Santo Sex Shop</h2>
                 </div>
+            </div>
+
+            <div class="social-icon">
+                <button><img src="./img/icons/Instagram_logo_1.svg"><a href="#"></a></button>
             </div>
         </div>
     </header>
@@ -735,6 +852,19 @@
         <!-- Products Section -->
         <section class="products-section">
             <h2 class="section-title">Nuestros Productos</h2>
+
+            <!-- Botones de vista -->
+            <div class="view-toggle">
+                <button class="view-btn active" id="viewLarge" title="Vista grande">
+                    <!-- <i class="fas fa-th-large"></i> -->
+                    <img src="./img/icons/icon_large_1.png">
+                </button>
+                <button class="view-btn" id="viewSmall" title="Vista compacta">
+                    <!-- <i class="fas fa-th"></i> -->
+                     <img src="./img/icons/icon_small_1.png">
+                </button>
+            </div>
+
             <div class="products-grid" id="productsGrid">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -810,6 +940,7 @@
         let products = [];
         let currentCategory = 'all';
         const whatsappNumber = "+18296386767"; // Número de WhatsApp actualizado
+        let currentView = 'large'; // 'large' o 'small'
 
         // Variables para la galería de imágenes
         let currentProductImages = [];
@@ -845,6 +976,27 @@
         function closeCategoriesPanel() {
             document.getElementById('categoriesPanel').classList.remove('open');
             document.getElementById('categoriesOverlay').style.display = 'none';
+        }
+
+        // Cambiar vista de productos
+        function toggleView(viewType) {
+            currentView = viewType;
+            const productsGrid = document.getElementById('productsGrid');
+            const viewLargeBtn = document.getElementById('viewLarge');
+            const viewSmallBtn = document.getElementById('viewSmall');
+
+            if (viewType === 'large') {
+                productsGrid.classList.remove('compact');
+                viewLargeBtn.classList.add('active');
+                viewSmallBtn.classList.remove('active');
+            } else {
+                productsGrid.classList.add('compact');
+                viewLargeBtn.classList.remove('active');
+                viewSmallBtn.classList.add('active');
+            }
+
+            // Guardar preferencia en localStorage
+            localStorage.setItem('productView', viewType);
         }
 
         // Load categories from Firestore
@@ -1044,146 +1196,112 @@
                 // Mostrar placeholder si no hay imágenes
                 mainImage.src = '';
                 mainImage.alt = 'Imagen no disponible';
-                mainImage.parentElement.innerHTML = '<i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>';
-                document.querySelector('.gallery-prev').style.display = 'none';
-                document.querySelector('.gallery-next').style.display = 'none';
+                mainImage.style.display = 'none';
+                mainImage.parentElement.innerHTML = '<i class="fas fa-image" style="font-size: 4rem; color: #ccc;"></i>';
                 return;
             }
 
-            // Configurar imagen principal
+            // Mostrar primera imagen
             mainImage.src = images[0];
-            mainImage.alt = 'Product image';
+            mainImage.alt = 'Imagen del producto';
             mainImage.style.display = 'block';
 
             // Crear miniaturas
-            images.forEach((imageUrl, index) => {
+            images.forEach((image, index) => {
                 const thumbnail = document.createElement('div');
-                thumbnail.className = `gallery-thumbnail ${index === 0 ? 'active' : ''}`;
-                thumbnail.innerHTML = `<img src="${imageUrl}" alt="Thumbnail ${index + 1}">`;
-                thumbnail.onclick = () => changeToImage(index);
+                thumbnail.className = 'gallery-thumbnail';
+                if (index === 0) thumbnail.classList.add('active');
+                thumbnail.innerHTML = `<img src="${image}" alt="Miniatura ${index + 1}">`;
+                thumbnail.onclick = () => {
+                    changeImageToIndex(index);
+                };
                 thumbnailsContainer.appendChild(thumbnail);
             });
 
-            // Mostrar/ocultar botones de navegación según sea necesario
-            document.querySelector('.gallery-prev').style.display = images.length > 1 ? 'flex' : 'none';
-            document.querySelector('.gallery-next').style.display = images.length > 1 ? 'flex' : 'none';
+            // Mostrar u ocultar botones de navegación según la cantidad de imágenes
+            document.querySelectorAll('.gallery-nav').forEach(nav => {
+                nav.style.display = images.length > 1 ? 'flex' : 'none';
+            });
+        }
+
+        // Función para cambiar imagen en la galería
+        function changeImage(direction) {
+            if (currentProductImages.length <= 1) return;
+
+            let newIndex = currentImageIndex + direction;
+            if (newIndex < 0) newIndex = currentProductImages.length - 1;
+            if (newIndex >= currentProductImages.length) newIndex = 0;
+
+            changeImageToIndex(newIndex);
         }
 
         // Función para cambiar a una imagen específica
-        function changeToImage(index) {
-            if (index < 0 || index >= currentProductImages.length) return;
-
+        function changeImageToIndex(index) {
             currentImageIndex = index;
             const mainImage = document.getElementById('galleryMainImage');
             mainImage.src = currentProductImages[index];
 
             // Actualizar miniaturas activas
             document.querySelectorAll('.gallery-thumbnail').forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
+                if (i === index) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
             });
-        }
-
-        // Función para navegar entre imágenes
-        function changeImage(direction) {
-            let newIndex = currentImageIndex + direction;
-
-            // Navegación circular
-            if (newIndex < 0) {
-                newIndex = currentProductImages.length - 1;
-            } else if (newIndex >= currentProductImages.length) {
-                newIndex = 0;
-            }
-
-            changeToImage(newIndex);
         }
 
         // Close modal
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
-            // Reset URL
-            window.history.pushState({}, '', window.location.pathname);
-            // Limpiar galería
-            currentProductImages = [];
-            currentImageIndex = 0;
+            // Restore original URL
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         // Update meta tags for social media preview
         function updateMetaTags(product, url) {
-            const title = `${product.nombre} - Santo Sex Shop`;
-            const description = product.descripcion;
-            const image = product.icono || 'https://via.placeholder.com/400x400/667eea/white?text=Santo+Sex+Shop';
-
-            // Update existing meta tags
-            let titleMeta = document.getElementById('metaTitle');
-            let descMeta = document.getElementById('metaDescription');
-            let imageMeta = document.getElementById('metaImage');
-            let urlMeta = document.getElementById('metaUrl');
-
-            if (!titleMeta) {
-                titleMeta = document.createElement('meta');
-                titleMeta.id = 'metaTitle';
-                titleMeta.setAttribute('property', 'og:title');
-                document.head.appendChild(titleMeta);
-            }
-
-            if (!descMeta) {
-                descMeta = document.createElement('meta');
-                descMeta.id = 'metaDescription';
-                descMeta.setAttribute('property', 'og:description');
-                document.head.appendChild(descMeta);
-            }
-
-            if (!imageMeta) {
-                imageMeta = document.createElement('meta');
-                imageMeta.id = 'metaImage';
-                imageMeta.setAttribute('property', 'og:image');
-                document.head.appendChild(imageMeta);
-            }
-
-            if (!urlMeta) {
-                urlMeta = document.createElement('meta');
-                urlMeta.id = 'metaUrl';
-                urlMeta.setAttribute('property', 'og:url');
-                document.head.appendChild(urlMeta);
-            }
-
-            titleMeta.content = title;
-            descMeta.content = description;
-            imageMeta.content = image;
-            urlMeta.content = url;
-
-            // Update page title too
-            document.title = title;
+            document.getElementById('metaTitle').content = product.nombre;
+            document.getElementById('metaDescription').content = product.descripcion.substring(0, 160);
+            document.getElementById('metaImage').content = product.imagenes && product.imagenes.length > 0 ? product.imagenes[0] : product.icono;
+            document.getElementById('metaUrl').content = url;
         }
 
-        // Initialize the app
-        function initApp() {
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
             // Event listeners
             document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
             document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
             document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
 
-            // Close modal when clicking outside
-            window.addEventListener('click', (event) => {
-                if (event.target === document.getElementById('productModal')) {
-                    closeModal();
-                }
-            });
+            // Event listeners para botones de vista
+            document.getElementById('viewLarge').addEventListener('click', () => toggleView('large'));
+            document.getElementById('viewSmall').addEventListener('click', () => toggleView('small'));
+
+            // Cargar preferencia de vista guardada
+            const savedView = localStorage.getItem('productView');
+            if (savedView) {
+                toggleView(savedView);
+            }
 
             // Load data
             loadCategories();
             loadProducts();
 
-            // Check if a product ID is in the URL
+            // Check if a product is specified in the URL
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('producto');
             if (productId) {
                 openProductModal(productId);
             }
-        }
+        });
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
     </script>
 </body>
 
