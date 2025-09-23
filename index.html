@@ -548,63 +548,114 @@
         }
 
         // Mostrar productos destacados con animación infinita
-        function displayFeaturedProducts(products) {
-            const container = document.getElementById('featuredProductsTrack');
+      function displayFeaturedProducts(products) {
+    const container = document.getElementById('featuredProductsTrack');
 
-            if (products.length === 0) {
-                container.innerHTML = `
-                    <div class="no-featured">
-                        No hay productos destacados en este momento
-                    </div>
-                `;
-                return;
-            }
+    if (products.length === 0) {
+        container.innerHTML = `<div class="no-featured">No hay productos destacados en este momento</div>`;
+        return;
+    }
 
-            // Crear HTML para los productos
-            const productsHTML = products.map(product => `
-                <div class="featured-product-card" onclick="openProductModal('${product.id}')">
-                    <div class="featured-product-image">
-                        <img src="${product.icono}" alt="${product.nombre}">
-                        <div class="shadow-img"></div>
-                    </div>
-                    <div class="featured-product-info">
-                        <h4 class="featured-product-name">${product.nombre}</h4>
-                        <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
-                        <div class="featured-product-price">${formatPrice(product.precio)}</div>
-                    </div>
-                </div>
-            `).join('');
+    // Duplicamos para crear efecto infinito
+    const productsHTML = products.map(product => `
+        <div class="featured-product-card" onclick="openProductModal('${product.id}')">
+            <div class="featured-product-image">
+                <img src="${product.icono}" alt="${product.nombre}">
+                <div class="shadow-img"></div>
+            </div>
+            <div class="featured-product-info">
+                <h4 class="featured-product-name">${product.nombre}</h4>
+                <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
+                <div class="featured-product-price">${formatPrice(product.precio)}</div>
+            </div>
+        </div>
+    `).join('');
 
-            // Duplicar los productos para crear el efecto de scroll infinito
-            container.innerHTML = productsHTML + productsHTML;
+    container.innerHTML = productsHTML + productsHTML; // duplicamos
+
+    // Variables del carrusel
+    let track = container;
+    let isDown = false;
+    let startX, scrollLeft;
+
+    // Convertimos el ancho total
+    let cardWidth = track.querySelector('.featured-product-card').offsetWidth + 16; // incluye margin
+    let totalWidth = cardWidth * products.length;
+
+    // Evento de mouse/touch
+    track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX;
+        scrollLeft = track.scrollLeft;
+    });
+    track.addEventListener('mouseleave', () => isDown = false);
+    track.addEventListener('mouseup', () => isDown = false);
+    track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - startX;
+        track.scrollLeft = scrollLeft - x;
+        loopScroll();
+    });
+
+    // Mobile touch
+    track.addEventListener('touchstart', (e) => {
+        isDown = true;
+        startX = e.touches[0].pageX;
+        scrollLeft = track.scrollLeft;
+    });
+    track.addEventListener('touchend', () => isDown = false);
+    track.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        const x = e.touches[0].pageX - startX;
+        track.scrollLeft = scrollLeft - x;
+        loopScroll();
+    });
+
+    // Reposicionar cuando llegue a un extremo
+    function loopScroll() {
+        if (track.scrollLeft >= totalWidth) {
+            track.scrollLeft = 0;
+        } else if (track.scrollLeft <= 0) {
+            track.scrollLeft = totalWidth;
         }
+    }
+
+    // Auto scroll suave
+    setInterval(() => {
+        track.scrollLeft += 1;
+        loopScroll();
+    }, 20);
+}
+
+
 
         // Display products
-        function displayProducts() {
-            const grid = document.getElementById('productsGrid');
-            const filteredProducts = currentCategory === 'all'
-                ? products
-                : products.filter(product => product.categoria === currentCategory);
+function displayProducts() {
+    const grid = document.getElementById('productsGrid');
+    const filteredProducts = currentCategory === 'all'
+        ? products
+        : products.filter(product => product.categoria === currentCategory);
 
-            if (filteredProducts.length === 0) {
-                grid.innerHTML = '<div class="loading"><p>No hay productos en esta categoría</p></div>';
-                return;
-            }
+    if (filteredProducts.length === 0) {
+        grid.innerHTML = '<div class="loading"><p>No hay productos en esta categoría</p></div>';
+        return;
+    }
 
-            grid.innerHTML = filteredProducts.map(product => `
-                <div class="product-card" onclick="openProductModal('${product.id}')">
-                    <div class="product-image">
-                        <img src="${product.icono}" alt="${product.nombre}">
-                        <div class="shadow-img"></div>
-                    </div>
-                    <div class="product-info">
-                        <h4 class="product-name">${product.nombre}</h4>
-                        <div class="product-description">${product.descripcion.substring(0, 80)}...</div>
-                                                <div class="product-price">${formatPrice(product.precio)}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
+    grid.innerHTML = filteredProducts.map(product => `
+        <div class="product-card" onclick="openProductModal('${product.id}')">
+            <div class="product-image">
+                <img src="${product.icono}" alt="${product.nombre}">
+                <div class="shadow-img"></div>
+            </div>
+            <div class="product-info">
+                <h4 class="product-name">${product.nombre}</h4>
+                <div class="product-description">${product.descripcion.substring(0, 80)}...</div>
+                <div class="product-price">${formatPrice(product.precio)}</div>
+            </div>
+        </div>
+    `).join('');
+}
 
         // Select category
         function selectCategory(categoryId) {
