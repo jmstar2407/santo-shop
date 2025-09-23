@@ -192,7 +192,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" style="background: #6c757d;"
                     onclick="closeProductModal()">Cancelar</button>
-                <button type="submit" class="btn" id="productSubmitBtn">Guardar Producto</button>
+                <button type="submit" class="btn">Guardar Producto</button>
             </div>
             </form>
         </div>
@@ -220,7 +220,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" style="background: #6c757d;"
                     onclick="closeCategoryModal()">Cancelar</button>
-                <button type="submit" class="btn" id="categorySubmitBtn">Guardar Categoría</button>
+                <button type="submit" class="btn">Guardar Categoría</button>
                 </form>
             </div>
         </div>
@@ -251,21 +251,6 @@
         let productImageFiles = [];
         let existingProductImages = [];
         let quill;
-        let isSavingProduct = false;
-        let isSavingCategory = false;
-
-        // Función debounce para prevenir múltiples llamadas
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
 
         // Inicializar Quill editor
         function initQuillEditor() {
@@ -545,46 +530,30 @@
         }
 
         async function saveCategory(e) {
-            console.log('Save category function called', new Date().toISOString());
             e.preventDefault();
-            
-            // Prevenir múltiples envíos
-            if (isSavingCategory) {
-                console.log('Category save already in progress, ignoring duplicate call');
-                return;
-            }
-            
-            const submitButton = document.getElementById('categorySubmitBtn');
-            const originalText = submitButton.textContent;
-            
-            isSavingCategory = true;
-            submitButton.disabled = true;
-            submitButton.textContent = 'Guardando...';
+            const name = document.getElementById('categoryName').value;
+            const categoryData = { nombre: name };
 
-            try {
-                const name = document.getElementById('categoryName').value;
-                const categoryData = { nombre: name };
-
-                if (editingCategoryId) {
-                    await db.collection('categoria').doc(editingCategoryId).update(categoryData);
-                    console.log('Category updated successfully');
-                } else {
-                    await db.collection('categoria').add(categoryData);
-                    console.log('Category added successfully');
-                }
-
-                closeCategoryModal();
-                resetCategoryForm();
-                loadCategories();
-
-            } catch (error) {
-                console.error("Error saving category: ", error);
-                alert("Error al guardar la categoría: " + error.message);
-            } finally {
-                isSavingCategory = false;
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-                console.log('Save category function completed');
+            if (editingCategoryId) {
+                db.collection('categoria').doc(editingCategoryId).update(categoryData)
+                    .then(() => {
+                        closeCategoryModal();
+                        resetCategoryForm();
+                        loadCategories();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating category: ", error);
+                    });
+            } else {
+                db.collection('categoria').add(categoryData)
+                    .then(() => {
+                        closeCategoryModal();
+                        resetCategoryForm();
+                        loadCategories();
+                    })
+                    .catch((error) => {
+                        console.error("Error adding category: ", error);
+                    });
             }
         }
 
@@ -616,16 +585,10 @@
             document.getElementById('categoryId').value = '';
             document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
             editingCategoryId = null;
-            
-            // Habilitar botón por si acaso
-            const submitButton = document.getElementById('categorySubmitBtn');
-            submitButton.disabled = false;
-            submitButton.textContent = 'Guardar Categoría';
         }
 
         // Product functions
         function loadProducts() {
-            console.log('Loading products...');
             db.collection('productos').get().then((snapshot) => {
                 products = [];
                 const productsGrid = document.getElementById('productsGrid');
@@ -636,150 +599,113 @@
                         id: doc.id,
                         ...doc.data()
                     };
-                    
-                    // Verificar duplicados en memoria
-                    const existingIndex = products.findIndex(p => p.id === product.id);
-                    if (existingIndex === -1) {
-                        products.push(product);
+                    products.push(product);
 
-                        const category = categories.find(c => c.id === product.categoria);
-                        const categoryName = category ? category.nombre : 'Sin categoría';
-                        const images = product.imagenes || (product.icono ? [product.icono] : []);
-                        const firstImage = images.length > 0 ? images[0] : null;
-                        const isFeatured = product.destacado === 'yes';
-                        const featuredBadge = isFeatured ? '<span class="product-featured-badge" style="color: #e9c81e; font-size: 0.8rem; margin-left: 5px;"><br><i class="fas fa-star"></i> Destacado</span>' : '';
+                    const category = categories.find(c => c.id === product.categoria);
+                    const categoryName = category ? category.nombre : 'Sin categoría';
+                    const images = product.imagenes || (product.icono ? [product.icono] : []);
+                    const firstImage = images.length > 0 ? images[0] : null;
+                    const isFeatured = product.destacado === 'yes';
+                    const featuredBadge = isFeatured ? '<span class="product-featured-badge" style="color: #e9c81e; font-size: 0.8rem; margin-left: 5px;"><br><i class="fas fa-star"></i> Destacado</span>' : '';
 
-                        const card = document.createElement('div');
-                        card.className = 'product-card';
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
 
-                        let imageHtml = '';
-                        if (firstImage) {
-                            imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}" loading="lazy">`;
-                        } else {
-                            imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
-                        }
-
-                        card.innerHTML = `
-                            ${imageHtml}
-                            <div class="product-info">
-                                <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
-                                    <div class="product-name">${product.nombre} ${featuredBadge}</div>
-                                    <span class="image-badge">${images.length} img</span>
-                                </div>
-                                <div class="product-price">RD$${formatPrice(product.precio)}</div>
-                                <div class="product-category">${categoryName}</div>
-                                <div class="product-actions">
-                                    <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
-                                    <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
-                                </div>
-                            </div>
-                        `;
-                        productsGrid.appendChild(card);
+                    let imageHtml = '';
+                    if (firstImage) {
+                        imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}" loading="lazy">`;
                     } else {
-                        console.warn('Producto duplicado encontrado en carga:', product.id, product.nombre);
+                        imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
                     }
+
+                    card.innerHTML = `
+                        ${imageHtml}
+                        <div class="product-info">
+                            <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
+                                <div class="product-name">${product.nombre} ${featuredBadge}</div>
+                                <span class="image-badge">${images.length} img</span>
+                            </div>
+                            <div class="product-price">RD$${formatPrice(product.precio)}</div>
+                            <div class="product-category">${categoryName}</div>
+                            <div class="product-actions">
+                                <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
+                                <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                    productsGrid.appendChild(card);
                 });
-                
-                console.log(`Loaded ${products.length} products`);
             }).catch((error) => {
                 console.error("Error loading products: ", error);
             });
         }
 
         async function saveProduct(e) {
-            console.log('Save product function called', new Date().toISOString());
             e.preventDefault();
-            
-            // Prevenir múltiples envíos
-            if (isSavingProduct) {
-                console.log('Product save already in progress, ignoring duplicate call');
+
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const description = quill.root.innerHTML;
+            const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
+
+            // Validar campos requeridos
+            if (!name || !price || !category) {
+                alert('Por favor complete todos los campos requeridos');
                 return;
             }
-            
-            const submitButton = document.getElementById('productSubmitBtn');
-            const originalText = submitButton.textContent;
-            
-            isSavingProduct = true;
-            submitButton.disabled = true;
-            submitButton.textContent = 'Guardando...';
 
-            try {
-                const name = document.getElementById('productName').value;
-                const price = parseFloat(document.getElementById('productPrice').value);
-                const category = document.getElementById('productCategory').value;
-                const description = quill.root.innerHTML;
-                const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
-
-                // Validación más estricta
-                if (!name || !price || !category) {
-                    alert('Por favor complete todos los campos requeridos');
+            // Subir nuevas imágenes si existen
+            let newImageUrls = [];
+            if (productImageFiles.length > 0) {
+                try {
+                    newImageUrls = await uploadImages(productImageFiles, 'product-images');
+                } catch (error) {
+                    console.error("Error uploading product images: ", error);
+                    alert("Error al subir las imágenes del producto");
                     return;
                 }
+            }
 
-                // Verificar si ya existe un producto con el mismo nombre (opcional)
-                const existingProduct = products.find(p => 
-                    p.nombre.toLowerCase() === name.toLowerCase() && 
-                    p.id !== editingProductId
-                );
-                
-                if (existingProduct && !editingProductId) {
-                    if (!confirm(`Ya existe un producto llamado "${name}". ¿Desea continuar?`)) {
-                        return;
-                    }
-                }
+            // Combinar imágenes existentes con las nuevas
+            const allImageUrls = [...existingProductImages, ...newImageUrls];
 
-                // Subir nuevas imágenes si existen
-                let newImageUrls = [];
-                if (productImageFiles.length > 0) {
-                    try {
-                        newImageUrls = await uploadImages(productImageFiles, 'product-images');
-                        console.log('Uploaded', newImageUrls.length, 'new images');
-                    } catch (error) {
-                        console.error("Error uploading product images: ", error);
-                        alert("Error al subir las imágenes del producto");
-                        return;
-                    }
-                }
+            const productData = {
+                nombre: name,
+                precio: price,
+                categoria: category,
+                descripcion: description,
+                destacado: featured,
+                imagenes: allImageUrls,
+                fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-                // Combinar imágenes existentes con las nuevas
-                const allImageUrls = [...existingProductImages, ...newImageUrls];
+            // Mantener compatibilidad con versión anterior (icono)
+            if (allImageUrls.length > 0) {
+                productData.icono = allImageUrls[0];
+            }
 
-                const productData = {
-                    nombre: name,
-                    precio: price,
-                    categoria: category,
-                    descripcion: description,
-                    destacado: featured,
-                    imagenes: allImageUrls,
-                    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Mantener compatibilidad con versión anterior (icono)
-                if (allImageUrls.length > 0) {
-                    productData.icono = allImageUrls[0];
-                }
-
-                if (editingProductId) {
-                    await db.collection('productos').doc(editingProductId).update(productData);
-                    console.log('Product updated successfully');
-                } else {
-                    productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('productos').add(productData);
-                    console.log('Product added successfully');
-                }
-
-                closeProductModal();
-                resetProductForm();
-                loadProducts();
-
-            } catch (error) {
-                console.error("Error saving product: ", error);
-                alert("Error al guardar el producto: " + error.message);
-            } finally {
-                isSavingProduct = false;
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-                console.log('Save product function completed');
+            if (editingProductId) {
+                db.collection('productos').doc(editingProductId).update(productData)
+                    .then(() => {
+                        closeProductModal();
+                        resetProductForm();
+                        loadProducts();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating product: ", error);
+                    });
+            } else {
+                productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+                db.collection('productos').add(productData)
+                    .then(() => {
+                        closeProductModal();
+                        resetProductForm();
+                        loadProducts();
+                    })
+                    .catch((error) => {
+                        console.error("Error adding product: ", error);
+                    });
             }
         }
 
@@ -812,6 +738,7 @@
                             <button type="button" class="remove-image" onclick="removeExistingImage(${index})">
                                 <i class="fas fa-times"></i>
                             </button>
+
                         `;
                         previewElement.appendChild(imageItem);
                     });
@@ -828,6 +755,12 @@
                 document.getElementById('productModalTitle').textContent = 'Editar Producto';
                 document.getElementById('productModal').style.display = 'flex';
             }
+        }
+
+        // Obtener formato de imagen desde URL
+        function getImageFormatFromUrl(url) {
+            const extension = url.split('.').pop().split('?')[0].toUpperCase();
+            return extension.length <= 4 ? extension : 'IMG';
         }
 
         // Función para eliminar imagen existente
@@ -889,16 +822,11 @@
             if (quill) {
                 quill.root.innerHTML = '';
             }
-            
-            // Habilitar botón por si acaso
-            const submitButton = document.getElementById('productSubmitBtn');
-            submitButton.disabled = false;
-            submitButton.textContent = 'Guardar Producto';
         }
 
-        // Event listeners con debounce
-        document.getElementById('productForm').addEventListener('submit', debounce(saveProduct, 500));
-        document.getElementById('categoryForm').addEventListener('submit', debounce(saveCategory, 500));
+        // Event listeners
+        document.getElementById('productForm').addEventListener('submit', saveProduct);
+        document.getElementById('categoryForm').addEventListener('submit', saveCategory);
     </script>
 
     <script>
