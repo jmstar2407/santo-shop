@@ -125,6 +125,187 @@
                 transform: translateX(-50%);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* Animación para el modal - aparece desde abajo */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Animación de salida - desaparece hacia abajo */
+        @keyframes slideDown {
+            from {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+
+            to {
+                opacity: 0;
+                transform: translate(-50%, 100%);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: slideUp 0.4s ease-out;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            text-align: center;
+            max-height: 90%;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* Clase para la animación de salida */
+        .modal-content.closing {
+            animation: slideDown 0.3s ease-in forwards;
+        }
+
+
+        .modal-body {
+            background: rgb(255 255 255);
+            overflow: auto;
+            flex: 1;
+            padding: 1.5rem;
+            text-align: left;
+            scrollbar-width: thin;
+            scrollbar-color: #b5b5b5 #f1f1f100;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .modal-product-gallery {
+            position: relative;
+        }
+
+        .modal-product-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+
+
+        #modalProductName2 {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        #modalProductPrice {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: #f9f9f9;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 2px dashed #e0e0e0;
+        }
+
+
+
+        .modal-footer {
+            background: #f0f0f0;
+            border: none;
+            padding: 1rem;
+            border-top: 1px solid rgb(201 213 243);
+            display: flex;
+            justify-content: center;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: #25d366;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn:hover {
+            background: #128c7e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .modal-content {
+                width: 100%;
+                max-height: 100%;
+                border-radius: 0px;
+            }
+
+            .modal-title h3 {
+                font-size: 1.2rem;
+                padding: 0 40px;
+            }
+
+            #modalProductName2 {
+                font-size: 1.4rem;
+            }
+
+            #modalProductPrice {
+                font-size: 1.6rem;
+            }
+        }
     </style>
 </head>
 
@@ -259,7 +440,6 @@
     <!-- Product Modal -->
     <div class="modal" id="productModal">
         <div class="modal-content">
-
             <div class="modal-title">
                 <h3 id="modalProductName">Producto</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -271,40 +451,48 @@
                         <img id="galleryMainImage" src="" alt="Product image">
                         <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">&#10094;</button>
                         <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
-
                     </div>
 
                     <div class="gallery-thumbnails" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
-
                 </div>
 
                 <div class="modal-product-info">
-                    <div id="modalProductName2" class="product-name"></div>
-                    <div id="modalProductPrice" class="product-price">RD$0</div>
-                    <div id="modalProductDescription" class="product-description html-content"></div>
-
+                    <div>
+                        <div class="division2" style="margin-bottom: 14px;"></div>
+                        <div class="product-name-header">Producto:</div>
+                        <div id="modalProductName2" class="product-name"></div>
+                        <div id="modalProductPrice" class="product-price">RD$0</div>
+                        <div class="product-description-header">Descripción:</div>
+                        <div id="modalProductDescription" class="product-description html-content"></div>
+                        <div class="division2" style="margin-bottom: 14px;"></div>
+                        <div class="info-general">
+                            🔒 En Santo Sex Shop nos comprometemos a ofrecerte productos de la más alta calidad ✨ con total discreción y confianza 🤫💖. Cada pedido se prepara con cuidado 🛍️ y se envía en empaques 100% confidenciales 📦. Queremos que vivas una experiencia de compra cómoda 😌, segura 🛡️ y llena de satisfacción 💕.
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <a href="#" class="whatsapp-btn" id="whatsappBtn">
-                    <i class="fab fa-whatsapp" style="font-size: 2rem;"></i>
+                    <i class="fab fa-whatsapp" style="font-size: 1.8rem;"></i>
                     Pedir por WhatsApp
                 </a>
             </div>
-
         </div>
     </div>
 
 
 
-        <div class="prev-info-down">
-                <div class="division"></div>
-                
-            <p>En Santo Sex Shop nos comprometemos a ofrecerte productos de la más alta calidad con total discreción y confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se envía en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura y llena de satisfacción.</p>
-        </div>
+    <div class="prev-info-down">
+        <div class="division"></div>
+
+        <p>En Santo Sex Shop nos comprometemos a ofrecerte productos de la más alta calidad con total discreción y
+            confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se envía
+            en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura y
+            llena de satisfacción.</p>
+    </div>
 
     <div class="info-down">
         <div class="background-down"><img src="./img/2T-Elvis Sex Shop Logo777.png"></div>
@@ -587,7 +775,7 @@
                     </div>
                     <div class="featured-product-info">
                         <h4 class="featured-product-name">${product.nombre}</h4>
-                        <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
+                        <h3 class="featured-product-description">${product.descripcion}</h3>
                         <div class="featured-product-price">${formatPrice(product.precio)}</div>
                     </div>
                 </div>
@@ -618,7 +806,7 @@
             </div>
             <div class="product-info">
                 <h4 class="product-name">${product.nombre}</h4>
-                <div class="product-description">${product.descripcion}</div>
+                <div id="text-card-description" class="product-description">${product.descripcion}</div>
                 <div class="product-price">${formatPrice(product.precio)}</div>
             </div>
         </div>
@@ -650,27 +838,34 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
 
-            // Update modal content
-            document.getElementById('modalProductName').textContent = product.nombre;
+            // Actualizar contenido del modal
+            document.getElementById('modalProductName').textContent = `${product.nombre}`;
             document.getElementById('modalProductName2').textContent = product.nombre;
             document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
             document.getElementById('modalProductDescription').innerHTML = product.descripcion;
 
-            // Generar el enlace del producto (usando la URL actual + parámetro del producto)
+            // Generar el enlace del producto
             const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
 
-            // Update WhatsApp button - mensaje modificado
+            // Actualizar botón de WhatsApp
             const whatsappBtn = document.getElementById('whatsappBtn');
             const message = encodeURIComponent(`Saludos, me interesa este producto: ${productUrl}`);
             whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
 
-            // Setup gallery
+            // Configurar galería
             setupProductGallery(product);
 
-            // Show modal
-            document.getElementById('productModal').style.display = 'block';
+            // Mostrar modal con animación
+            const modal = document.getElementById('productModal');
+            const modalContent = modal.querySelector('.modal-content');
+
+            // Remover clase de cierre si existe
+            modalContent.classList.remove('closing');
+
+            modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
+
 
         // Setup product gallery
         function setupProductGallery(product) {
@@ -715,10 +910,22 @@
             setCurrentImage(newIndex);
         }
 
-        // Close modal
+        // Cerrar modal
         function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById('productModal');
+            const modalContent = modal.querySelector('.modal-content');
+
+            // Aplicar animación de salida
+            modalContent.classList.add('closing');
+
+            // Esperar a que termine la animación antes de ocultar el modal
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+
+                // Remover la clase de cierre para la próxima apertura
+                modalContent.classList.remove('closing');
+            }, 300); // Duración de la animación (0.3s)
         }
 
         // Función para mostrar texto específico en el carrusel

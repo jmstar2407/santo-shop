@@ -381,6 +381,10 @@
             font-weight: bold;
             margin-bottom: 0.5rem;
             color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
         }
 
         .product-price {
@@ -396,7 +400,6 @@
             line-height: 1.5;
         }
 
-
         /* Estilos para vista compacta */
         .products-grid.compact .product-card {
             border-radius: 14px;
@@ -408,7 +411,7 @@
         }
 
         .products-grid.compact .product-info {
-            padding: 0.4rem;
+            padding: 0.2rem 0.4rem 0.4rem 0.4rem;
         }
 
         .products-grid.compact .product-name {
@@ -425,93 +428,29 @@
         }
 
         /* Product Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
 
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: modalSlideIn 0.3s ease;
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            background-color: #f5f5f5;
-            border-radius: 10px;
-            text-align: center;
-            /* animation: modalFadeIn 0.3s; */
-            max-height: 90%;
-            width: 100%;
-            max-width: 800px;
-        }
 
 
         .modal-title {
             width: 100%;
-            min-height: 40px;
-            border-bottom: 1px solid rgb(201 213 243);
-            display: inline-flex;
+            min-height: 50px;
+            border-bottom: 1px solid rgb(157 157 157);
+            display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px 10px 0px 0px;
-            color: #e91e63;
+            background: linear-gradient(83deg, #e91e63, #5c27b0);
+            color: white;
+            padding: 0.5rem 1rem;
         }
 
         .modal-title h3 {
-            font-size: 1.3rem;
-            font-weight: 500;
-            text-align: center;
-            padding: 0px 55px;
-        }
-
-        .modal-body {
-            background: rgb(255 255 255);
-            overflow: auto;
-            flex: 1;
-            padding: 1rem;
-            text-align: left;
-            scrollbar-width: thin;
-            scrollbar-color: #b5b5b5 #f1f1f100;
-        }
-
-        .modal-footer {
-            color: white;
-            border: none;
-            padding: 8px 8px;
-            border-radius: 0px 0px 10px 10px;
-            font-size: 14px;
+            font-size: 1.4rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            border-top: 1px solid rgb(201 213 243);
-            display: inline-flex;
-            gap: 1rem;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            margin: 0;
+            padding: 0 55px;
         }
 
-
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
 
 
         .modal-close {
@@ -629,12 +568,18 @@
             margin-bottom: 1rem;
         }
 
-        #modalProductDescription {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 1.5rem;
+
+        .product-name-header {
+            font-size: 1.1rem;
+            color: #666;
         }
+
+        .product-description-header {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
 
         .whatsapp-btn {
             font-family: system-ui;
@@ -694,6 +639,14 @@
             margin: 1rem 0rem;
         }
 
+        .division2 {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+            border-radius: 2px;
+        }
+
         .prev-info-down {
             position: relative;
             background: #121115;
@@ -723,6 +676,14 @@
             aspect-ratio: 1 / 1;
             background-size: 100%;
         }
+
+        .info-general {
+    text-align: center;
+    background: #ededed;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    margin: 2rem 1rem 1rem 1rem;
+}
 
         .background-down img {
             width: 100%;
@@ -812,19 +773,19 @@
             top: -50px;
         }
 
-.info-mini-redes h6 {
-    font-family: sans-serif;
-    font-weight: 100;
-    color: #b9b9b9;
-    margin-block-start: 25px;
-    margin-block-end: 5px;
-    font-size: 14px;
-    padding: 4px;
-    border-radius: 7px;
-    width: 100%;
-    text-align: center;
-    display: flow;
-}
+        .info-mini-redes h6 {
+            font-family: sans-serif;
+            font-weight: 100;
+            color: #b9b9b9;
+            margin-block-start: 25px;
+            margin-block-end: 5px;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 7px;
+            width: 100%;
+            text-align: center;
+            display: flow;
+        }
 
         .info-mini-redes div {
             display: flex;
@@ -1115,7 +1076,7 @@
         }
 
         .featured-product-info {
-            padding: 0.5rem;
+            padding: 0.2rem 0.4rem 0.4rem 0.4rem;
         }
 
         .featured-product-info h3 {
@@ -1138,13 +1099,35 @@
             text-align: center;
         }
 
-        .product-description p {
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-}
+        .featured-product-description p {
+
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .product-description p {}
+
+        #modalProductDescription {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #000000;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #fff3fe;
+            border-radius: 8px;
+            border-left: 4px solid #e91e63;
+        }
+
+        #text-card-description p {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
 
         .featured-product-price {
             font-size: 1.3rem;
