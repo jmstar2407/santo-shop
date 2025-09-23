@@ -1156,35 +1156,42 @@ footer {
 
 
 
-
-/* Pantallas grandes (ej. escritorio) */
-@media screen and (min-width: 1025px) {
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Oculta todo el contenido */
-    #app,
-    main,
-    header,
-    footer,
-    section {
-        display: none !important;
-    }
-
-    /* Pantalla negra con el mensaje */
+/* Mensaje para dispositivos de escritorio */
+@media (min-width: 769px) {
     body::before {
-        content: "Solo se admite desde el móvil 📱";
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    
+    body::after {
+        content: "⚠️ Esta web solo está disponible para dispositivos móviles. Por favor, ábrela desde tu teléfono.";
         position: fixed;
-        inset: 0;
-        background: black;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         color: white;
-        font-size: 2rem;
+        font-size: 1.5rem;
         text-align: center;
-        z-index: 9999;
+        padding: 2rem;
+        z-index: 10000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 80%;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 10px;
+        border: 2px solid #e91e63;
+    }
+
+    /* Ocultar todo el contenido en escritorio */
+    body > *:not(::before):not(::after) {
+        display: none !important;
     }
 }
