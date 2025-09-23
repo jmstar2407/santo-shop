@@ -549,14 +549,15 @@
 
         // Mostrar productos destacados con animación infinita
       function displayFeaturedProducts(products) {
-    const container = document.getElementById('featuredProductsTrack');
+    const track = document.getElementById('featuredProductsTrack');
+    const wrapper = track.parentElement; // .featured-products-container
 
     if (products.length === 0) {
-        container.innerHTML = `<div class="no-featured">No hay productos destacados en este momento</div>`;
+        track.innerHTML = `<div class="no-featured">No hay productos destacados en este momento</div>`;
         return;
     }
 
-    // Duplicamos para crear efecto infinito
+    // HTML de las tarjetas
     const productsHTML = products.map(product => `
         <div class="featured-product-card" onclick="openProductModal('${product.id}')">
             <div class="featured-product-image">
@@ -571,61 +572,88 @@
         </div>
     `).join('');
 
-    container.innerHTML = productsHTML + productsHTML; // duplicamos
+    // duplicamos el contenido para el loop infinito
+    track.innerHTML = productsHTML + productsHTML;
 
-    // Variables del carrusel
-    let track = container;
-    let isDown = false;
-    let startX, scrollLeft;
+    // evitar que las imágenes interfieran con el arrastre nativo
+    track.querySelectorAll('img').forEach(img => img.draggable = false);
 
-    // Convertimos el ancho total
-    let cardWidth = track.querySelector('.featured-product-card').offsetWidth + 16; // incluye margin
-    let totalWidth = cardWidth * products.length;
+    // calculamos anchos *después* de render (requestAnimationFrame)
+    requestAnimationFrame(() => {
+        const singleWidth = track.scrollWidth / 2; // ancho del conjunto original (no duplicado)
+        // comenzar en el "medio" para permitir arrastrar hacia ambos lados sin choque
+        wrapper.scrollLeft = singleWidth;
 
-    // Evento de mouse/touch
-    track.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX;
-        scrollLeft = track.scrollLeft;
-    });
-    track.addEventListener('mouseleave', () => isDown = false);
-    track.addEventListener('mouseup', () => isDown = false);
-    track.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - startX;
-        track.scrollLeft = scrollLeft - x;
-        loopScroll();
-    });
+        let isDragging = false;
+        let startX = 0;
+        let scrollStart = 0;
+        let autoScrollTimer = null;
 
-    // Mobile touch
-    track.addEventListener('touchstart', (e) => {
-        isDown = true;
-        startX = e.touches[0].pageX;
-        scrollLeft = track.scrollLeft;
-    });
-    track.addEventListener('touchend', () => isDown = false);
-    track.addEventListener('touchmove', (e) => {
-        if (!isDown) return;
-        const x = e.touches[0].pageX - startX;
-        track.scrollLeft = scrollLeft - x;
-        loopScroll();
-    });
-
-    // Reposicionar cuando llegue a un extremo
-    function loopScroll() {
-        if (track.scrollLeft >= totalWidth) {
-            track.scrollLeft = 0;
-        } else if (track.scrollLeft <= 0) {
-            track.scrollLeft = totalWidth;
+        function startDrag(e) {
+            isDragging = true;
+            wrapper.classList.add('dragging');
+            startX = (e.type === 'touchstart') ? e.touches[0].pageX : e.pageX;
+            scrollStart = wrapper.scrollLeft;
+            cancelAutoScroll();
+            // prevenir selección de texto
+            e.preventDefault && e.preventDefault();
         }
-    }
 
-    // Auto scroll suave
-    setInterval(() => {
-        track.scrollLeft += 1;
-        loopScroll();
-    }, 20);
+        function moveDrag(e) {
+            if (!isDragging) return;
+            const x = (e.type === 'touchmove') ? e.touches[0].pageX : e.pageX;
+            const delta = startX - x;
+            wrapper.scrollLeft = scrollStart + delta;
+
+            // loop: si llegamos a un extremo, saltamos para mantener continuidad
+            if (wrapper.scrollLeft >= singleWidth * 2) {
+                wrapper.scrollLeft -= singleWidth;
+            } else if (wrapper.scrollLeft <= 0) {
+                wrapper.scrollLeft += singleWidth;
+            }
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            wrapper.classList.remove('dragging');
+            startAutoScroll();
+        }
+
+        // Listeners (mouse + touch). Usamos window para mousemove/touchmove por si el cursor sale del área.
+        wrapper.addEventListener('mousedown', startDrag, { passive: false });
+        wrapper.addEventListener('touchstart', startDrag, { passive: false });
+
+        window.addEventListener('mousemove', moveDrag, { passive: false });
+        window.addEventListener('touchmove', moveDrag, { passive: false });
+
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('touchend', endDrag);
+
+        // Autoscroll suave (pausa al arrastrar)
+        function startAutoScroll() {
+            cancelAutoScroll();
+            autoScrollTimer = setInterval(() => {
+                if (isDragging) return;
+                wrapper.scrollLeft += 0.7; // ajusta velocidad (menor = más lento)
+                if (wrapper.scrollLeft >= singleWidth * 2) wrapper.scrollLeft -= singleWidth;
+            }, 16); // ~60fps
+        }
+
+        function cancelAutoScroll() {
+            if (autoScrollTimer) {
+                clearInterval(autoScrollTimer);
+                autoScrollTimer = null;
+            }
+        }
+
+        // pausar cuando el mouse esté encima
+        wrapper.addEventListener('mouseenter', cancelAutoScroll);
+        wrapper.addEventListener('mouseleave', startAutoScroll);
+
+        // iniciar autoscroll
+        startAutoScroll();
+    });
 }
 
 
