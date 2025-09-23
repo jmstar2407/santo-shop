@@ -15,7 +15,8 @@
     <meta property="og:title" content="Santo Sex Shop ❤️🔥😈">
     <meta property="og:description"
         content="Santo Sex Shop - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.">
-    <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/santo-shop-ecdc1.firebasestorage.app/o/logo_1.png?alt=media&token=f5981bd3-9d84-4cf5-a955-26e0ff964d8c">
+    <meta property="og:image"
+        content="https://firebasestorage.googleapis.com/v0/b/santo-shop-ecdc1.firebasestorage.app/o/logo_1.png?alt=media&token=f5981bd3-9d84-4cf5-a955-26e0ff964d8c">
     <meta property="og:url" content="https://jmstar2407.github.io/santo-shop/">
     <meta property="og:type" content="website">
 
@@ -124,7 +125,6 @@
                 transform: translateX(-50%);
             }
         }
-        
     </style>
 </head>
 
@@ -298,8 +298,22 @@
         </div>
     </div>
 
+
+
+        <div class="prev-info-down">
+                <div class="division"></div>
+                
+            <p>En Santo Sex Shop nos comprometemos a ofrecerte productos de la más alta calidad con total discreción y confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se envía en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura y llena de satisfacción.</p>
+        </div>
+
     <div class="info-down">
         <div class="background-down"><img src="./img/2T-Elvis Sex Shop Logo777.png"></div>
+        <div class="info-mini-redes">
+            <h6>Síguenos:</h6>
+            <div>
+                <img src="./img/icons/Instagram_logo_1.svg">
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -585,18 +599,18 @@
 
         // Display products
         // Display products
-function displayProducts() {
-    const grid = document.getElementById('productsGrid');
-    const filteredProducts = currentCategory === 'all'
-        ? products
-        : products.filter(product => product.categoria === currentCategory);
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            const filteredProducts = currentCategory === 'all'
+                ? products
+                : products.filter(product => product.categoria === currentCategory);
 
-    if (filteredProducts.length === 0) {
-        grid.innerHTML = '<div class="loading"><p>No hay productos en esta categoría</p></div>';
-        return;
-    }
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '<div class="loading"><p>No hay productos en esta categoría</p></div>';
+                return;
+            }
 
-    grid.innerHTML = filteredProducts.map(product => `
+            grid.innerHTML = filteredProducts.map(product => `
         <div class="product-card" onclick="openProductModal('${product.id}')">
             <div class="product-image">
                 <img src="${product.icono}" alt="${product.nombre}">
@@ -604,12 +618,12 @@ function displayProducts() {
             </div>
             <div class="product-info">
                 <h4 class="product-name">${product.nombre}</h4>
-                <div class="product-description">${product.descripcion.substring(0, 80)}...</div>
+                <div class="product-description">${product.descripcion}</div>
                 <div class="product-price">${formatPrice(product.precio)}</div>
             </div>
         </div>
     `).join('');
-}
+        }
 
         // Select category
         function selectCategory(categoryId) {
@@ -631,32 +645,32 @@ function displayProducts() {
         }
 
         // Open product modal
-// Open product modal
-function openProductModal(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
+        // Open product modal
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
 
-    // Update modal content
-    document.getElementById('modalProductName').textContent = product.nombre;
-    document.getElementById('modalProductName2').textContent = product.nombre;
-    document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
-    document.getElementById('modalProductDescription').innerHTML = product.descripcion;
+            // Update modal content
+            document.getElementById('modalProductName').textContent = product.nombre;
+            document.getElementById('modalProductName2').textContent = product.nombre;
+            document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
+            document.getElementById('modalProductDescription').innerHTML = product.descripcion;
 
-    // Generar el enlace del producto (usando la URL actual + parámetro del producto)
-    const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
-    
-    // Update WhatsApp button - mensaje modificado
-    const whatsappBtn = document.getElementById('whatsappBtn');
-    const message = encodeURIComponent(`Saludos, me interesa este producto: ${productUrl}`);
-    whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
+            // Generar el enlace del producto (usando la URL actual + parámetro del producto)
+            const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
 
-    // Setup gallery
-    setupProductGallery(product);
+            // Update WhatsApp button - mensaje modificado
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            const message = encodeURIComponent(`Saludos, me interesa este producto: ${productUrl}`);
+            whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
 
-    // Show modal
-    document.getElementById('productModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
+            // Setup gallery
+            setupProductGallery(product);
+
+            // Show modal
+            document.getElementById('productModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
 
         // Setup product gallery
         function setupProductGallery(product) {
@@ -795,29 +809,29 @@ function openProductModal(productId) {
         function updateWhatsAppButtonPosition() {
             const whatsappBtn = document.getElementById('whatsappFloatBtn');
             const footer = document.querySelector('footer');
-            
+
             if (!whatsappBtn || !footer) return;
-            
+
             // Calcular la posición del footer
             const footerRect = footer.getBoundingClientRect();
             const footerTop = footerRect.top;
-            
+
             // Altura del botón de WhatsApp
             const btnHeight = whatsappBtn.offsetHeight;
-            
+
             // Margen de seguridad (20px)
             const safetyMargin = 20;
-            
+
             // Si el botón está cerca del footer, ajustar su posición
             if (footerTop < window.innerHeight) {
                 // El footer está visible en la pantalla
                 const overlap = window.innerHeight - footerTop;
                 const maxBottom = window.innerHeight - overlap - safetyMargin;
-                
+
                 // Si el botón está por debajo del límite permitido, ajustarlo
                 const btnRect = whatsappBtn.getBoundingClientRect();
                 const btnBottom = btnRect.bottom;
-                
+
                 if (btnBottom > maxBottom) {
                     // Calcular cuánto necesitamos mover el botón hacia arriba
                     const moveUp = btnBottom - maxBottom;
@@ -860,7 +874,7 @@ function openProductModal(productId) {
             // Configurar el evento de scroll para el botón de WhatsApp
             window.addEventListener('scroll', updateWhatsAppButtonPosition);
             window.addEventListener('resize', updateWhatsAppButtonPosition);
-            
+
             // Ejecutar una vez al cargar para establecer la posición inicial
             setTimeout(updateWhatsAppButtonPosition, 100);
 
