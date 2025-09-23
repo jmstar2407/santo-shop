@@ -548,116 +548,38 @@
         }
 
         // Mostrar productos destacados con animación infinita
-      function displayFeaturedProducts(products) {
-    const track = document.getElementById('featuredProductsTrack');
-    const wrapper = track.parentElement; // .featured-products-container
+        function displayFeaturedProducts(products) {
+            const container = document.getElementById('featuredProductsTrack');
 
-    if (products.length === 0) {
-        track.innerHTML = `<div class="no-featured">No hay productos destacados en este momento</div>`;
-        return;
-    }
-
-    // HTML de las tarjetas
-    const productsHTML = products.map(product => `
-        <div class="featured-product-card" onclick="openProductModal('${product.id}')">
-            <div class="featured-product-image">
-                <img src="${product.icono}" alt="${product.nombre}">
-                <div class="shadow-img"></div>
-            </div>
-            <div class="featured-product-info">
-                <h4 class="featured-product-name">${product.nombre}</h4>
-                <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
-                <div class="featured-product-price">${formatPrice(product.precio)}</div>
-            </div>
-        </div>
-    `).join('');
-
-    // duplicamos el contenido para el loop infinito
-    track.innerHTML = productsHTML + productsHTML;
-
-    // evitar que las imágenes interfieran con el arrastre nativo
-    track.querySelectorAll('img').forEach(img => img.draggable = false);
-
-    // calculamos anchos *después* de render (requestAnimationFrame)
-    requestAnimationFrame(() => {
-        const singleWidth = track.scrollWidth / 2; // ancho del conjunto original (no duplicado)
-        // comenzar en el "medio" para permitir arrastrar hacia ambos lados sin choque
-        wrapper.scrollLeft = singleWidth;
-
-        let isDragging = false;
-        let startX = 0;
-        let scrollStart = 0;
-        let autoScrollTimer = null;
-
-        function startDrag(e) {
-            isDragging = true;
-            wrapper.classList.add('dragging');
-            startX = (e.type === 'touchstart') ? e.touches[0].pageX : e.pageX;
-            scrollStart = wrapper.scrollLeft;
-            cancelAutoScroll();
-            // prevenir selección de texto
-            e.preventDefault && e.preventDefault();
-        }
-
-        function moveDrag(e) {
-            if (!isDragging) return;
-            const x = (e.type === 'touchmove') ? e.touches[0].pageX : e.pageX;
-            const delta = startX - x;
-            wrapper.scrollLeft = scrollStart + delta;
-
-            // loop: si llegamos a un extremo, saltamos para mantener continuidad
-            if (wrapper.scrollLeft >= singleWidth * 2) {
-                wrapper.scrollLeft -= singleWidth;
-            } else if (wrapper.scrollLeft <= 0) {
-                wrapper.scrollLeft += singleWidth;
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="no-featured">
+                        No hay productos destacados en este momento
+                    </div>
+                `;
+                return;
             }
+
+            // Crear HTML para los productos
+            const productsHTML = products.map(product => `
+                <div class="featured-product-card" onclick="openProductModal('${product.id}')">
+                    <div class="featured-product-image">
+                        <img src="${product.icono}" alt="${product.nombre}">
+                        <div class="shadow-img"></div>
+                    </div>
+                    <div class="featured-product-info">
+                        <h4 class="featured-product-name">${product.nombre}</h4>
+                        <h3 class="featured-product-description">${product.descripcion.substring(0, 60)}...</h3>
+                        <div class="featured-product-price">${formatPrice(product.precio)}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Duplicar los productos para crear el efecto de scroll infinito
+            container.innerHTML = productsHTML + productsHTML;
         }
 
-        function endDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-            wrapper.classList.remove('dragging');
-            startAutoScroll();
-        }
-
-        // Listeners (mouse + touch). Usamos window para mousemove/touchmove por si el cursor sale del área.
-        wrapper.addEventListener('mousedown', startDrag, { passive: false });
-        wrapper.addEventListener('touchstart', startDrag, { passive: false });
-
-        window.addEventListener('mousemove', moveDrag, { passive: false });
-        window.addEventListener('touchmove', moveDrag, { passive: false });
-
-        window.addEventListener('mouseup', endDrag);
-        window.addEventListener('touchend', endDrag);
-
-        // Autoscroll suave (pausa al arrastrar)
-        function startAutoScroll() {
-            cancelAutoScroll();
-            autoScrollTimer = setInterval(() => {
-                if (isDragging) return;
-                wrapper.scrollLeft += 0.7; // ajusta velocidad (menor = más lento)
-                if (wrapper.scrollLeft >= singleWidth * 2) wrapper.scrollLeft -= singleWidth;
-            }, 16); // ~60fps
-        }
-
-        function cancelAutoScroll() {
-            if (autoScrollTimer) {
-                clearInterval(autoScrollTimer);
-                autoScrollTimer = null;
-            }
-        }
-
-        // pausar cuando el mouse esté encima
-        wrapper.addEventListener('mouseenter', cancelAutoScroll);
-        wrapper.addEventListener('mouseleave', startAutoScroll);
-
-        // iniciar autoscroll
-        startAutoScroll();
-    });
-}
-
-
-
+        // Display products
         // Display products
 function displayProducts() {
     const grid = document.getElementById('productsGrid');
