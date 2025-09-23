@@ -8,7 +8,6 @@
     <link rel="icon" href="./img/logo_1.png" type="image/png">
     <link rel="stylesheet" href="./css/style.css" />
 
-
     <meta name="description"
         content="Santo Sex Shop - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.">
 
@@ -125,6 +124,7 @@
                 transform: translateX(-50%);
             }
         }
+        
     </style>
 </head>
 
@@ -300,8 +300,8 @@
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <p>&copy; 2025 Santo Sex Shop. Todos los derechos reservados. | Envío discreto garantizado</p>
+        <div class="container footer">
+            <p>&copy; 2025 Santo Sex Shop. Todos los derechos reservados.<br>Desarrollado por José Polanco.</p>
         </div>
     </footer>
 
@@ -627,35 +627,32 @@ function displayProducts() {
         }
 
         // Open product modal
-        function openProductModal(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
+// Open product modal
+function openProductModal(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
 
-            // Update modal content
-            document.getElementById('modalProductName').textContent = product.nombre;
-            document.getElementById('modalProductName2').textContent = product.nombre;
-            document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
-            document.getElementById('modalProductDescription').innerHTML = product.descripcion;
+    // Update modal content
+    document.getElementById('modalProductName').textContent = product.nombre;
+    document.getElementById('modalProductName2').textContent = product.nombre;
+    document.getElementById('modalProductPrice').textContent = formatPrice(product.precio);
+    document.getElementById('modalProductDescription').innerHTML = product.descripcion;
 
+    // Generar el enlace del producto (usando la URL actual + parámetro del producto)
+    const productUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+    
+    // Update WhatsApp button - mensaje modificado
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const message = encodeURIComponent(`Saludos, me interesa este producto: ${productUrl}`);
+    whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
 
-            // Update WhatsApp button
-            const whatsappBtn = document.getElementById('whatsappBtn');
-            const message = encodeURIComponent(`Hola, me interesa el producto: ${product.nombre} - ${formatPrice(product.precio)}. ¿Podrían darme más información?`);
-            whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${message}`;
+    // Setup gallery
+    setupProductGallery(product);
 
-            // Update meta tags for social sharing
-            /*document.getElementById('metaTitle').content = product.nombre;
-            document.getElementById('metaDescription').content = product.descripcion;
-            document.getElementById('metaImage').content = product.icono;
-            document.getElementById('metaUrl').content = window.location.href + '?product=' + product.id;*/
-
-            // Setup gallery
-            setupProductGallery(product);
-
-            // Show modal
-            document.getElementById('productModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
+    // Show modal
+    document.getElementById('productModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
 
         // Setup product gallery
         function setupProductGallery(product) {
@@ -790,6 +787,47 @@ function displayProducts() {
             }, 7000); // 7 segundos
         }
 
+        // Función para manejar la posición del botón de WhatsApp
+        function updateWhatsAppButtonPosition() {
+            const whatsappBtn = document.getElementById('whatsappFloatBtn');
+            const footer = document.querySelector('footer');
+            
+            if (!whatsappBtn || !footer) return;
+            
+            // Calcular la posición del footer
+            const footerRect = footer.getBoundingClientRect();
+            const footerTop = footerRect.top;
+            
+            // Altura del botón de WhatsApp
+            const btnHeight = whatsappBtn.offsetHeight;
+            
+            // Margen de seguridad (20px)
+            const safetyMargin = 20;
+            
+            // Si el botón está cerca del footer, ajustar su posición
+            if (footerTop < window.innerHeight) {
+                // El footer está visible en la pantalla
+                const overlap = window.innerHeight - footerTop;
+                const maxBottom = window.innerHeight - overlap - safetyMargin;
+                
+                // Si el botón está por debajo del límite permitido, ajustarlo
+                const btnRect = whatsappBtn.getBoundingClientRect();
+                const btnBottom = btnRect.bottom;
+                
+                if (btnBottom > maxBottom) {
+                    // Calcular cuánto necesitamos mover el botón hacia arriba
+                    const moveUp = btnBottom - maxBottom;
+                    whatsappBtn.style.transform = `translateY(-${moveUp}px)`;
+                } else {
+                    // Restablecer la posición si no hay superposición
+                    whatsappBtn.style.transform = 'translateY(0)';
+                }
+            } else {
+                // Restablecer la posición si el footer no está visible
+                whatsappBtn.style.transform = 'translateY(0)';
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             // Event listeners
@@ -814,6 +852,13 @@ function displayProducts() {
 
             // Iniciar carrusel de textos
             initDynamicTexts();
+
+            // Configurar el evento de scroll para el botón de WhatsApp
+            window.addEventListener('scroll', updateWhatsAppButtonPosition);
+            window.addEventListener('resize', updateWhatsAppButtonPosition);
+            
+            // Ejecutar una vez al cargar para establecer la posición inicial
+            setTimeout(updateWhatsAppButtonPosition, 100);
 
             // Close modal on escape key
             document.addEventListener('keydown', (e) => {

@@ -30,6 +30,14 @@
             color: aliceblue;
         }
 
+        .footer {
+            width: 100%;
+            padding: 0 20px;
+            text-align: center;
+            color: #d9d9d9;
+            font-size: 0.7rem;
+        }
+
         /* Header */
         header {
             background: rgb(0 0 0 / 95%);
@@ -351,8 +359,8 @@
             padding: 0.5rem;
         }
 
-        .product-info h3{
-                      color: #666;
+        .product-info h3 {
+            color: #666;
             font-size: 0.8rem;
         }
 
@@ -383,7 +391,7 @@
         }
 
         .products-grid.compact .product-image {
-            height: 114px;
+            height: 140px;
             font-size: 3rem;
         }
 
@@ -689,6 +697,7 @@
             }
 
             .modal-content {
+                        height: 100%;
                 max-height: 100%;
                 border-radius: 0px;
             }
@@ -824,12 +833,12 @@
             width: 100%;
         }
 
-        /* Botón flotante de WhatsApp */
+        /* Estilos para el botón de WhatsApp mejorado */
         .whatsapp-float {
             text-decoration: none;
             position: fixed;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             bottom: 40px;
             right: 10px;
             background-color: #25d366;
@@ -837,12 +846,12 @@
             border-radius: 50px;
             text-align: center;
             font-size: 30px;
-            /*box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);*/
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            transform: translateY(0); /* Para la animación dinámica */
         }
 
         .whatsapp-float:hover {
@@ -943,7 +952,7 @@
             padding: 0.5rem;
         }
 
-                .featured-product-info h3 {
+        .featured-product-info h3 {
             font-size: 0.7rem;
             color: #333;
         }
@@ -963,7 +972,7 @@
             text-align: center;
         }
 
-   
+
 
         .featured-product-price {
             font-size: 1.3rem;
@@ -988,7 +997,3 @@
             }
 
         }
-
-
-
-        
