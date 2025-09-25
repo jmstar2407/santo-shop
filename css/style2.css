@@ -337,16 +337,13 @@ header {
 }
 
 .product-card {
-    background: white;
-    border-radius: 15px;
+    flex: 0 0 auto;
+    width: 280px;
+    background: rgb(255 255 255);
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
     cursor: pointer;
-}
-
-.product-card:hover {
-    transform: scale(0.98);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product-image {
@@ -807,6 +804,89 @@ footer {
     padding: 1rem 0;
 }
 
+
+
+
+/* Estilos para el botón "Mostrar Todo" */
+.show-all-btn {
+    background: linear-gradient(45deg, #e91e63, #9c27b0);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.show-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
+}
+
+/* Badge para mostrar la cantidad */
+.product-count-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+
+/* Estilos para cuando se muestran todos los productos */
+.category-products.expanded {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    overflow-x: visible;
+    padding-bottom: 0;
+}
+
+.category-products.expanded .product-card {
+    width: 100%;
+}
+
+/* Ocultar flechas de navegación cuando está expandido */
+.category-products.expanded~.category-nav {
+    display: none !important;
+}
+
+/* Ajustes responsive para la vista expandida */
+@media (max-width: 768px) {
+    .category-products.expanded {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .category-products.expanded {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos para el encabezado de categoría con botón */
+.category-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-title {
+    margin-bottom: 0 !important;
+}
+
+
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .hero h1 {
@@ -1151,47 +1231,4 @@ footer {
         height: 140px;
     }
 
-}
-
-
-
-
-/* Mensaje para dispositivos de escritorio */
-@media (min-width: 769px) {
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: black;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    body::after {
-        content: "⚠️ Esta web solo está disponible para dispositivos móviles. Por favor, ábrela desde tu teléfono.";
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 1.5rem;
-        text-align: center;
-        padding: 2rem;
-        z-index: 10000;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        max-width: 80%;
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 10px;
-        border: 2px solid #e91e63;
-    }
-
-    /* Ocultar todo el contenido en escritorio */
-    body > *:not(::before):not(::after) {
-        display: none !important;
-    }
 }
