@@ -257,7 +257,7 @@ header {
             /* dirección: de arriba hacia abajo */
             #121115 0%,
             /* color inicial */
-            #111115 8%,
+            #11111575 8%,
             /* se mantiene hasta el 10% */
             #9c27b000 10%,
             /* desde aquí cambia */
@@ -274,10 +274,10 @@ header {
     position: relative;
 }
 
-.section-title::after {
+.section-title::before {
     content: '';
     position: absolute;
-    bottom: -10px;
+    top: -7px;
     left: 50%;
     transform: translateX(-50%);
     width: 100px;
@@ -376,7 +376,7 @@ header {
 .product-name {
     font-size: 1.3rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
     color: #333;
     white-space: nowrap;
     overflow: hidden;
@@ -395,6 +395,13 @@ header {
     color: #666;
     font-size: 0.9rem;
     line-height: 1.5;
+}
+
+.product-description p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 /* Estilos para vista compacta */
@@ -812,30 +819,26 @@ footer {
     background: linear-gradient(45deg, #e91e63, #9c27b0);
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.2rem 0.4rem;
     border-radius: 20px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-left: 1rem;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 0.3rem;
 }
 
-.show-all-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
-}
+
 
 /* Badge para mostrar la cantidad */
 .product-count-badge {
     background: rgba(255, 255, 255, 0.2);
     padding: 0.2rem 0.5rem;
     border-radius: 10px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 400;
 }
 
 
@@ -861,23 +864,27 @@ footer {
 @media (max-width: 768px) {
     .category-products.expanded {
         grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        gap: 0.7rem;
     }
 }
 
 @media (max-width: 480px) {
     .category-products.expanded {
         grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        gap: 0.7rem;
     }
 }
 
 /* Estilos para el encabezado de categoría con botón */
 .category-header {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.7rem;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .category-title {
