@@ -152,7 +152,7 @@
             }
         }
 
-        .modal {
+         .modal {
             display: none;
             position: fixed;
             top: 0;
@@ -187,6 +187,7 @@
             animation: slideDown 0.3s ease-in forwards;
         }
 
+
         .modal-body {
             background: rgb(255 255 255);
             overflow: auto;
@@ -210,6 +211,8 @@
             justify-content: space-between;
         }
 
+
+
         #modalProductName2 {
             font-size: 1.6rem;
             font-weight: bold;
@@ -229,6 +232,8 @@
             border-radius: 8px;
             border: 2px dashed #e0e0e0;
         }
+
+
 
         .modal-footer {
             background: #f0f0f0;
@@ -262,6 +267,7 @@
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
         }
 
+
         /* Estilos para categorías y productos - MODIFICADO */
         .category-section {
             margin-bottom: 0.5rem;
@@ -269,12 +275,10 @@
 
         .category-title {
             font-size: 1rem;
-            font-weight: 400;
+            font-weight: 500;
             color: #fff;
             text-align: center;
             position: relative;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0;
         }
 
         /*.category-title::after {
@@ -364,35 +368,6 @@
         /* NUEVO: Estilos para las tarjetas de productos */
 
 
-        .product-image {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-        }
-
-
-        .product-info {
-            padding: 0rem 1rem 1rem 1rem;
-        }
-
-
-
-        .product-description {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            opacity: 0.8;
-        }
-
-        .product-price {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #e91e63;
-        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -605,7 +580,7 @@
                         <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
                     </div>
 
-                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                    <div class="gallery-thumbnail" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
                 </div>
@@ -641,7 +616,8 @@
     <div class="prev-info-down">
         <div class="division"></div>
 
-        <p>En <strong>Santo Sex Shop</strong> nos comprometemos a ofrecerte productos de la más alta calidad con total discreción y
+        <p>En <strong>Santo Sex Shop</strong> nos comprometemos a ofrecerte productos de la más alta calidad con total
+            discreción y
             confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se envía
             en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura y
             llena de satisfacción.</p>
@@ -652,7 +628,9 @@
         <div class="info-mini-redes">
             <h6>Síguenos:</h6>
             <div style="position: relative;">
-                <img src="./img/icons/Instagram_logo_1.svg"><a href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp" target="_blank" style="position: absolute;top: 0;left: 0;height: 100%;width: 100%;"></a>
+                <img src="./img/icons/Instagram_logo_1.svg"><a
+                    href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp" target="_blank"
+                    style="position: absolute;top: 0;left: 0;height: 100%;width: 100%;"></a>
             </div>
         </div>
     </div>
@@ -707,21 +685,20 @@
         }
 
         // Age verification
-        function confirmAge(isAdult) {
-            if (isAdult) {
-                document.getElementById('ageVerification').style.display = 'none';
-                sessionStorage.setItem('ageVerified', 'true');
-            } else {
-                window.location.href = 'https://www.google.com';
-            }
-        }
+// Age verification - SIEMPRE muestra el modal
+function confirmAge(isAdult) {
+    if (isAdult) {
+        document.getElementById('ageVerification').style.display = 'none';
+        // No guardar en sessionStorage para que siempre aparezca
+    } else {
+        window.location.href = 'https://www.google.com';
+    }
+}
 
-        // Check age verification on load
-        window.addEventListener('load', () => {
-            if (sessionStorage.getItem('ageVerified') === 'true') {
-                document.getElementById('ageVerification').style.display = 'none';
-            }
-        });
+// Eliminar cualquier verificación previa al cargar
+// window.addEventListener('load', () => {
+//     // Sin verificación - el modal siempre estará visible
+// });
 
         // Toggle categories panel
         function toggleCategoriesPanel() {
@@ -1237,7 +1214,7 @@
         // Actualizar galería
         function updateGallery() {
             const galleryMainImage = document.getElementById('galleryMainImage');
-            const thumbnails = document.querySelectorAll('.gallery-thumbnails img');
+            const thumbnails = document.querySelectorAll('.gallery-thumbnail img');
 
             galleryMainImage.src = currentProductImages[currentImageIndex];
 
