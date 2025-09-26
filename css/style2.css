@@ -507,6 +507,7 @@ header {
     align-items: center;
     justify-content: center;
     background: linear-gradient(83deg, #e91e63, #5c27b0);
+        background: gray;
     color: white;
     padding: 0.5rem 1rem;
 }
