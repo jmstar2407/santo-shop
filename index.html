@@ -26,10 +26,6 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-     
-    </style>
 </head>
 
 <body>
@@ -50,30 +46,6 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <!-- Header -->
-    <header>
-        <video autoplay loop muted playsinline class="video-fondo">
-            <source src="./img/vid/33090-395456658_small.mp4" type="video/mp4">
-            Tu navegador no soporta el video.
-        </video>
-
-        <div class="container">
-
-            <div class="header-content">
-                <div class="logo"><img src="./img/logo_1.png">
-                    <div class="tex-background">
-                        <h2 id="titleanim" style="font-size: 1.5rem;">Santo Sex Shop</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="social-icon">
-                <button><img src="./img/icons/Instagram_logo_1.svg"><a
-                        href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp"
-                        target="_blank"></a></button>
-            </div>
-        </div>
-    </header>
 
     <!-- Botón de filtro fijo -->
     <div class="filter-toggle" id="filterToggle">
@@ -95,59 +67,133 @@
         </ul>
     </div>
 
-    <div class="content-master">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="line01"></div>
-            <h1>Bienvenidos</h1>
-            <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos de
-                calidad.</p>
-        </section>
 
-        <!-- Sección de textos dinámicos -->
-        <section class="dynamic-text-section">
-            <div class="dynamic-text-container" id="dynamicTextContainer">
-                <div class="dynamic-texts-wrapper" id="dynamicTextsWrapper">
-                    <div class="dynamic-text">Envíos 100% discretos 🚚📦 | Calidad garantizada 💯 | Atención
-                        personalizada 💬</div>
-                    <div class="dynamic-text">Pequeños detalles… grandes travesuras 😈🔥🎁 | Disfruta con discreción 🤫
+    <div class="Box-Master">
+
+        <!-- Header -->
+        <header>
+            <video autoplay loop muted playsinline class="video-fondo">
+                <source src="./img/vid/33090-395456658_small.mp4" type="video/mp4">
+                Tu navegador no soporta el video.
+            </video>
+
+            <div class="container">
+
+                <div class="header-content">
+                    <div class="logo"><img src="./img/logo_1.png">
+                        <div class="tex-background">
+                            <h2 id="titleanim" style="font-size: 1.5rem;">Santo Sex Shop</h2>
+                        </div>
                     </div>
-                    <div class="dynamic-text">Explora tus fantasías 💭✨ | Atrévete a más 🔥😈 | Compra con confianza 😉
+                </div>
+
+                <div class="social-icon">
+                    <button><img src="./img/icons/Instagram_logo_1.svg"><a
+                            href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp"
+                            target="_blank"></a></button>
+                </div>
+            </div>
+        </header>
+
+
+
+        <div class="content-master">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="line01"></div>
+                <h1>Bienvenidos</h1>
+                <p><strong>Santo Sex Shop</strong> - Tu tienda íntima de confianza, con la mejor selección de productos
+                    de
+                    calidad.</p>
+            </section>
+
+            <!-- Sección de textos dinámicos -->
+            <section class="dynamic-text-section">
+                <div class="dynamic-text-container" id="dynamicTextContainer">
+                    <div class="dynamic-texts-wrapper" id="dynamicTextsWrapper">
+                        <div class="dynamic-text">Envíos 100% discretos 🚚📦 | Calidad garantizada 💯 | Atención
+                            personalizada 💬</div>
+                        <div class="dynamic-text">Pequeños detalles… grandes travesuras 😈🔥🎁 | Disfruta con discreción
+                            🤫
+                        </div>
+                        <div class="dynamic-text">Explora tus fantasías 💭✨ | Atrévete a más 🔥😈 | Compra con confianza
+                            😉
+                        </div>
+                        <div class="dynamic-text">Porque tu placer y tu privacidad son nuestra prioridad ❤️‍🔥🔒</div>
+                        <div class="dynamic-text">Más que un sex shop… tu cómplice en cada travesura 😏✨</div>
                     </div>
-                    <div class="dynamic-text">Porque tu placer y tu privacidad son nuestra prioridad ❤️‍🔥🔒</div>
-                    <div class="dynamic-text">Más que un sex shop… tu cómplice en cada travesura 😏✨</div>
+                </div>
+                <div class="dynamic-indicators" id="dynamicIndicators">
+                    <!-- Los indicadores se generarán con JavaScript -->
+                </div>
+            </section>
+
+            <!-- Nueva sección de productos destacados -->
+            <section class="featured-section">
+
+                <h2 class="featured-title">Productos Destacados 👑</h2>
+
+                <div class="featured-products-container">
+                    <div class="featured-products-track" id="featuredProductsTrack">
+                        <!-- Los productos destacados se cargarán aquí -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section class="products-section">
+                <h2 class="section-title">Nuestros Productos</h2>
+
+                <!-- Sección de categorías y productos -->
+                <div id="categoriesProductsContainer">
+                    <!-- Las categorías con sus productos se cargarán aquí -->
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Cargando productos...</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+
+
+        <div class="prev-info-down">
+            <div class="division"></div>
+
+            <p>En <strong>Santo Sex Shop</strong> nos comprometemos a ofrecerte productos de la más alta calidad con
+                total
+                discreción y
+                confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se
+                envía
+                en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura
+                y
+                llena de satisfacción.</p>
+        </div>
+
+        <div class="info-down">
+            <div class="background-down"><img src="./img/2T-Elvis Sex Shop Logo777.png"></div>
+            <div class="info-mini-redes">
+                <h6>Síguenos:</h6>
+                <div style="position: relative;">
+                    <img src="./img/icons/Instagram_logo_1.svg"><a
+                        href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp" target="_blank"
+                        style="position: absolute;top: 0;left: 0;height: 100%;width: 100%;"></a>
                 </div>
             </div>
-            <div class="dynamic-indicators" id="dynamicIndicators">
-                <!-- Los indicadores se generarán con JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container footer">
+                <p>&copy; 2025 Santo Sex Shop. Todos los derechos reservados.<br>Desarrollado por José Polanco.</p>
             </div>
-        </section>
+        </footer>
 
-        <!-- Nueva sección de productos destacados -->
-        <section class="featured-section">
 
-            <h2 class="featured-title">Productos Destacados 👑</h2>
 
-            <div class="featured-products-container">
-                <div class="featured-products-track" id="featuredProductsTrack">
-                    <!-- Los productos destacados se cargarán aquí -->
-                </div>
-            </div>
-        </section>
 
-        <!-- Products Section -->
-        <section class="products-section">
-            <h2 class="section-title">Nuestros Productos</h2>
 
-            <!-- Sección de categorías y productos -->
-            <div id="categoriesProductsContainer">
-                <!-- Las categorías con sus productos se cargarán aquí -->
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <div>Cargando productos...</div>
-                </div>
-            </div>
-        </section>
     </div>
 
     <!-- Product Modal -->
@@ -166,7 +212,7 @@
                         <button class="gallery-nav gallery-next" onclick="changeImage(1)">&#10095;</button>
                     </div>
 
-                    <div class="gallery-thumbnail" id="galleryThumbnails">
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
                         <!-- Las miniaturas se agregarán aquí -->
                     </div>
                 </div>
@@ -199,34 +245,7 @@
         </div>
     </div>
 
-    <div class="prev-info-down">
-        <div class="division"></div>
 
-        <p>En <strong>Santo Sex Shop</strong> nos comprometemos a ofrecerte productos de la más alta calidad con total
-            discreción y
-            confianza. Sabemos lo importante que es tu privacidad, por eso cada pedido se prepara con cuidado y se envía
-            en empaques 100% confidenciales. Nuestro objetivo es que vivas una experiencia de compra cómoda, segura y
-            llena de satisfacción.</p>
-    </div>
-
-    <div class="info-down">
-        <div class="background-down"><img src="./img/2T-Elvis Sex Shop Logo777.png"></div>
-        <div class="info-mini-redes">
-            <h6>Síguenos:</h6>
-            <div style="position: relative;">
-                <img src="./img/icons/Instagram_logo_1.svg"><a
-                    href="https://www.instagram.com/santo.sex.shop?igsh=dnNxamNoaWRxZmVp" target="_blank"
-                    style="position: absolute;top: 0;left: 0;height: 100%;width: 100%;"></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container footer">
-            <p>&copy; 2025 Santo Sex Shop. Todos los derechos reservados.<br>Desarrollado por José Polanco.</p>
-        </div>
-    </footer>
 
     <script>
         // Firebase Configuration
@@ -270,21 +289,15 @@
             })}`;
         }
 
-        // Age verification
-// Age verification - SIEMPRE muestra el modal
-function confirmAge(isAdult) {
-    if (isAdult) {
-        document.getElementById('ageVerification').style.display = 'none';
-        // No guardar en sessionStorage para que siempre aparezca
-    } else {
-        window.location.href = 'https://www.google.com';
-    }
-}
-
-// Eliminar cualquier verificación previa al cargar
-// window.addEventListener('load', () => {
-//     // Sin verificación - el modal siempre estará visible
-// });
+        // Age verification - SIEMPRE muestra el modal
+        function confirmAge(isAdult) {
+            if (isAdult) {
+                document.getElementById('ageVerification').style.display = 'none';
+                // No guardar en sessionStorage para que siempre aparezca
+            } else {
+                window.location.href = 'https://www.google.com';
+            }
+        }
 
         // Toggle categories panel
         function toggleCategoriesPanel() {
@@ -541,8 +554,6 @@ function confirmAge(isAdult) {
             initCategoryNavigation();
         }
 
-
-
         // Función para mostrar/ocultar todos los productos de una categoría
         function toggleShowAll(categoryId) {
             const categoryProductsContainer = document.getElementById(`category-${categoryId}`);
@@ -608,8 +619,6 @@ function confirmAge(isAdult) {
                 updateNavButtons(productsElement, prevButton, nextButton);
             }
         }
-
-
 
         // Inicializar navegación con flechas para categorías
         function initCategoryNavigation() {
@@ -772,9 +781,9 @@ function confirmAge(isAdult) {
 
             // Crear miniaturas
             galleryThumbnails.innerHTML = currentProductImages.map((img, index) => `
-                <img src="${img}" alt="Miniatura ${index + 1}" 
-                     onclick="changeImageByIndex(${index})" 
-                     class="${index === 0 ? 'active' : ''}">
+                <div class="gallery-thumbnail ${index === 0 ? 'active' : ''}" onclick="setCurrentImage(${index})">
+                    <img src="${img}" alt="Miniatura ${index + 1}">
+                </div>
             `).join('');
         }
 
@@ -782,182 +791,175 @@ function confirmAge(isAdult) {
         function changeImage(direction) {
             currentImageIndex += direction;
 
+            // Verificar límites
             if (currentImageIndex < 0) {
                 currentImageIndex = currentProductImages.length - 1;
             } else if (currentImageIndex >= currentProductImages.length) {
                 currentImageIndex = 0;
             }
 
-            updateGallery();
+            setCurrentImage(currentImageIndex);
         }
 
-        // Cambiar imagen por índice específico
-        function changeImageByIndex(index) {
-            currentImageIndex = index;
-            updateGallery();
-        }
-
-        // Actualizar galería
-        function updateGallery() {
+        // Establecer imagen actual
+        function setCurrentImage(index) {
             const galleryMainImage = document.getElementById('galleryMainImage');
-            const thumbnails = document.querySelectorAll('.gallery-thumbnail img');
+            const thumbnails = document.querySelectorAll('.gallery-thumbnail');
 
-            galleryMainImage.src = currentProductImages[currentImageIndex];
+            // Actualizar índice
+            currentImageIndex = index;
 
-            thumbnails.forEach((thumb, index) => {
-                thumb.classList.toggle('active', index === currentImageIndex);
+            // Cambiar imagen principal
+            galleryMainImage.src = currentProductImages[index];
+
+            // Actualizar miniaturas activas
+            thumbnails.forEach((thumb, i) => {
+                if (i === index) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
             });
         }
 
         // Cerrar modal
         function closeModal() {
-            const modal = document.getElementById('productModal');
-            const modalContent = document.querySelector('.modal-content');
-
-            // Aplicar animación de salida
-            modalContent.classList.add('closing');
-
-            setTimeout(() => {
-                modal.style.display = 'none';
-                modalContent.classList.remove('closing');
-                document.body.style.overflow = 'auto';
-            }, 300);
+            document.getElementById('productModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
-        // Cerrar modal al hacer clic fuera del contenido
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
-
-        // Inicializar carrusel de textos dinámicos
+        // Inicializar textos dinámicos
         function initDynamicTexts() {
-            const textsWrapper = document.getElementById('dynamicTextsWrapper');
-            const indicatorsContainer = document.getElementById('dynamicIndicators');
-            const texts = document.querySelectorAll('.dynamic-text');
+            const wrapper = document.getElementById('dynamicTextsWrapper');
+            const indicators = document.getElementById('dynamicIndicators');
+            const texts = wrapper.querySelectorAll('.dynamic-text');
             const totalTexts = texts.length;
 
             // Crear indicadores
-            indicatorsContainer.innerHTML = Array.from({ length: totalTexts }, (_, i) =>
-                `<div class="indicator ${i === 0 ? 'active' : ''}" onclick="goToText(${i})"></div>`
+            indicators.innerHTML = Array.from({ length: totalTexts }, (_, i) =>
+                `<span class="indicator ${i === 0 ? 'active' : ''}" onclick="goToText(${i})"></span>`
             ).join('');
 
-            // Iniciar rotación automática
-            startTextRotation();
+            // Configurar animación automática
+            textInterval = setInterval(() => {
+                currentTextIndex = (currentTextIndex + 1) % totalTexts;
+                updateTextPosition();
+            }, 5000);
 
-            // Pausar rotación al hacer hover
-            textsWrapper.addEventListener('mouseenter', () => {
-                clearInterval(textInterval);
-            });
-
-            // Reanudar rotación al salir del hover
-            textsWrapper.addEventListener('mouseleave', () => {
-                startTextRotation();
-            });
-
-            // Agregar soporte para desplazamiento táctil
-            textsWrapper.addEventListener('touchstart', handleTouchStart, false);
-            textsWrapper.addEventListener('touchmove', handleTouchMove, false);
+            // Configurar eventos táctiles para deslizar
+            wrapper.addEventListener('touchstart', handleTouchStart, false);
+            wrapper.addEventListener('touchmove', handleTouchMove, false);
+            wrapper.addEventListener('touchend', handleTouchEnd, false);
         }
 
         // Manejar inicio de toque
         function handleTouchStart(e) {
             startX = e.touches[0].clientX;
             isDragging = true;
-            clearInterval(textInterval);
+            clearInterval(textInterval); // Pausar animación automática
         }
 
         // Manejar movimiento de toque
         function handleTouchMove(e) {
             if (!isDragging) return;
-
             currentX = e.touches[0].clientX;
-            const diffX = startX - currentX;
-
-            // Cambiar texto si el desplazamiento es suficiente
-            if (Math.abs(diffX) > 50) {
-                if (diffX > 0) {
-                    // Desplazamiento a la derecha - siguiente texto
-                    goToText((currentTextIndex + 1) % document.querySelectorAll('.dynamic-text').length);
-                } else {
-                    // Desplazamiento a la izquierda - texto anterior
-                    goToText((currentTextIndex - 1 + document.querySelectorAll('.dynamic-text').length) % document.querySelectorAll('.dynamic-text').length);
-                }
-                isDragging = false;
-            }
         }
 
-        // Iniciar rotación automática de textos
-        function startTextRotation() {
+        // Manejar fin de toque
+        function handleTouchEnd() {
+            if (!isDragging) return;
+
+            const diffX = startX - currentX;
+            const threshold = 50; // Mínimo desplazamiento para cambiar texto
+
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0) {
+                    // Deslizamiento hacia izquierda - siguiente texto
+                    currentTextIndex = (currentTextIndex + 1) % document.querySelectorAll('.dynamic-text').length;
+                } else {
+                    // Deslizamiento hacia derecha - texto anterior
+                    currentTextIndex = (currentTextIndex - 1 + document.querySelectorAll('.dynamic-text').length) % document.querySelectorAll('.dynamic-text').length;
+                }
+                updateTextPosition();
+            }
+
+            isDragging = false;
+
+            // Reanudar animación automática después de 5 segundos
             textInterval = setInterval(() => {
-                goToText((currentTextIndex + 1) % document.querySelectorAll('.dynamic-text').length);
+                currentTextIndex = (currentTextIndex + 1) % document.querySelectorAll('.dynamic-text').length;
+                updateTextPosition();
             }, 5000);
         }
 
         // Ir a texto específico
         function goToText(index) {
-            const textsWrapper = document.getElementById('dynamicTextsWrapper');
-            const indicators = document.querySelectorAll('.indicator');
-            const totalTexts = document.querySelectorAll('.dynamic-text').length;
-
             currentTextIndex = index;
+            updateTextPosition();
+            clearInterval(textInterval);
 
-            // Actualizar posición del carrusel
-            textsWrapper.style.transform = `translateX(-${currentTextIndex * 100}%)`;
+            // Reanudar animación automática después de 5 segundos
+            textInterval = setInterval(() => {
+                currentTextIndex = (currentTextIndex + 1) % document.querySelectorAll('.dynamic-text').length;
+                updateTextPosition();
+            }, 5000);
+        }
+
+        // Actualizar posición del texto
+        function updateTextPosition() {
+            const wrapper = document.getElementById('dynamicTextsWrapper');
+            const indicators = document.querySelectorAll('.indicator');
+
+            // Mover el wrapper
+            wrapper.style.transform = `translateX(-${currentTextIndex * 100}%)`;
 
             // Actualizar indicadores
             indicators.forEach((indicator, i) => {
-                indicator.classList.toggle('active', i === currentTextIndex);
+                if (i === currentTextIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
             });
         }
 
-        // Inicializar la aplicación
-        async function initApp() {
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Cargar categorías y productos
             await loadCategories();
             await loadProducts();
             await loadFeaturedProducts();
+
+            // Inicializar textos dinámicos
             initDynamicTexts();
 
-            // Actualizar contadores de productos por categoría
-            updateProductCounts();
-        }
-
-        // Actualizar contadores de productos
-        function updateProductCounts() {
-            categories.forEach(category => {
-                const count = products.filter(product => product.categoria === category.id).length;
-                const countElement = document.getElementById(`count-${category.id}`);
-                if (countElement) {
-                    countElement.textContent = count;
-                }
-            });
-
-            // Contador para "Todos"
-            const allCountElement = document.getElementById('count-all');
-            if (allCountElement) {
-                allCountElement.textContent = products.length;
-            }
-        }
-
-        // Event listeners cuando el DOM esté cargado
-        document.addEventListener('DOMContentLoaded', () => {
-            // Toggle categories panel
+            // Configurar eventos
             document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
             document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
             document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
 
-            // Inicializar la aplicación
-            initApp();
-        });
+            // Cerrar modal al hacer clic fuera del contenido
+            document.getElementById('productModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
 
-        // Manejar el botón flotante de WhatsApp
-        document.getElementById('whatsappFloatBtn').addEventListener('click', function (e) {
-            e.preventDefault();
-            const message = "Saludos, me gustaría comunicarme con servicio al cliente.";
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+            // Cerrar modal con tecla Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            // Configurar botón flotante de WhatsApp
+            const whatsappBtn = document.getElementById('whatsappFloatBtn');
+            if (whatsappBtn) {
+                whatsappBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.open(this.href, '_blank');
+                });
+            }
         });
     </script>
 </body>
