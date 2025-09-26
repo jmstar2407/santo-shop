@@ -475,6 +475,8 @@ header {
     animation: slideDown 0.3s ease-in forwards;
 }
 
+
+
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -1423,7 +1425,6 @@ footer {
 
     .product-description {
         font-size: 0.8rem;
-        display: none;
     }
 
     #modalProductPrice {
