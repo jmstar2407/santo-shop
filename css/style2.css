@@ -701,8 +701,7 @@ header {
 }
 
 /* Botón de WhatsApp */
-.whatsapp-btn,
-.whatsapp-float {
+.whatsapp-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.7rem;
@@ -717,6 +716,22 @@ header {
     transition: all 0.3s ease;
     text-decoration: none;
     box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-float {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: #25d366;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .whatsapp-btn:hover,
