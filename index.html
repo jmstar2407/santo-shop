@@ -11,14 +11,24 @@
     <meta name="description"
         content="Santo Sex Shop - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.">
 
-    <!-- WhatsApp Preview (Open Graph) -->
-    <meta property="og:title" content="Santo Sex Shop ❤️🔥😈">
-    <meta property="og:description"
-        content="Santo Sex Shop - Tu tienda íntima de confianza, con la mejor selección de productos de calidad.">
-    <meta property="og:image"
-        content="https://firebasestorage.googleapis.com/v0/b/santo-shop-ecdc1.firebasestorage.app/o/logo_1.png?alt=media&token=f5981bd3-9d84-4cf5-a955-26e0ff964d8c">
-    <meta property="og:url" content="https://jmstar2407.github.io/santo-shop/">
-    <meta property="og:type" content="website">
+<!-- WhatsApp & Social Media Preview (Open Graph) -->
+<meta property="og:title" content="Santo Sex Shop ❤️🔥😈">
+<meta property="og:description" content="Tu tienda íntima de confianza en República Dominicana. Encuentra la mejor selección de productos eróticos de calidad, con envío discreto y seguro.">
+<meta property="og:image" content="https://santosexshop.com/logo_1.png">
+<meta property="og:url" content="https://santosexshop.com/">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card Preview -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Santo Sex Shop ❤️🔥😈">
+<meta name="twitter:description" content="Tu tienda íntima de confianza en República Dominicana. Productos eróticos de calidad, envío discreto y seguro.">
+<meta name="twitter:image" content="https://santosexshop.com/logo_1.png">
+
+<!-- SEO Meta -->
+<meta name="description" content="Santo Sex Shop - Tu tienda íntima de confianza en República Dominicana. Productos eróticos de calidad con envío discreto y seguro.">
+<meta name="author" content="Santo Sex Shop">
+<meta name="robots" content="index, follow">
+
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -338,33 +348,51 @@
         }
 
         // Display categories in the side panel
-        function displayCategories() {
-            const list = document.getElementById('categoriesList');
+// Display categories in the side panel
+function displayCategories() {
+    const list = document.getElementById('categoriesList');
 
-            // Add "Todos" category
-            const allCategory = { id: 'all', nombre: 'Todos los Productos', icono: 'fas fa-th-large' };
-            const categoriesToShow = [allCategory, ...categories];
+    // Add "Todos" category
+    const allCategory = { 
+        id: 'all', 
+        nombre: 'Todos los Productos', 
+        icono: 'fas fa-th-large',
+        count: products.length // Total de todos los productos
+    };
+    
+    // Crear array de categorías con su conteo de productos
+    const categoriesToShow = [allCategory];
+    
+    categories.forEach(category => {
+        const categoryProducts = products.filter(product => product.categoria === category.id);
+        categoriesToShow.push({
+            ...category,
+            count: categoryProducts.length
+        });
+    });
 
-            list.innerHTML = categoriesToShow.map(category => `
-                <li class="category-item" onclick="filterByCategory('${category.id}')">
-                    <span><i class="${category.icono}"></i> ${category.nombre}</span>
-                    <span class="product-count" id="count-${category.id}">0</span>
-                </li>
-            `).join('');
-        }
+    list.innerHTML = categoriesToShow.map(category => `
+        <li class="category-item" onclick="filterByCategory('${category.id}')">
+            <span><i class="${category.icono}"></i> ${category.nombre}</span>
+            <span class="product-count" id="count-${category.id}">${category.count}</span>
+        </li>
+    `).join('');
+}
 
         // Load products from Firestore
-        async function loadProducts() {
-            try {
-                const snapshot = await db.collection('productos').get();
-                products = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+async function loadProducts() {
+    try {
+        const snapshot = await db.collection('productos').get();
+        products = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
-                displayProductsByCategory();
-            } catch (error) {
-                console.error('Error loading products:', error);
+        // Actualizar las categorías con los conteos de productos
+        displayCategories();
+        displayProductsByCategory();
+    } catch (error) {
+        console.error('Error loading products:', error);
                 // Fallback products for demo
                 products = [
                     {
@@ -437,8 +465,9 @@
                         ]
                     }
                 ];
-                displayProductsByCategory();
-            }
+        displayCategories();
+        displayProductsByCategory();
+    }
         }
 
         // Función para cargar y mostrar productos destacados
@@ -736,36 +765,67 @@
             closeCategoriesPanel();
         }
 
-        // Abrir modal de producto
-        function openProductModal(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
+  // Abrir modal de producto
+    function openProductModal(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
 
-            const modal = document.getElementById('productModal');
-            const modalName = document.getElementById('modalProductName');
-            const modalName2 = document.getElementById('modalProductName2');
-            const modalPrice = document.getElementById('modalProductPrice');
-            const modalDescription = document.getElementById('modalProductDescription');
-            const whatsappBtn = document.getElementById('whatsappBtn');
+        const modal = document.getElementById('productModal');
+        const modalContent = modal.querySelector('.modal-content');
+        const modalName = document.getElementById('modalProductName');
+        const modalName2 = document.getElementById('modalProductName2');
+        const modalPrice = document.getElementById('modalProductPrice');
+        const modalDescription = document.getElementById('modalProductDescription');
+        const whatsappBtn = document.getElementById('whatsappBtn');
 
-            // Actualizar información del producto
-            modalName.textContent = product.nombre;
-            modalName2.textContent = product.nombre;
-            modalPrice.textContent = formatPrice(product.precio);
-            modalDescription.innerHTML = product.descripcion;
+        // Remover clase de cierre si existe
+        modalContent.classList.remove('closing');
 
-            // Configurar enlace de WhatsApp
-            const message = `Hola, me interesa el producto: ${product.nombre} - ${formatPrice(product.precio)}`;
-            const encodedMessage = encodeURIComponent(message);
-            whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        // Actualizar información del producto
+        modalName.textContent = product.nombre;
+        modalName2.textContent = product.nombre;
+        modalPrice.textContent = formatPrice(product.precio);
+        modalDescription.innerHTML = product.descripcion;
 
-            // Configurar galería de imágenes
-            setupProductGallery(product);
+        // Configurar enlace de WhatsApp con URL del producto
+        const productUrl = `${window.location.origin}${window.location.pathname}?product=${productId}`;
+        const message = `Saludos, me interesa el producto: ${product.nombre} - ${formatPrice(product.precio)}\n\nVer producto: ${productUrl}`;
+        const encodedMessage = encodeURIComponent(message);
+        whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
-            // Mostrar modal
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+        // Configurar galería de imágenes
+        setupProductGallery(product);
+
+        // Mostrar modal
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+
+     // Función para abrir producto desde URL
+    function openProductFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product');
+        
+        if (productId) {
+            // Esperar a que los productos estén cargados
+            const checkProductLoaded = setInterval(() => {
+                if (products.length > 0) {
+                    clearInterval(checkProductLoaded);
+                    const product = products.find(p => p.id === productId);
+                    if (product) {
+                        openProductModal(productId);
+                        
+                        // Limpiar la URL sin recargar la página
+                        const newUrl = window.location.origin + window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                    }
+                }
+            }, 100);
         }
+    }
+
+
 
         // Configurar galería de imágenes del producto
         function setupProductGallery(product) {
@@ -823,10 +883,35 @@
         }
 
         // Cerrar modal
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+// Cerrar modal con animación
+function closeModal() {
+    const modal = document.getElementById('productModal');
+    const modalContent = modal.querySelector('.modal-content');
+    
+    // Agregar clase para animación de salida
+    modalContent.classList.add('closing');
+    
+    // Esperar a que termine la animación antes de ocultar el modal
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modalContent.classList.remove('closing');
+        document.body.style.overflow = 'auto';
+    }, 300); // Debe coincidir con la duración de la animación (0.3s = 300ms)
+}
+
+// Modificar el evento de clic fuera del modal para usar la animación
+document.getElementById('productModal').addEventListener('click', function (e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Modificar el evento de tecla Escape para usar la animación
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
 
         // Inicializar textos dinámicos
         function initDynamicTexts() {
@@ -923,44 +1008,50 @@
             });
         }
 
-        // Inicializar aplicación
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Cargar categorías y productos
-            await loadCategories();
-            await loadProducts();
-            await loadFeaturedProducts();
+      // Inicializar aplicación
+    document.addEventListener('DOMContentLoaded', async function () {
+        // Cargar categorías y productos
+        await loadCategories();
+        await loadProducts();
+        await loadFeaturedProducts();
 
-            // Inicializar textos dinámicos
-            initDynamicTexts();
+        // Inicializar textos dinámicos
+        initDynamicTexts();
 
-            // Configurar eventos
-            document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
-            document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
-            document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
+        // Configurar eventos
+        document.getElementById('filterToggle').addEventListener('click', toggleCategoriesPanel);
+        document.getElementById('closeCategories').addEventListener('click', closeCategoriesPanel);
+        document.getElementById('categoriesOverlay').addEventListener('click', closeCategoriesPanel);
 
-            // Cerrar modal al hacer clic fuera del contenido
-            document.getElementById('productModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-
-            // Cerrar modal con tecla Escape
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
-            });
-
-            // Configurar botón flotante de WhatsApp
-            const whatsappBtn = document.getElementById('whatsappFloatBtn');
-            if (whatsappBtn) {
-                whatsappBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    window.open(this.href, '_blank');
-                });
+        // Cerrar modal al hacer clic fuera del contenido
+        document.getElementById('productModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
             }
         });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Configurar botón flotante de WhatsApp
+        const whatsappBtn = document.getElementById('whatsappFloatBtn');
+        if (whatsappBtn) {
+            whatsappBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.open(this.href, '_blank');
+            });
+        }
+
+        // Verificar si hay un producto en la URL al cargar la página
+        openProductFromURL();
+    });
+
+    // También verificar cuando cambia la URL (por si acaso)
+    window.addEventListener('popstate', openProductFromURL);
     </script>
 </body>
 

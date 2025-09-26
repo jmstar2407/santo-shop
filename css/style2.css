@@ -50,7 +50,7 @@ select,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(84deg, #1a2151 0%, #070a16 50%, #3d0e34 100%);
+    background: linear-gradient(272deg, #1a21518a 0%, #070a16 50%, #3d0e3496 100%);
     flex-direction: column;
 }
 
@@ -208,12 +208,16 @@ header {
 }
 
 .close-categories {
-    background: none;
+    background: #f34a4a;
+    border-radius: 7px;
+    padding: 0.2rem 0.7rem;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #666;
+    color: #ffffff;
 }
+
+
 
 .categories-list {
     list-style: none;
@@ -836,71 +840,71 @@ header {
 
 @keyframes neon1 {
     0% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     20% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     21% {
-        filter: brightness(0.5);
+        filter: brightness(0.4);
     }
 
     22% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     23% {
-        filter: brightness(0.5);
+        filter: brightness(0.4);
     }
 
     24% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     25% {
-        filter: brightness(0.5);
+        filter: brightness(0.4);
     }
 
     26% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     27% {
-        filter: brightness(1);
+        filter: brightness(0.8);
     }
 
     50% {
-        filter: brightness(1);
+        filter: brightness(0.8);
     }
 
     78% {
-        filter: brightness(1);
+        filter: brightness(0.8);
     }
 
     79% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     80% {
-        filter: brightness(0.5);
+        filter: brightness(0.4);
     }
 
     81% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     82% {
-        filter: brightness(0.5);
+        filter: brightness(0.4);
     }
 
     83% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 
     100% {
-        filter: brightness(0.9);
+        filter: brightness(0.8);
     }
 }
 
