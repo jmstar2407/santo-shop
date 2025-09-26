@@ -769,13 +769,10 @@
         }
 
         // Abrir modal de producto
-       function openProductModal(productId) {
+     // Abrir modal de producto
+function openProductModal(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
-
-    // Debug: verificar contenido
-    console.log('Producto:', product);
-    console.log('Descripción:', product.descripcion);
 
     const modal = document.getElementById('productModal');
     const modalContent = modal.querySelector('.modal-content');
@@ -793,9 +790,14 @@
     modalName2.textContent = product.nombre;
     modalPrice.textContent = formatPrice(product.precio);
     
-    // MEJORA: Manejar descripción vacía
+    // MEJORA: Manejar descripción vacía y asegurar formato correcto
     const description = product.descripcion || 'Descripción no disponible en este momento.';
-    modalDescription.innerHTML = description;
+    
+    // Limpiar y formatear correctamente la descripción
+    modalDescription.innerHTML = description
+        .replace(/\n/g, '<br>') // Convertir saltos de línea a <br>
+        .replace(/\s+/g, ' ')   // Normalizar espacios
+        .trim();
 
     // Configurar enlace de WhatsApp con URL del producto
     const productUrl = `${window.location.origin}${window.location.pathname}?product=${productId}`;
@@ -809,6 +811,13 @@
     // Mostrar modal
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+
+    // MEJORA: Forzar reflow para asegurar que los estilos se apliquen correctamente
+    setTimeout(() => {
+        modalDescription.style.display = 'none';
+        modalDescription.offsetHeight; // Trigger reflow
+        modalDescription.style.display = 'block';
+    }, 10);
 }
 
 
