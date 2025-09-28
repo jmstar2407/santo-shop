@@ -20,6 +20,51 @@
     <!-- Quill.js CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+    <!-- SortableJS para arrastrar y soltar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
+    <style>
+        /* Estilos adicionales para el ordenamiento */
+        .sortable-ghost {
+            opacity: 0.4;
+            background-color: #f8f9fa;
+        }
+        
+        .sortable-chosen {
+            background-color: #e9ecef;
+        }
+        
+        .sortable-drag {
+            opacity: 0.8;
+            transform: rotate(5deg);
+        }
+        
+        .category-row {
+            cursor: move;
+            transition: background-color 0.2s;
+        }
+        
+        .category-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .position-cell {
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+            color: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+    </style>
 </head>
 
 <body>
@@ -104,12 +149,18 @@
                     <button class="btn btn-add" onclick="openCategoryModal()">
                         <i class="fas fa-plus"></i> Agregar Categoría
                     </button>
+                    
+                    <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px;">
+                        <i class="fas fa-info-circle"></i> 
+                        Arrastra y suelta las categorías para cambiar su orden de visualización
+                    </div>
 
                     <!-- Categories Table -->
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
+                                    <th class="position-cell">Posición</th>
                                     <th>Nombre</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -251,6 +302,7 @@
         let productImageFiles = [];
         let existingProductImages = [];
         let quill;
+        let sortable;
 
         // Inicializar Quill editor
         function initQuillEditor() {
@@ -491,7 +543,7 @@
 
         // Category functions
         function loadCategories() {
-            db.collection('categoria').get().then((snapshot) => {
+            db.collection('categoria').orderBy('positionOrder', 'asc').get().then((snapshot) => {
                 categories = [];
                 const categoriesTable = document.getElementById('categoriesTable');
                 const categorySelect = document.getElementById('productCategory');
@@ -510,7 +562,15 @@
                     categories.push(category);
 
                     const row = document.createElement('tr');
+                    row.className = 'category-row';
+                    row.setAttribute('data-id', doc.id);
                     row.innerHTML = `
+                        <td class="position-cell">
+                            <span class="drag-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </span>
+                            ${category.positionOrder || (snapshot.size - categories.length)}
+                        </td>
                         <td>${category.nombre}</td>
                         <td class="actions">
                             <button class="btn btn-sm btn-edit" onclick="editCategory('${doc.id}')">Editar</button>
@@ -524,17 +584,86 @@
                     option.textContent = category.nombre;
                     categorySelect.appendChild(option);
                 });
+
+                // Inicializar Sortable después de cargar las categorías
+                initSortable();
             }).catch((error) => {
                 console.error("Error loading categories: ", error);
+            });
+        }
+
+        // Inicializar Sortable para arrastrar y soltar
+        function initSortable() {
+            const categoriesTable = document.getElementById('categoriesTable');
+            
+            if (sortable) {
+                sortable.destroy();
+            }
+            
+            sortable = new Sortable(categoriesTable, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                handle: '.drag-handle',
+                onEnd: function(evt) {
+                    updateCategoryOrder();
+                }
+            });
+        }
+
+        // Actualizar el orden de las categorías después de arrastrar
+        function updateCategoryOrder() {
+            const rows = document.querySelectorAll('#categoriesTable .category-row');
+            const batch = db.batch();
+            
+            rows.forEach((row, index) => {
+                const categoryId = row.getAttribute('data-id');
+                const positionCell = row.querySelector('.position-cell');
+                positionCell.innerHTML = `
+                    <span class="drag-handle">
+                        <i class="fas fa-grip-vertical"></i>
+                    </span>
+                    ${index + 1}
+                `;
+                
+                // Actualizar en Firebase
+                const categoryRef = db.collection('categoria').doc(categoryId);
+                batch.update(categoryRef, { positionOrder: index + 1 });
+            });
+            
+            // Ejecutar todas las actualizaciones en lote
+            batch.commit().then(() => {
+                console.log('Orden de categorías actualizado');
+            }).catch((error) => {
+                console.error("Error updating category order: ", error);
+                alert("Error al actualizar el orden de las categorías");
             });
         }
 
         async function saveCategory(e) {
             e.preventDefault();
             const name = document.getElementById('categoryName').value;
-            const categoryData = { nombre: name };
+            
+            // Obtener el siguiente número de orden
+            let nextPosition = 1;
+            if (categories.length > 0) {
+                const maxPosition = Math.max(...categories.map(c => c.positionOrder || 0));
+                nextPosition = maxPosition + 1;
+            }
+            
+            const categoryData = { 
+                nombre: name,
+                positionOrder: nextPosition
+            };
 
             if (editingCategoryId) {
+                // Al editar, mantener el positionOrder existente
+                const existingCategory = categories.find(c => c.id === editingCategoryId);
+                if (existingCategory && existingCategory.positionOrder) {
+                    categoryData.positionOrder = existingCategory.positionOrder;
+                }
+                
                 db.collection('categoria').doc(editingCategoryId).update(categoryData)
                     .then(() => {
                         closeCategoryModal();
