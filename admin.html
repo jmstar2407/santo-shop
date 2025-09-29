@@ -381,24 +381,41 @@
         }
 
         // Authentication functions
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorElement = document.getElementById('loginError');
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorElement = document.getElementById('loginError');
 
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    document.getElementById('userEmail').textContent = user.email;
-                    document.getElementById('loginSection').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    loadCategories();
-                    loadProducts();
-                })
-                .catch((error) => {
-                    errorElement.textContent = error.message;
-                });
-        }
+    // Validar campos vacíos
+    if (!email || !password) {
+        errorElement.textContent = 'Por favor ingresa tu email y contraseña';
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadCategories();
+            loadProducts();
+        })
+        .catch((error) => {
+            // Mostrar mensaje personalizado para credenciales incorrectas
+            if (error.code === 'auth/invalid-login-credentials') {
+                errorElement.textContent = 'Credenciales incorrectas';
+            } else if (error.code === 'auth/invalid-email') {
+                errorElement.textContent = 'Email inválido';
+            } else if (error.code === 'auth/missing-password') {
+                errorElement.textContent = 'Por favor ingresa tu contraseña';
+            } else if (error.code === 'auth/user-not-found') {
+                errorElement.textContent = 'Usuario no encontrado';
+            } else {
+                errorElement.textContent = error.message;
+            }
+        });
+}
 
         function logout() {
             auth.signOut().then(() => {
@@ -810,63 +827,167 @@ function resetCategoryForm() {
     toggleDeleteSection(false);
 }
 
-        function resetCategoryForm() {
-            document.getElementById('categoryForm').reset();
-            document.getElementById('categoryId').value = '';
-            document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
-            editingCategoryId = null;
-        }
-
-        // Product functions
+        // Product functions - MODIFICADO PARA ORGANIZAR POR CATEGORÍAS
         function loadProducts() {
-            db.collection('productos').get().then((snapshot) => {
-                products = [];
-                const productsGrid = document.getElementById('productsGrid');
-                productsGrid.innerHTML = '';
-
-                snapshot.forEach((doc) => {
-                    const product = {
+            // Primero cargar las categorías para asegurar que tenemos los datos
+            db.collection('categoria').orderBy('positionOrder', 'asc').get().then((categorySnapshot) => {
+                const categories = [];
+                categorySnapshot.forEach((doc) => {
+                    categories.push({
                         id: doc.id,
                         ...doc.data()
+                    });
+                });
+
+                // Ahora cargar los productos
+                db.collection('productos').get().then((productSnapshot) => {
+                    const products = [];
+                    const productsByCategory = {};
+
+                    // Inicializar objeto para agrupar productos por categoría
+                    categories.forEach(category => {
+                        productsByCategory[category.id] = {
+                            categoryName: category.nombre,
+                            products: []
+                        };
+                    });
+
+                    // Agregar una categoría para productos sin categoría
+                    productsByCategory['no-category'] = {
+                        categoryName: 'Sin Categoría',
+                        products: []
                     };
-                    products.push(product);
 
-                    const category = categories.find(c => c.id === product.categoria);
-                    const categoryName = category ? category.nombre : 'Sin categoría';
-                    const images = product.imagenes || (product.icono ? [product.icono] : []);
-                    const firstImage = images.length > 0 ? images[0] : null;
-                    const isFeatured = product.destacado === 'yes';
-                    const featuredBadge = isFeatured ? '<span class="product-featured-badge" style="color: #e9c81e; font-size: 0.8rem; margin-left: 5px;"><br><i class="fas fa-star"></i> Destacado</span>' : '';
+                    // Procesar cada producto
+                    productSnapshot.forEach((doc) => {
+                        const product = {
+                            id: doc.id,
+                            ...doc.data()
+                        };
+                        products.push(product);
 
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
+                        const categoryId = product.categoria || 'no-category';
+                        
+                        // Si la categoría no existe en nuestro objeto, la creamos
+                        if (!productsByCategory[categoryId]) {
+                            const category = categories.find(c => c.id === categoryId);
+                            productsByCategory[categoryId] = {
+                                categoryName: category ? category.nombre : 'Categoría Desconocida',
+                                products: []
+                            };
+                        }
 
-                    let imageHtml = '';
-                    if (firstImage) {
-                        imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}" loading="lazy">`;
-                    } else {
-                        imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
-                    }
+                        productsByCategory[categoryId].products.push(product);
+                    });
 
-                    card.innerHTML = `
-                        ${imageHtml}
-                        <div class="product-info">
-                            <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
-                                <div class="product-name">${product.nombre} ${featuredBadge}</div>
-                                <span class="image-badge">${images.length} img</span>
-                            </div>
-                            <div class="product-price">RD$${formatPrice(product.precio)}</div>
-                            <div class="product-category">${categoryName}</div>
-                            <div class="product-actions">
-                                <button class="btn btn-sm btn-edit" onclick="editProduct('${doc.id}')">Editar</button>
-                                <button class="btn btn-sm btn-delete" onclick="deleteProduct('${doc.id}')">Eliminar</button>
-                            </div>
-                        </div>
-                    `;
-                    productsGrid.appendChild(card);
+                    // Renderizar la vista organizada por categorías
+                    renderProductsByCategory(categories, productsByCategory);
                 });
             }).catch((error) => {
                 console.error("Error loading products: ", error);
+            });
+        }
+
+        // Nueva función para renderizar productos organizados por categorías
+        function renderProductsByCategory(categories, productsByCategory) {
+            const productsGrid = document.getElementById('productsGrid');
+            productsGrid.innerHTML = '';
+
+            let hasProducts = false;
+
+            // Primero renderizar categorías ordenadas por positionOrder
+            categories.forEach(category => {
+                const categoryProducts = productsByCategory[category.id];
+                if (categoryProducts && categoryProducts.products.length > 0) {
+                    renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
+                    hasProducts = true;
+                }
+            });
+
+            // Luego productos sin categoría
+            const noCategoryProducts = productsByCategory['no-category'];
+            if (noCategoryProducts && noCategoryProducts.products.length > 0) {
+                renderCategorySection(productsGrid, noCategoryProducts.categoryName, noCategoryProducts.products);
+                hasProducts = true;
+            }
+
+            // Finalmente, categorías que no están en la lista ordenada pero tienen productos
+            Object.keys(productsByCategory).forEach(categoryId => {
+                if (categoryId !== 'no-category' && !categories.find(c => c.id === categoryId)) {
+                    const categoryProducts = productsByCategory[categoryId];
+                    if (categoryProducts && categoryProducts.products.length > 0) {
+                        renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
+                        hasProducts = true;
+                    }
+                }
+            });
+
+            // Mostrar mensaje si no hay productos
+            if (!hasProducts) {
+                productsGrid.innerHTML = `
+                    <div class="no-products-message">
+                        <i class="fas fa-box-open" style="font-size: 3rem; color: #666; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #888; margin-bottom: 0.5rem;">No hay productos</h3>
+                        <p style="color: #666;">Agrega tu primer producto haciendo clic en el botón "Agregar Producto"</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Función para renderizar una sección de categoría con sus productos
+        function renderCategorySection(container, categoryName, products) {
+            const categorySection = document.createElement('div');
+            categorySection.className = 'category-section';
+            
+            categorySection.innerHTML = `
+                <div class="category-header">
+                    <h3 class="category-title">${categoryName}</h3>
+                    <span class="product-count">${products.length} producto${products.length !== 1 ? 's' : ''}</span>
+                </div>
+                <div class="category-products-grid" id="products-${categoryName.replace(/\s+/g, '-').toLowerCase()}">
+                    <!-- Los productos de esta categoría se insertarán aquí -->
+                </div>
+            `;
+
+            container.appendChild(categorySection);
+
+            const productsGrid = categorySection.querySelector('.category-products-grid');
+            
+            // Renderizar productos de esta categoría
+            products.forEach(product => {
+                const category = categories.find(c => c.id === product.categoria);
+                const categoryName = category ? category.nombre : 'Sin categoría';
+                const images = product.imagenes || (product.icono ? [product.icono] : []);
+                const firstImage = images.length > 0 ? images[0] : null;
+                const isFeatured = product.destacado === 'yes';
+                const featuredBadge = isFeatured ? '<span class="product-featured-badge" style="color: #e9c81e; font-size: 0.8rem; margin-left: 5px;"><br><i class="fas fa-star"></i> Destacado</span>' : '';
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                let imageHtml = '';
+                if (firstImage) {
+                    imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}" loading="lazy">`;
+                } else {
+                    imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
+                }
+
+                card.innerHTML = `
+                    ${imageHtml}
+                    <div class="product-info">
+                        <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
+                            <div class="product-name">${product.nombre} ${featuredBadge}</div>
+                            <span class="image-badge">${images.length} img</span>
+                        </div>
+                        <div class="product-price">RD$${formatPrice(product.precio)}</div>
+                        <div class="product-category">${categoryName}</div>
+                        <div class="product-actions">
+                            <button class="btn btn-sm btn-edit" onclick="editProduct('${product.id}')">Editar</button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteProduct('${product.id}')">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
             });
         }
 
