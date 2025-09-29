@@ -318,27 +318,27 @@ La discreción es nuestra prioridad 🤫. Envíos a todas partes del país 🇩�
         }
 
         // Load categories from Firestore
-        async function loadCategories() {
-            try {
-                const snapshot = await db.collection('categoria').get();
-                categories = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+async function loadCategories() {
+    try {
+        const snapshot = await db.collection('categoria').get();
+        categories = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
-                displayCategories();
-            } catch (error) {
-                console.error('Error loading categories:', error);
-                // Fallback categories for demo
-                categories = [
-                    { id: '1', nombre: 'Juguetes', icono: 'fas fa-dice' },
-                    { id: '2', nombre: 'Lencería', icono: 'fas fa-tshirt' },
-                    { id: '3', nombre: 'Aceites', icono: 'fas fa-flask' },
-                    { id: '4', nombre: 'Preservativos', icono: 'fas fa-shield-alt' }
-                ];
-                displayCategories();
-            }
-        }
+        displayCategories();
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        // Fallback categories for demo - agregar positionOrder a las categorías de ejemplo
+        categories = [
+            { id: '1', nombre: 'Juguetes', icono: 'fas fa-dice', positionOrder: 1 },
+            { id: '2', nombre: 'Lencería', icono: 'fas fa-tshirt', positionOrder: 2 },
+            { id: '3', nombre: 'Aceites', icono: 'fas fa-flask', positionOrder: 3 },
+            { id: '4', nombre: 'Preservativos', icono: 'fas fa-shield-alt', positionOrder: 4 }
+        ];
+        displayCategories();
+    }
+}
 
         // Display categories in the side panel
         // Display categories in the side panel
@@ -520,28 +520,36 @@ La discreción es nuestra prioridad 🤫. Envíos a todas partes del país 🇩�
         }
 
         // Mostrar productos organizados por categorías (SOLO CATEGORÍAS REALES)
-        function displayProductsByCategory() {
-            const container = document.getElementById('categoriesProductsContainer');
+      function displayProductsByCategory() {
+    const container = document.getElementById('categoriesProductsContainer');
 
-            let html = '';
+    let html = '';
 
-            // Solo mostrar categorías reales, no incluir "Todos"
-            categories.forEach(category => {
-                // Filtrar productos por categoría
-                const categoryProducts = products.filter(product => product.categoria === category.id);
+    // Ordenar categorías por positionOrder (de menor a mayor)
+    const sortedCategories = [...categories].sort((a, b) => {
+        // Si no tiene positionOrder, ponerlo al final
+        const orderA = a.positionOrder || 9999;
+        const orderB = b.positionOrder || 9999;
+        return orderA - orderB;
+    });
 
-                if (categoryProducts.length === 0) return;
+    // Solo mostrar categorías reales, no incluir "Todos"
+    sortedCategories.forEach(category => {
+        // Filtrar productos por categoría
+        const categoryProducts = products.filter(product => product.categoria === category.id);
 
-                // Determinar si mostrar el botón "Mostrar Todo"
-                const showAllButton = categoryProducts.length > 5 ?
-                    `<button class="show-all-btn" onclick="toggleShowAll('${category.id}')">
+        if (categoryProducts.length === 0) return;
+
+        // Determinar si mostrar el botón "Mostrar Todo"
+        const showAllButton = categoryProducts.length > 5 ?
+            `<button class="show-all-btn" onclick="toggleShowAll('${category.id}')">
                 Ver todo <span class="product-count-badge">${categoryProducts.length}</span>
             </button>` : '';
 
-                // Limitar a máximo 5 productos para vista inicial
-                const limitedProducts = categoryProducts.slice(0, 5);
+        // Limitar a máximo 5 productos para vista inicial
+        const limitedProducts = categoryProducts.slice(0, 5);
 
-                html += `
+        html += `
             <div class="category-section">
                 <div class="category-header">
                     <h3 class="category-title">${category.nombre}</h3>
@@ -568,13 +576,13 @@ La discreción es nuestra prioridad 🤫. Envíos a todas partes del país 🇩�
                 </div>
             </div>
         `;
-            });
+    });
 
-            container.innerHTML = html;
+    container.innerHTML = html;
 
-            // Inicializar navegación de flechas para cada categoría
-            initCategoryNavigation();
-        }
+    // Inicializar navegación de flechas para cada categoría
+    initCategoryNavigation();
+}
 
         // Función para mostrar/ocultar todos los productos de una categoría
         function toggleShowAll(categoryId) {
@@ -694,35 +702,35 @@ La discreción es nuestra prioridad 🤫. Envíos a todas partes del país 🇩�
 
         // Filtrar productos por categoría
         function filterByCategory(categoryId) {
-            const container = document.getElementById('categoriesProductsContainer');
+    const container = document.getElementById('categoriesProductsContainer');
 
-            if (categoryId === 'all') {
-                // Mostrar todos los productos organizados por categoría
-                displayProductsByCategory();
-            } else {
-                // Filtrar productos por categoría específica
-                const filteredProducts = products.filter(product => product.categoria === categoryId);
+    if (categoryId === 'all') {
+        // Mostrar todos los productos organizados por categoría, ordenados por positionOrder
+        displayProductsByCategory();
+    } else {
+        // Filtrar productos por categoría específica
+        const filteredProducts = products.filter(product => product.categoria === categoryId);
 
-                if (filteredProducts.length === 0) {
-                    container.innerHTML = `
+        if (filteredProducts.length === 0) {
+            container.innerHTML = `
                 <div class="no-products">
                     <i class="fas fa-box-open"></i>
                     <p>No hay productos en esta categoría</p>
                 </div>
             `;
-                } else {
-                    // Determinar si mostrar el botón "Mostrar Todo"
-                    const showAllButton = filteredProducts.length > 5 ?
-                        `<button class="show-all-btn" onclick="toggleShowAll('${categoryId}')">
+        } else {
+            // Determinar si mostrar el botón "Mostrar Todo"
+            const showAllButton = filteredProducts.length > 5 ?
+                `<button class="show-all-btn" onclick="toggleShowAll('${categoryId}')">
                     Ver todo <span class="product-count-badge">${filteredProducts.length}</span>
                 </button>` : '';
 
-                    // Limitar a máximo 5 productos para vista inicial
-                    const limitedProducts = filteredProducts.slice(0, 5);
+            // Limitar a máximo 5 productos para vista inicial
+            const limitedProducts = filteredProducts.slice(0, 5);
 
-                    const category = categories.find(cat => cat.id === categoryId);
+            const category = categories.find(cat => cat.id === categoryId);
 
-                    container.innerHTML = `
+            container.innerHTML = `
                 <div class="category-section">
                     <div class="category-header">
                         <h3 class="category-title">${category.nombre}</h3>
@@ -750,13 +758,13 @@ La discreción es nuestra prioridad 🤫. Envíos a todas partes del país 🇩�
                 </div>
             `;
 
-                    // Inicializar navegación para esta categoría
-                    initCategoryNavigationForCategory(categoryId);
-                }
-            }
-
-            closeCategoriesPanel();
+            // Inicializar navegación para esta categoría
+            initCategoryNavigationForCategory(categoryId);
         }
+    }
+
+    closeCategoriesPanel();
+}
 
         // Abrir modal de producto
      // Abrir modal de producto

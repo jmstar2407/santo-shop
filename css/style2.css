@@ -401,10 +401,6 @@ header {
 }
 
 .product-description p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
     color: #292929;
 }
 
@@ -1434,6 +1430,7 @@ footer {
 
     .product-description {
         font-size: 0.8rem;
+        display: none;
     }
 
     #modalProductPrice {

@@ -46,7 +46,7 @@
         }
         
         .category-row:hover {
-            background-color: #f8f9fa;
+            background-color: #3d4b59;
         }
         
         .position-cell {
@@ -63,6 +63,44 @@
         
         .drag-handle:active {
             cursor: grabbing;
+        }
+        
+        /* Estilos para el campo de contraseña con ojito */
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .password-toggle:hover {
+            color: #e91e63;
+        }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .forgot-password a {
+            color: #e91e63;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -90,10 +128,18 @@
                 <input type="email" id="email" placeholder="Ingresa tu email">
             </div>
             <div class="form-group">
-                <input type="password" id="password" placeholder="Ingresa tu contraseña">
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña">
+                    <button type="button" class="password-toggle" id="passwordToggle">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
-            <button class="btn btn-block" onclick="login()" style="margin-top: 4rem;border-radius: 17px;">Iniciar
+            <button class="btn btn-block" onclick="login()" style="margin-top: 2rem;border-radius: 17px;">Iniciar
                 Sesión</button>
+            <div class="forgot-password">
+                <a id="forgotPasswordLink">¿Se te olvidó la contraseña?</a>
+            </div>
             <div id="loginError" class="error-message"></div>
         </div>
     </section>
@@ -150,26 +196,26 @@
                         <i class="fas fa-plus"></i> Agregar Categoría
                     </button>
                     
-                    <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px;">
+                    <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px;display: none;">
                         <i class="fas fa-info-circle"></i> 
                         Arrastra y suelta las categorías para cambiar su orden de visualización
                     </div>
 
                     <!-- Categories Table -->
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="position-cell">Posición</th>
-                                    <th>Nombre</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="categoriesTable">
-                                <!-- Categories will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
+                   <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th class="position-cell">Posición</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="categoriesTable">
+            <!-- Categories will be loaded here -->
+        </tbody>
+    </table>
+</div>
                 </div>
             </div>
         </main>
@@ -250,32 +296,43 @@
     </div>
 
     <!-- Category Modal -->
-    <div id="categoryModal" class="modal">
-        <div class="modal-content" id="modal-category-style">
-            <div class="modal-title">
-                <span class="close-modal" onclick="closeCategoryModal()" style="display: none;">&times;</span>
-                <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
-            </div>
+<!-- Category Modal -->
+<div id="categoryModal" class="modal">
+    <div class="modal-content" id="modal-category-style">
+        <div class="modal-title">
+            <span class="close-modal" onclick="closeCategoryModal()" style="display: none;">&times;</span>
+            <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
+        </div>
 
-            <div class="modal-body">
-                <form id="categoryForm">
-                    <input type="hidden" id="categoryId">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="categoryName">Nombre</label>
-                            <input type="text" id="categoryName" required>
-                        </div>
+        <div class="modal-body">
+            <form id="categoryForm">
+                <input type="hidden" id="categoryId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categoryName">Nombre</label>
+                        <input type="text" id="categoryName" required>
                     </div>
-            </div>
+                </div>
+                
+                <!-- Botón de eliminar solo visible cuando se está editando -->
+                <div id="deleteCategorySection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                    <button type="button" class="btn btn-delete" onclick="deleteCurrentCategory()" style="background: #dc3545; width: 100%;">
+                        <i class="fas fa-trash"></i> Eliminar Categoría
+                    </button>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 10px; text-align: center;">
+                        ¡Advertencia: Esta acción no se puede deshacer!
+                    </p>
+                </div>
+        </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn" style="background: #6c757d;"
-                    onclick="closeCategoryModal()">Cancelar</button>
-                <button type="submit" class="btn">Guardar Categoría</button>
-                </form>
-            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" style="background: #6c757d;"
+                onclick="closeCategoryModal()">Cancelar</button>
+            <button type="submit" class="btn">Guardar Categoría</button>
+            </form>
         </div>
     </div>
+</div>
 
     <script>
         // Firebase Configuration
@@ -352,6 +409,26 @@
             });
         }
 
+        // Función para recuperar contraseña
+        function forgotPassword() {
+            const email = document.getElementById('email').value;
+            const errorElement = document.getElementById('loginError');
+            
+            if (!email) {
+                errorElement.textContent = 'Por favor ingresa tu email para recuperar tu contraseña';
+                return;
+            }
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    errorElement.textContent = '';
+                    alert('Se ha enviado un correo para restablecer tu contraseña. Revisa tu bandeja de entrada. (Puede que esté en spam)');
+                })
+                .catch((error) => {
+                    errorElement.textContent = error.message;
+                });
+        }
+
         // Check auth state
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -409,13 +486,12 @@
             resetCategoryForm();
         }
 
-        // Close modals when clicking outside
-        window.onclick = function (event) {
-            const productModal = document.getElementById('productModal');
-            const categoryModal = document.getElementById('categoryModal');
-            if (event.target === productModal) closeProductModal();
-            if (event.target === categoryModal) closeCategoryModal();
-        };
+// Cerrar modals solo con los botones de cerrar/cancelar
+// Se elimina el cierre al hacer clic fuera del modal
+window.onclick = function (event) {
+    // No hacer nada cuando se hace clic fuera del modal
+    // Los modals solo se cerrarán con los botones de cerrar/cancelar
+};
 
         // Validar formato de imagen
         function isValidImageFormat(file) {
@@ -564,19 +640,18 @@
                     const row = document.createElement('tr');
                     row.className = 'category-row';
                     row.setAttribute('data-id', doc.id);
-                    row.innerHTML = `
-                        <td class="position-cell">
-                            <span class="drag-handle">
-                                <i class="fas fa-grip-vertical"></i>
-                            </span>
-                            ${category.positionOrder || (snapshot.size - categories.length)}
-                        </td>
-                        <td>${category.nombre}</td>
-                        <td class="actions">
-                            <button class="btn btn-sm btn-edit" onclick="editCategory('${doc.id}')">Editar</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteCategory('${doc.id}')">Eliminar</button>
-                        </td>
-                    `;
+                   row.innerHTML = `
+    <td class="position-cell">
+        <span class="drag-handle">
+            <i class="fas fa-grip-vertical"></i>
+        </span>
+        ${category.positionOrder || (snapshot.size - categories.length)}
+    </td>
+    <td>${category.nombre}</td>
+    <td class="actions">
+        <button class="btn btn-sm btn-edit" onclick="editCategory('${doc.id}')">Editar</button>
+    </td>
+`;
                     categoriesTable.appendChild(row);
 
                     const option = document.createElement('option');
@@ -686,28 +761,54 @@
             }
         }
 
-        function editCategory(id) {
-            const category = categories.find(c => c.id === id);
-            if (category) {
-                editingCategoryId = id;
-                document.getElementById('categoryId').value = id;
-                document.getElementById('categoryName').value = category.nombre;
-                document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
-                document.getElementById('categoryModal').style.display = 'flex';
-            }
-        }
+       // Función para mostrar/ocultar la sección de eliminar en el modal
+function toggleDeleteSection(show) {
+    const deleteSection = document.getElementById('deleteCategorySection');
+    if (deleteSection) {
+        deleteSection.style.display = show ? 'block' : 'none';
+    }
+}
 
-        function deleteCategory(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
-                db.collection('categoria').doc(id).delete()
-                    .then(() => {
-                        loadCategories();
-                    })
-                    .catch((error) => {
-                        console.error("Error deleting category: ", error);
-                    });
-            }
-        }
+// Función para eliminar la categoría actual desde el modal
+function deleteCurrentCategory() {
+    if (editingCategoryId && confirm('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.')) {
+        db.collection('categoria').doc(editingCategoryId).delete()
+            .then(() => {
+                closeCategoryModal();
+                loadCategories();
+            })
+            .catch((error) => {
+                console.error("Error deleting category: ", error);
+                alert("Error al eliminar la categoría");
+            });
+    }
+}
+
+// Modifica la función editCategory para mostrar el botón de eliminar
+function editCategory(id) {
+    const category = categories.find(c => c.id === id);
+    if (category) {
+        editingCategoryId = id;
+        document.getElementById('categoryId').value = id;
+        document.getElementById('categoryName').value = category.nombre;
+        document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
+        document.getElementById('categoryModal').style.display = 'flex';
+        
+        // Mostrar la sección de eliminar
+        toggleDeleteSection(true);
+    }
+}
+
+// Modifica la función resetCategoryForm para ocultar el botón de eliminar
+function resetCategoryForm() {
+    document.getElementById('categoryForm').reset();
+    document.getElementById('categoryId').value = '';
+    document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
+    editingCategoryId = null;
+    
+    // Ocultar la sección de eliminar
+    toggleDeleteSection(false);
+}
 
         function resetCategoryForm() {
             document.getElementById('categoryForm').reset();
@@ -899,12 +1000,12 @@
             previewElement.innerHTML = '';
 
             if (existingProductImages.length > 0) {
-                existingProductImages.forEach((imageUrl, idx) => {
+                existingProductImages.forEach((imageUrl, i) => {
                     const imageItem = document.createElement('div');
                     imageItem.className = 'image-preview-item';
                     imageItem.innerHTML = `
                         <img src="${imageUrl}" alt="Preview" loading="lazy">
-                        <button type="button" class="remove-image" onclick="removeExistingImage(${idx})">
+                        <button type="button" class="remove-image" onclick="removeExistingImage(${i})">
                             <i class="fas fa-times"></i>
                         </button>
                     `;
@@ -936,56 +1037,56 @@
         function resetProductForm() {
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
+            document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
             document.getElementById('productImagesPreview').innerHTML = `
                 <div class="image-preview-item empty">
                     <i class="fas fa-image"></i>
                     <span>Sin imágenes</span>
                 </div>
             `;
-            document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
-            editingProductId = null;
-            productImageFiles = [];
-            existingProductImages = [];
-            updateImageCount();
-
             if (quill) {
                 quill.root.innerHTML = '';
             }
+            productImageFiles = [];
+            existingProductImages = [];
+            editingProductId = null;
+            updateImageCount();
         }
 
         // Event listeners
         document.getElementById('productForm').addEventListener('submit', saveProduct);
         document.getElementById('categoryForm').addEventListener('submit', saveCategory);
-    </script>
 
-    <script>
-        // Función para actualizar el fondo según el estado
-        function updateBackground() {
-            const animationWrapper = document.querySelector('.animation-wrapper');
-            const loginSection = document.getElementById('loginSection');
-            const adminPanel = document.getElementById('adminPanel');
+        // Event listener para el botón de mostrar/ocultar contraseña
+        document.getElementById('passwordToggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
 
-            if (animationWrapper && loginSection && adminPanel) {
-                if (adminPanel.style.display === 'block') {
-                    animationWrapper.style.background = '#110f1a';
-                } else if (loginSection.style.display === 'flex') {
-                    animationWrapper.style.background = 'linear-gradient(135deg, #1a2151 0%, #070a16 50%, #3d0e34 100%)';
+        // Event listener para recuperar contraseña
+        document.getElementById('forgotPasswordLink').addEventListener('click', forgotPassword);
+
+        // Event listener para presionar Enter en el login
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // Verificar si estamos en la sección de login
+                const loginSection = document.getElementById('loginSection');
+                if (loginSection && loginSection.style.display !== 'none') {
+                    login();
                 }
             }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            updateBackground();
-            const observer = new MutationObserver(updateBackground);
-            const config = { attributes: true, attributeFilter: ['style'] };
-            const loginSection = document.getElementById('loginSection');
-            const adminPanel = document.getElementById('adminPanel');
-
-            if (loginSection) observer.observe(loginSection, config);
-            if (adminPanel) observer.observe(adminPanel, config);
         });
     </script>
-
 </body>
 
 </html>
