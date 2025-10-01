@@ -274,15 +274,27 @@
                         <div id="editor-container" style="height: 200px;"></div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="featured-label">
-                            <span>Producto Destacado 👑:</span>
-                            <label class="featured-toggle">
-                                <input type="checkbox" id="productFeatured">
-                                <span class="featured-slider"></span>
-                            </label>
-                        </label>
-                    </div>
+<div class="form-group">
+    <label class="featured-label">
+        <span>Producto Destacado 👑:</span>
+        <label class="featured-toggle">
+            <input type="checkbox" id="productFeatured">
+            <span class="featured-slider"></span>
+        </label>
+    </label>
+</div>
+
+<!-- AGREGAR ESTE NUEVO SWITCH DESPUÉS DEL ANTERIOR -->
+<div class="form-group">
+    <label class="featured-label">
+        <span>Producto Visible 👁️:</span>
+        <label class="featured-toggle">
+            <input type="checkbox" id="productVisible" checked>
+            <span class="featured-slider"></span>
+        </label>
+    </label>
+</div>
+
 
             </div>
 
@@ -827,66 +839,68 @@ function resetCategoryForm() {
     toggleDeleteSection(false);
 }
 
-        // Product functions - MODIFICADO PARA ORGANIZAR POR CATEGORÍAS
-        function loadProducts() {
-            // Primero cargar las categorías para asegurar que tenemos los datos
-            db.collection('categoria').orderBy('positionOrder', 'asc').get().then((categorySnapshot) => {
-                const categories = [];
-                categorySnapshot.forEach((doc) => {
-                    categories.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
+       // Product functions - MODIFICADO PARA ORGANIZAR POR CATEGORÍAS
+function loadProducts() {
+    // Primero cargar las categorías para asegurar que tenemos los datos
+    db.collection('categoria').orderBy('positionOrder', 'asc').get().then((categorySnapshot) => {
+        const categories = [];
+        categorySnapshot.forEach((doc) => {
+            categories.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
 
-                // Ahora cargar los productos
-                db.collection('productos').get().then((productSnapshot) => {
-                    const products = [];
-                    const productsByCategory = {};
+        // Ahora cargar los productos
+        db.collection('productos').get().then((productSnapshot) => {
+            // ACTUALIZAR LA VARIABLE GLOBAL products
+            products = []; // Limpiar el array global
 
-                    // Inicializar objeto para agrupar productos por categoría
-                    categories.forEach(category => {
-                        productsByCategory[category.id] = {
-                            categoryName: category.nombre,
-                            products: []
-                        };
-                    });
+            const productsByCategory = {};
 
-                    // Agregar una categoría para productos sin categoría
-                    productsByCategory['no-category'] = {
-                        categoryName: 'Sin Categoría',
+            // Inicializar objeto para agrupar productos por categoría
+            categories.forEach(category => {
+                productsByCategory[category.id] = {
+                    categoryName: category.nombre,
+                    products: []
+                };
+            });
+
+            // Agregar una categoría para productos sin categoría
+            productsByCategory['no-category'] = {
+                categoryName: 'Sin Categoría',
+                products: []
+            };
+
+            // Procesar cada producto
+            productSnapshot.forEach((doc) => {
+                const product = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                products.push(product); // AGREGAR AL ARRAY GLOBAL
+
+                const categoryId = product.categoria || 'no-category';
+                
+                // Si la categoría no existe en nuestro objeto, la creamos
+                if (!productsByCategory[categoryId]) {
+                    const category = categories.find(c => c.id === categoryId);
+                    productsByCategory[categoryId] = {
+                        categoryName: category ? category.nombre : 'Categoría Desconocida',
                         products: []
                     };
+                }
 
-                    // Procesar cada producto
-                    productSnapshot.forEach((doc) => {
-                        const product = {
-                            id: doc.id,
-                            ...doc.data()
-                        };
-                        products.push(product);
-
-                        const categoryId = product.categoria || 'no-category';
-                        
-                        // Si la categoría no existe en nuestro objeto, la creamos
-                        if (!productsByCategory[categoryId]) {
-                            const category = categories.find(c => c.id === categoryId);
-                            productsByCategory[categoryId] = {
-                                categoryName: category ? category.nombre : 'Categoría Desconocida',
-                                products: []
-                            };
-                        }
-
-                        productsByCategory[categoryId].products.push(product);
-                    });
-
-                    // Renderizar la vista organizada por categorías
-                    renderProductsByCategory(categories, productsByCategory);
-                });
-            }).catch((error) => {
-                console.error("Error loading products: ", error);
+                productsByCategory[categoryId].products.push(product);
             });
-        }
+
+            // Renderizar la vista organizada por categorías
+            renderProductsByCategory(categories, productsByCategory);
+        });
+    }).catch((error) => {
+        console.error("Error loading products: ", error);
+    });
+}
 
         // Nueva función para renderizar productos organizados por categorías
         function renderProductsByCategory(categories, productsByCategory) {
@@ -991,122 +1005,128 @@ function resetCategoryForm() {
             });
         }
 
-        async function saveProduct(e) {
-            e.preventDefault();
+       // En la función saveProduct, agrega el campo visible
+async function saveProduct(e) {
+    e.preventDefault();
 
-            const name = document.getElementById('productName').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const category = document.getElementById('productCategory').value;
-            const description = quill.root.innerHTML;
-            const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
+    const name = document.getElementById('productName').value;
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const category = document.getElementById('productCategory').value;
+    const description = quill.root.innerHTML;
+    const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
+    const visible = document.getElementById('productVisible').checked ? 'yes' : 'no'; // NUEVO CAMPO
 
-            // Validar campos requeridos
-            if (!name || !price || !category) {
-                alert('Por favor complete todos los campos requeridos');
-                return;
-            }
+    // Validar campos requeridos
+    if (!name || !price || !category) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+    }
 
-            // Subir nuevas imágenes si existen
-            let newImageUrls = [];
-            if (productImageFiles.length > 0) {
-                try {
-                    newImageUrls = await uploadImages(productImageFiles, 'product-images');
-                } catch (error) {
-                    console.error("Error uploading product images: ", error);
-                    alert("Error al subir las imágenes del producto");
-                    return;
-                }
-            }
-
-            // Combinar imágenes existentes con las nuevas
-            const allImageUrls = [...existingProductImages, ...newImageUrls];
-
-            const productData = {
-                nombre: name,
-                precio: price,
-                categoria: category,
-                descripcion: description,
-                destacado: featured,
-                imagenes: allImageUrls,
-                fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            // Mantener compatibilidad con versión anterior (icono)
-            if (allImageUrls.length > 0) {
-                productData.icono = allImageUrls[0];
-            }
-
-            if (editingProductId) {
-                db.collection('productos').doc(editingProductId).update(productData)
-                    .then(() => {
-                        closeProductModal();
-                        resetProductForm();
-                        loadProducts();
-                    })
-                    .catch((error) => {
-                        console.error("Error updating product: ", error);
-                    });
-            } else {
-                productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
-                db.collection('productos').add(productData)
-                    .then(() => {
-                        closeProductModal();
-                        resetProductForm();
-                        loadProducts();
-                    })
-                    .catch((error) => {
-                        console.error("Error adding product: ", error);
-                    });
-            }
+    // Subir nuevas imágenes si existen
+    let newImageUrls = [];
+    if (productImageFiles.length > 0) {
+        try {
+            newImageUrls = await uploadImages(productImageFiles, 'product-images');
+        } catch (error) {
+            console.error("Error uploading product images: ", error);
+            alert("Error al subir las imágenes del producto");
+            return;
         }
+    }
 
-        function editProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (product) {
-                editingProductId = id;
-                document.getElementById('productId').value = id;
-                document.getElementById('productName').value = product.nombre;
-                document.getElementById('productPrice').value = product.precio;
-                document.getElementById('productCategory').value = product.categoria;
-                document.getElementById('productFeatured').checked = product.destacado === 'yes';
+    // Combinar imágenes existentes con las nuevas
+    const allImageUrls = [...existingProductImages, ...newImageUrls];
 
-                if (!quill) {
-                    initQuillEditor();
-                }
-                quill.root.innerHTML = product.descripcion || '';
+    const productData = {
+        nombre: name,
+        precio: price,
+        categoria: category,
+        descripcion: description,
+        destacado: featured,
+        visible: visible, // NUEVO CAMPO
+        imagenes: allImageUrls,
+        fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
-                const previewElement = document.getElementById('productImagesPreview');
-                previewElement.innerHTML = '';
-                const images = product.imagenes || (product.icono ? [product.icono] : []);
-                existingProductImages = images;
+    // Mantener compatibilidad con versión anterior (icono)
+    if (allImageUrls.length > 0) {
+        productData.icono = allImageUrls[0];
+    }
 
-                if (images.length > 0) {
-                    images.forEach((imageUrl, index) => {
-                        const imageItem = document.createElement('div');
-                        imageItem.className = 'image-preview-item';
-                        imageItem.innerHTML = `
-                            <img src="${imageUrl}" alt="Preview" loading="lazy">
-                            <button type="button" class="remove-image" onclick="removeExistingImage(${index})">
-                                <i class="fas fa-times"></i>
-                            </button>
+    if (editingProductId) {
+        db.collection('productos').doc(editingProductId).update(productData)
+            .then(() => {
+                closeProductModal();
+                resetProductForm();
+                loadProducts();
+            })
+            .catch((error) => {
+                console.error("Error updating product: ", error);
+            });
+    } else {
+        productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+        db.collection('productos').add(productData)
+            .then(() => {
+                closeProductModal();
+                resetProductForm();
+                loadProducts();
+            })
+            .catch((error) => {
+                console.error("Error adding product: ", error);
+            });
+    }
+}
 
-                        `;
-                        previewElement.appendChild(imageItem);
-                    });
-                } else {
-                    previewElement.innerHTML = `
-                        <div class="image-preview-item empty">
-                            <i class="fas fa-image"></i>
-                            <span>Sin imágenes</span>
-                        </div>
-                    `;
-                }
-                updateImageCount();
+// En la función editProduct, agrega la configuración del switch de visibilidad
+function editProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (product) {
+        editingProductId = id;
+        document.getElementById('productId').value = id;
+        document.getElementById('productName').value = product.nombre;
+        document.getElementById('productPrice').value = product.precio;
+        document.getElementById('productCategory').value = product.categoria;
+        document.getElementById('productFeatured').checked = product.destacado === 'yes';
+        document.getElementById('productVisible').checked = product.visible !== 'no'; // NUEVO: Por defecto visible
 
-                document.getElementById('productModalTitle').textContent = 'Editar Producto';
-                document.getElementById('productModal').style.display = 'flex';
-            }
+        if (!quill) {
+            initQuillEditor();
         }
+        quill.root.innerHTML = product.descripcion || '';
+
+        const previewElement = document.getElementById('productImagesPreview');
+        previewElement.innerHTML = '';
+        const images = product.imagenes || (product.icono ? [product.icono] : []);
+        existingProductImages = images;
+
+        if (images.length > 0) {
+            images.forEach((imageUrl, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-preview-item';
+                imageItem.innerHTML = `
+                    <img src="${imageUrl}" alt="Preview" loading="lazy">
+                    <button type="button" class="remove-image" onclick="removeExistingImage(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                previewElement.appendChild(imageItem);
+            });
+        } else {
+            previewElement.innerHTML = `
+                <div class="image-preview-item empty">
+                    <i class="fas fa-image"></i>
+                    <span>Sin imágenes</span>
+                </div>
+            `;
+        }
+        updateImageCount();
+
+        document.getElementById('productModalTitle').textContent = 'Editar Producto';
+        document.getElementById('productModal').style.display = 'flex';
+    }
+}
+
+
 
         // Obtener formato de imagen desde URL
         function getImageFormatFromUrl(url) {
@@ -1155,24 +1175,25 @@ function resetCategoryForm() {
             }
         }
 
-        function resetProductForm() {
-            document.getElementById('productForm').reset();
-            document.getElementById('productId').value = '';
-            document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
-            document.getElementById('productImagesPreview').innerHTML = `
-                <div class="image-preview-item empty">
-                    <i class="fas fa-image"></i>
-                    <span>Sin imágenes</span>
-                </div>
-            `;
-            if (quill) {
-                quill.root.innerHTML = '';
-            }
-            productImageFiles = [];
-            existingProductImages = [];
-            editingProductId = null;
-            updateImageCount();
-        }
+function resetProductForm() {
+    document.getElementById('productForm').reset();
+    document.getElementById('productId').value = '';
+    document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
+    document.getElementById('productImagesPreview').innerHTML = `
+        <div class="image-preview-item empty">
+            <i class="fas fa-image"></i>
+            <span>Sin imágenes</span>
+        </div>
+    `;
+    if (quill) {
+        quill.root.innerHTML = '';
+    }
+    productImageFiles = [];
+    existingProductImages = [];
+    editingProductId = null;
+    document.getElementById('productVisible').checked = true; // NUEVO: Por defecto visible
+    updateImageCount();
+}
 
         // Event listeners
         document.getElementById('productForm').addEventListener('submit', saveProduct);

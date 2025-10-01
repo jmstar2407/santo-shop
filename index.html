@@ -382,21 +382,24 @@ async function loadCategories() {
         }
 
         // Load products from Firestore
-        async function loadProducts() {
-            try {
-                const snapshot = await db.collection('productos').get();
-                products = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+async function loadProducts() {
+    try {
+        const snapshot = await db.collection('productos').get();
+        // FILTRAR SOLO PRODUCTOS VISIBLES
+        products = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(product => product.visible !== 'no'); // NUEVO FILTRO
 
-                // Actualizar las categorías con los conteos de productos
-                displayCategories();
-                displayProductsByCategory();
-            } catch (error) {
-                console.error('Error loading products:', error);
-                // Fallback products for demo
-                products = [
+        // Actualizar las categorías con los conteos de productos
+        displayCategories();
+        displayProductsByCategory();
+    } catch (error) {
+        console.error('Error loading products:', error);
+        // Fallback products for demo - asegurarse de incluir el campo visible
+        products = [
                     {
                         id: '1',
                         nombre: 'Producto Ejemplo 1',
@@ -466,35 +469,37 @@ async function loadCategories() {
                             'https://via.placeholder.com/600x600/4caf50/white?text=Imagen+1'
                         ]
                     }
-                ];
-                displayCategories();
-                displayProductsByCategory();
-            }
-        }
+                ].filter(product => product.visible !== 'no'); // Aplicar filtro también en fallback
+        
+        displayCategories();
+        displayProductsByCategory();
+    }
+}
 
         // Función para cargar y mostrar productos destacados
-        async function loadFeaturedProducts() {
-            try {
-                const snapshot = await db.collection('productos')
-                    .where('destacado', '==', 'yes')
-                    .get();
+async function loadFeaturedProducts() {
+    try {
+        const snapshot = await db.collection('productos')
+            .where('destacado', '==', 'yes')
+            .get();
 
-                const featuredProducts = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+        const featuredProducts = snapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(product => product.visible !== 'no'); // NUEVO FILTRO
 
-                displayFeaturedProducts(featuredProducts);
-            } catch (error) {
-                console.error('Error loading featured products:', error);
-                // Mostrar mensaje si no hay productos destacados
-                document.getElementById('featuredProductsTrack').innerHTML = `
-                    <div class="no-featured">
-                        No hay productos destacados en este momento
-                    </div>
-                `;
-            }
-        }
+        displayFeaturedProducts(featuredProducts);
+    } catch (error) {
+        console.error('Error loading featured products:', error);
+        document.getElementById('featuredProductsTrack').innerHTML = `
+            <div class="no-featured">
+                No hay productos destacados en este momento
+            </div>
+        `;
+    }
+}
 
         // Mostrar productos destacados con animación infinita
         function displayFeaturedProducts(products) {
