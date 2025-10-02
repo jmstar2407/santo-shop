@@ -20,57 +20,57 @@
     <!-- Quill.js CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    
+
     <!-- SortableJS para arrastrar y soltar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    
+
     <style>
         /* Estilos adicionales para el ordenamiento */
         .sortable-ghost {
             opacity: 0.4;
             background-color: #f8f9fa;
         }
-        
+
         .sortable-chosen {
             background-color: #e9ecef;
         }
-        
+
         .sortable-drag {
             opacity: 0.8;
             transform: rotate(5deg);
         }
-        
+
         .category-row {
             cursor: move;
             transition: background-color 0.2s;
         }
-        
+
         .category-row:hover {
             background-color: #3d4b59;
         }
-        
+
         .position-cell {
             width: 80px;
             text-align: center;
             font-weight: bold;
         }
-        
+
         .drag-handle {
             cursor: grab;
             color: #6c757d;
             margin-right: 10px;
         }
-        
+
         .drag-handle:active {
             cursor: grabbing;
         }
-        
+
         /* Estilos para el campo de contraseña con ojito */
         .password-container {
             position: relative;
             width: 100%;
         }
-        
+
         .password-toggle {
             position: absolute;
             right: 10px;
@@ -82,23 +82,23 @@
             cursor: pointer;
             font-size: 1rem;
         }
-        
+
         .password-toggle:hover {
             color: #e91e63;
         }
-        
+
         .forgot-password {
             text-align: center;
             margin-top: 1rem;
             font-size: 0.9rem;
         }
-        
+
         .forgot-password a {
             color: #e91e63;
             text-decoration: none;
             cursor: pointer;
         }
-        
+
         .forgot-password a:hover {
             text-decoration: underline;
         }
@@ -169,57 +169,71 @@
                 <ul>
                     <li><a href="#" class="nav-link active" data-tab="products">Productos</a></li>
                     <li><a href="#" class="nav-link" data-tab="categories">Categorías</a></li>
+                                <li><a href="#" class="nav-link" data-tab="hidden">Productos Ocultos</a></li>
+
                 </ul>
             </div>
         </nav>
 
-        <!-- Content -->
-        <main class="admin-content">
-            <div class="container">
-                <!-- Products Tab -->
-                <div id="productsTab" class="tab-content active">
-                    <h2 class="section-title">Gestión de Productos</h2>
-                    <button class="btn btn-add" onclick="openProductModal()">
-                        <i class="fas fa-plus"></i> Agregar Producto
-                    </button>
+      <!-- Content -->
+<main class="admin-content">
+    <div class="container">
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content active">
+            <h2 class="section-title">Gestión de Productos</h2>
+            <button class="btn btn-add" onclick="openProductModal()">
+                <i class="fas fa-plus"></i> Agregar Producto
+            </button>
 
-                    <!-- Products Grid -->
-                    <div class="products-grid" id="productsGrid">
-                        <!-- Products will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Categories Tab -->
-                <div id="categoriesTab" class="tab-content">
-                    <h2 class="section-title">Gestión de Categorías</h2>
-                    <button class="btn btn-add" onclick="openCategoryModal()">
-                        <i class="fas fa-plus"></i> Agregar Categoría
-                    </button>
-                    
-                    <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px;display: none;">
-                        <i class="fas fa-info-circle"></i> 
-                        Arrastra y suelta las categorías para cambiar su orden de visualización
-                    </div>
-
-                    <!-- Categories Table -->
-                   <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th class="position-cell">Posición</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="categoriesTable">
-            <!-- Categories will be loaded here -->
-        </tbody>
-    </table>
-</div>
-                </div>
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
             </div>
-        </main>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="categoriesTab" class="tab-content">
+            <h2 class="section-title">Gestión de Categorías</h2>
+            <button class="btn btn-add" onclick="openCategoryModal()">
+                <i class="fas fa-plus"></i> Agregar Categoría
+            </button>
+            
+            <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px;display: none;">
+                <i class="fas fa-info-circle"></i> 
+                Arrastra y suelta las categorías para cambiar su orden de visualización
+            </div>
+
+            <!-- Categories Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="position-cell">Posición</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTable">
+                        <!-- Categories will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Hidden Products Tab -->
+        <div id="hiddenTab" class="tab-content">
+            <h2 class="section-title">Productos Ocultos</h2>
+            <p style="color: #e9d430; margin-bottom: 20px;">
+                Estos productos están ocultos y no son visibles para los clientes en la tienda.
+            </p>
+
+            <!-- Hidden Products Grid -->
+            <div class="products-grid" id="hiddenProductsGrid">
+                <!-- Hidden products will be loaded here -->
+            </div>
+        </div>
     </div>
+</main>
 
     <!-- Product Modal -->
     <div id="productModal" class="modal">
@@ -243,8 +257,8 @@
                         <label for="productImagesInput" class="file-input-label">
                             <i class="fas fa-plus"></i> Agregar Imágenes (Máx. 10)
                         </label>
-                        <input type="file" id="productImagesInput" class="file-input" 
-                               accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg" multiple>
+                        <input type="file" id="productImagesInput" class="file-input"
+                            accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg" multiple>
                         <div class="image-count">0/10 imágenes seleccionadas</div>
                         <div class="supported-formats">
                             Formatos soportados: JPG, JPEG, PNG, GIF, WebP, BMP, SVG
@@ -274,26 +288,26 @@
                         <div id="editor-container" style="height: 200px;"></div>
                     </div>
 
-<div class="form-group">
-    <label class="featured-label">
-        <span>Producto Destacado 👑:</span>
-        <label class="featured-toggle">
-            <input type="checkbox" id="productFeatured">
-            <span class="featured-slider"></span>
-        </label>
-    </label>
-</div>
+                    <div class="form-group">
+                        <label class="featured-label">
+                            <span>Producto Destacado 👑:</span>
+                            <label class="featured-toggle">
+                                <input type="checkbox" id="productFeatured">
+                                <span class="featured-slider"></span>
+                            </label>
+                        </label>
+                    </div>
 
-<!-- AGREGAR ESTE NUEVO SWITCH DESPUÉS DEL ANTERIOR -->
-<div class="form-group">
-    <label class="featured-label">
-        <span>Producto Visible 👁️:</span>
-        <label class="featured-toggle">
-            <input type="checkbox" id="productVisible" checked>
-            <span class="featured-slider"></span>
-        </label>
-    </label>
-</div>
+                    <!-- AGREGAR ESTE NUEVO SWITCH DESPUÉS DEL ANTERIOR -->
+                    <div class="form-group">
+                        <label class="featured-label">
+                            <span>Producto Visible 👁️:</span>
+                            <label class="featured-toggle">
+                                <input type="checkbox" id="productVisible" checked>
+                                <span class="featured-slider"></span>
+                            </label>
+                        </label>
+                    </div>
 
 
             </div>
@@ -308,43 +322,45 @@
     </div>
 
     <!-- Category Modal -->
-<!-- Category Modal -->
-<div id="categoryModal" class="modal">
-    <div class="modal-content" id="modal-category-style">
-        <div class="modal-title">
-            <span class="close-modal" onclick="closeCategoryModal()" style="display: none;">&times;</span>
-            <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
-        </div>
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content" id="modal-category-style">
+            <div class="modal-title">
+                <span class="close-modal" onclick="closeCategoryModal()" style="display: none;">&times;</span>
+                <h3 class="modal-title" id="categoryModalTitle">Agregar Nueva Categoría</h3>
+            </div>
 
-        <div class="modal-body">
-            <form id="categoryForm">
-                <input type="hidden" id="categoryId">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="categoryName">Nombre</label>
-                        <input type="text" id="categoryName" required>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoryName">Nombre</label>
+                            <input type="text" id="categoryName" required>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Botón de eliminar solo visible cuando se está editando -->
-                <div id="deleteCategorySection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-                    <button type="button" class="btn btn-delete" onclick="deleteCurrentCategory()" style="background: #dc3545; width: 100%;">
-                        <i class="fas fa-trash"></i> Eliminar Categoría
-                    </button>
-                    <p style="font-size: 0.8rem; color: #666; margin-top: 10px; text-align: center;">
-                        ¡Advertencia: Esta acción no se puede deshacer!
-                    </p>
-                </div>
-        </div>
 
-        <div class="modal-footer">
-            <button type="button" class="btn" style="background: #6c757d;"
-                onclick="closeCategoryModal()">Cancelar</button>
-            <button type="submit" class="btn">Guardar Categoría</button>
-            </form>
+                    <!-- Botón de eliminar solo visible cuando se está editando -->
+                    <div id="deleteCategorySection"
+                        style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                        <button type="button" class="btn btn-delete" onclick="deleteCurrentCategory()"
+                            style="background: #dc3545; width: 100%;">
+                            <i class="fas fa-trash"></i> Eliminar Categoría
+                        </button>
+                        <p style="font-size: 0.8rem; color: #666; margin-top: 10px; text-align: center;">
+                            ¡Advertencia: Esta acción no se puede deshacer!
+                        </p>
+                    </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn" style="background: #6c757d;"
+                    onclick="closeCategoryModal()">Cancelar</button>
+                <button type="submit" class="btn">Guardar Categoría</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
         // Firebase Configuration
@@ -393,41 +409,41 @@
         }
 
         // Authentication functions
-function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorElement = document.getElementById('loginError');
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('loginError');
 
-    // Validar campos vacíos
-    if (!email || !password) {
-        errorElement.textContent = 'Por favor ingresa tu email y contraseña';
-        return;
-    }
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            document.getElementById('userEmail').textContent = user.email;
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            loadCategories();
-            loadProducts();
-        })
-        .catch((error) => {
-            // Mostrar mensaje personalizado para credenciales incorrectas
-            if (error.code === 'auth/invalid-login-credentials') {
-                errorElement.textContent = 'Credenciales incorrectas';
-            } else if (error.code === 'auth/invalid-email') {
-                errorElement.textContent = 'Email inválido';
-            } else if (error.code === 'auth/missing-password') {
-                errorElement.textContent = 'Por favor ingresa tu contraseña';
-            } else if (error.code === 'auth/user-not-found') {
-                errorElement.textContent = 'Usuario no encontrado';
-            } else {
-                errorElement.textContent = error.message;
+            // Validar campos vacíos
+            if (!email || !password) {
+                errorElement.textContent = 'Por favor ingresa tu email y contraseña';
+                return;
             }
-        });
-}
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadCategories();
+                    loadProducts();
+                })
+                .catch((error) => {
+                    // Mostrar mensaje personalizado para credenciales incorrectas
+                    if (error.code === 'auth/invalid-login-credentials') {
+                        errorElement.textContent = 'Credenciales incorrectas';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorElement.textContent = 'Email inválido';
+                    } else if (error.code === 'auth/missing-password') {
+                        errorElement.textContent = 'Por favor ingresa tu contraseña';
+                    } else if (error.code === 'auth/user-not-found') {
+                        errorElement.textContent = 'Usuario no encontrado';
+                    } else {
+                        errorElement.textContent = error.message;
+                    }
+                });
+        }
 
         function logout() {
             auth.signOut().then(() => {
@@ -442,12 +458,12 @@ function login() {
         function forgotPassword() {
             const email = document.getElementById('email').value;
             const errorElement = document.getElementById('loginError');
-            
+
             if (!email) {
                 errorElement.textContent = 'Por favor ingresa tu email para recuperar tu contraseña';
                 return;
             }
-            
+
             auth.sendPasswordResetEmail(email)
                 .then(() => {
                     errorElement.textContent = '';
@@ -515,22 +531,22 @@ function login() {
             resetCategoryForm();
         }
 
-// Cerrar modals solo con los botones de cerrar/cancelar
-// Se elimina el cierre al hacer clic fuera del modal
-window.onclick = function (event) {
-    // No hacer nada cuando se hace clic fuera del modal
-    // Los modals solo se cerrarán con los botones de cerrar/cancelar
-};
+        // Cerrar modals solo con los botones de cerrar/cancelar
+        // Se elimina el cierre al hacer clic fuera del modal
+        window.onclick = function (event) {
+            // No hacer nada cuando se hace clic fuera del modal
+            // Los modals solo se cerrarán con los botones de cerrar/cancelar
+        };
 
         // Validar formato de imagen
         function isValidImageFormat(file) {
             const validTypes = [
-                'image/jpeg', 
-                'image/jpg', 
-                'image/png', 
-                'image/gif', 
-                'image/webp', 
-                'image/bmp', 
+                'image/jpeg',
+                'image/jpg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+                'image/bmp',
                 'image/svg+xml'
             ];
             return validTypes.includes(file.type);
@@ -669,7 +685,7 @@ window.onclick = function (event) {
                     const row = document.createElement('tr');
                     row.className = 'category-row';
                     row.setAttribute('data-id', doc.id);
-                   row.innerHTML = `
+                    row.innerHTML = `
     <td class="position-cell">
         <span class="drag-handle">
             <i class="fas fa-grip-vertical"></i>
@@ -699,18 +715,18 @@ window.onclick = function (event) {
         // Inicializar Sortable para arrastrar y soltar
         function initSortable() {
             const categoriesTable = document.getElementById('categoriesTable');
-            
+
             if (sortable) {
                 sortable.destroy();
             }
-            
+
             sortable = new Sortable(categoriesTable, {
                 animation: 150,
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
                 dragClass: 'sortable-drag',
                 handle: '.drag-handle',
-                onEnd: function(evt) {
+                onEnd: function (evt) {
                     updateCategoryOrder();
                 }
             });
@@ -720,7 +736,7 @@ window.onclick = function (event) {
         function updateCategoryOrder() {
             const rows = document.querySelectorAll('#categoriesTable .category-row');
             const batch = db.batch();
-            
+
             rows.forEach((row, index) => {
                 const categoryId = row.getAttribute('data-id');
                 const positionCell = row.querySelector('.position-cell');
@@ -730,12 +746,12 @@ window.onclick = function (event) {
                     </span>
                     ${index + 1}
                 `;
-                
+
                 // Actualizar en Firebase
                 const categoryRef = db.collection('categoria').doc(categoryId);
                 batch.update(categoryRef, { positionOrder: index + 1 });
             });
-            
+
             // Ejecutar todas las actualizaciones en lote
             batch.commit().then(() => {
                 console.log('Orden de categorías actualizado');
@@ -748,15 +764,15 @@ window.onclick = function (event) {
         async function saveCategory(e) {
             e.preventDefault();
             const name = document.getElementById('categoryName').value;
-            
+
             // Obtener el siguiente número de orden
             let nextPosition = 1;
             if (categories.length > 0) {
                 const maxPosition = Math.max(...categories.map(c => c.positionOrder || 0));
                 nextPosition = maxPosition + 1;
             }
-            
-            const categoryData = { 
+
+            const categoryData = {
                 nombre: name,
                 positionOrder: nextPosition
             };
@@ -767,7 +783,7 @@ window.onclick = function (event) {
                 if (existingCategory && existingCategory.positionOrder) {
                     categoryData.positionOrder = existingCategory.positionOrder;
                 }
-                
+
                 db.collection('categoria').doc(editingCategoryId).update(categoryData)
                     .then(() => {
                         closeCategoryModal();
@@ -790,56 +806,57 @@ window.onclick = function (event) {
             }
         }
 
-       // Función para mostrar/ocultar la sección de eliminar en el modal
-function toggleDeleteSection(show) {
-    const deleteSection = document.getElementById('deleteCategorySection');
-    if (deleteSection) {
-        deleteSection.style.display = show ? 'block' : 'none';
-    }
-}
+        // Función para mostrar/ocultar la sección de eliminar en el modal
+        function toggleDeleteSection(show) {
+            const deleteSection = document.getElementById('deleteCategorySection');
+            if (deleteSection) {
+                deleteSection.style.display = show ? 'block' : 'none';
+            }
+        }
 
-// Función para eliminar la categoría actual desde el modal
-function deleteCurrentCategory() {
-    if (editingCategoryId && confirm('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.')) {
-        db.collection('categoria').doc(editingCategoryId).delete()
-            .then(() => {
-                closeCategoryModal();
-                loadCategories();
-            })
-            .catch((error) => {
-                console.error("Error deleting category: ", error);
-                alert("Error al eliminar la categoría");
-            });
-    }
-}
+        // Función para eliminar la categoría actual desde el modal
+        function deleteCurrentCategory() {
+            if (editingCategoryId && confirm('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.')) {
+                db.collection('categoria').doc(editingCategoryId).delete()
+                    .then(() => {
+                        closeCategoryModal();
+                        loadCategories();
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting category: ", error);
+                        alert("Error al eliminar la categoría");
+                    });
+            }
+        }
 
-// Modifica la función editCategory para mostrar el botón de eliminar
-function editCategory(id) {
-    const category = categories.find(c => c.id === id);
-    if (category) {
-        editingCategoryId = id;
-        document.getElementById('categoryId').value = id;
-        document.getElementById('categoryName').value = category.nombre;
-        document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
-        document.getElementById('categoryModal').style.display = 'flex';
-        
-        // Mostrar la sección de eliminar
-        toggleDeleteSection(true);
-    }
-}
+        // Modifica la función editCategory para mostrar el botón de eliminar
+        function editCategory(id) {
+            const category = categories.find(c => c.id === id);
+            if (category) {
+                editingCategoryId = id;
+                document.getElementById('categoryId').value = id;
+                document.getElementById('categoryName').value = category.nombre;
+                document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
+                document.getElementById('categoryModal').style.display = 'flex';
 
-// Modifica la función resetCategoryForm para ocultar el botón de eliminar
-function resetCategoryForm() {
-    document.getElementById('categoryForm').reset();
-    document.getElementById('categoryId').value = '';
-    document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
-    editingCategoryId = null;
-    
-    // Ocultar la sección de eliminar
-    toggleDeleteSection(false);
-}
+                // Mostrar la sección de eliminar
+                toggleDeleteSection(true);
+            }
+        }
 
-       // Product functions - MODIFICADO PARA ORGANIZAR POR CATEGORÍAS
+        // Modifica la función resetCategoryForm para ocultar el botón de eliminar
+        function resetCategoryForm() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryModalTitle').textContent = 'Agregar Nueva Categoría';
+            editingCategoryId = null;
+
+            // Ocultar la sección de eliminar
+            toggleDeleteSection(false);
+        }
+
+        // Product functions - MODIFICADO PARA ORGANIZAR POR CATEGORÍAS
+       // Modificar la función loadProducts para separar productos visibles y ocultos
 function loadProducts() {
     // Primero cargar las categorías para asegurar que tenemos los datos
     db.collection('categoria').orderBy('positionOrder', 'asc').get().then((categorySnapshot) => {
@@ -857,17 +874,26 @@ function loadProducts() {
             products = []; // Limpiar el array global
 
             const productsByCategory = {};
+            const hiddenProductsByCategory = {};
 
-            // Inicializar objeto para agrupar productos por categoría
+            // Inicializar objetos para agrupar productos por categoría
             categories.forEach(category => {
                 productsByCategory[category.id] = {
                     categoryName: category.nombre,
                     products: []
                 };
+                hiddenProductsByCategory[category.id] = {
+                    categoryName: category.nombre,
+                    products: []
+                };
             });
 
-            // Agregar una categoría para productos sin categoría
+            // Agregar categorías para productos sin categoría
             productsByCategory['no-category'] = {
+                categoryName: 'Sin Categoría',
+                products: []
+            };
+            hiddenProductsByCategory['no-category'] = {
                 categoryName: 'Sin Categoría',
                 products: []
             };
@@ -881,78 +907,191 @@ function loadProducts() {
                 products.push(product); // AGREGAR AL ARRAY GLOBAL
 
                 const categoryId = product.categoria || 'no-category';
+                const isHidden = product.visible === 'no';
                 
+                // Determinar en qué objeto guardar el producto
+                const targetObject = isHidden ? hiddenProductsByCategory : productsByCategory;
+
                 // Si la categoría no existe en nuestro objeto, la creamos
-                if (!productsByCategory[categoryId]) {
+                if (!targetObject[categoryId]) {
                     const category = categories.find(c => c.id === categoryId);
-                    productsByCategory[categoryId] = {
+                    targetObject[categoryId] = {
                         categoryName: category ? category.nombre : 'Categoría Desconocida',
                         products: []
                     };
                 }
 
-                productsByCategory[categoryId].products.push(product);
+                targetObject[categoryId].products.push(product);
             });
 
             // Renderizar la vista organizada por categorías
-            renderProductsByCategory(categories, productsByCategory);
+            renderProductsByCategory(categories, productsByCategory, 'productsGrid');
+            
+            // Renderizar productos ocultos
+            renderHiddenProductsByCategory(categories, hiddenProductsByCategory, 'hiddenProductsGrid');
         });
     }).catch((error) => {
         console.error("Error loading products: ", error);
     });
 }
 
-        // Nueva función para renderizar productos organizados por categorías
-        function renderProductsByCategory(categories, productsByCategory) {
-            const productsGrid = document.getElementById('productsGrid');
-            productsGrid.innerHTML = '';
+// Nueva función para renderizar productos ocultos organizados por categorías
+function renderHiddenProductsByCategory(categories, productsByCategory, containerId) {
+    const productsGrid = document.getElementById(containerId);
+    productsGrid.innerHTML = '';
 
-            let hasProducts = false;
+    let hasProducts = false;
 
-            // Primero renderizar categorías ordenadas por positionOrder
-            categories.forEach(category => {
-                const categoryProducts = productsByCategory[category.id];
-                if (categoryProducts && categoryProducts.products.length > 0) {
-                    renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
-                    hasProducts = true;
-                }
-            });
+    // Primero renderizar categorías ordenadas por positionOrder
+    categories.forEach(category => {
+        const categoryProducts = productsByCategory[category.id];
+        if (categoryProducts && categoryProducts.products.length > 0) {
+            renderHiddenCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
+            hasProducts = true;
+        }
+    });
 
-            // Luego productos sin categoría
-            const noCategoryProducts = productsByCategory['no-category'];
-            if (noCategoryProducts && noCategoryProducts.products.length > 0) {
-                renderCategorySection(productsGrid, noCategoryProducts.categoryName, noCategoryProducts.products);
+    // Luego productos sin categoría
+    const noCategoryProducts = productsByCategory['no-category'];
+    if (noCategoryProducts && noCategoryProducts.products.length > 0) {
+        renderHiddenCategorySection(productsGrid, noCategoryProducts.categoryName, noCategoryProducts.products);
+        hasProducts = true;
+    }
+
+    // Finalmente, categorías que no están en la lista ordenada pero tienen productos
+    Object.keys(productsByCategory).forEach(categoryId => {
+        if (categoryId !== 'no-category' && !categories.find(c => c.id === categoryId)) {
+            const categoryProducts = productsByCategory[categoryId];
+            if (categoryProducts && categoryProducts.products.length > 0) {
+                renderHiddenCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
                 hasProducts = true;
             }
+        }
+    });
 
-            // Finalmente, categorías que no están en la lista ordenada pero tienen productos
-            Object.keys(productsByCategory).forEach(categoryId => {
-                if (categoryId !== 'no-category' && !categories.find(c => c.id === categoryId)) {
-                    const categoryProducts = productsByCategory[categoryId];
-                    if (categoryProducts && categoryProducts.products.length > 0) {
-                        renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
-                        hasProducts = true;
-                    }
-                }
-            });
+    // Mostrar mensaje si no hay productos ocultos
+    if (!hasProducts) {
+        productsGrid.innerHTML = `
+            <div class="no-products-message">
+                <i class="fas fa-eye-slash" style="font-size: 3rem; color: #666; margin-bottom: 1rem;"></i>
+                <h3 style="color: #888; margin-bottom: 0.5rem;">No hay productos ocultos</h3>
+                <p style="color: #666;">Los productos que marques como no visibles aparecerán aquí</p>
+            </div>
+        `;
+    }
+}
 
-            // Mostrar mensaje si no hay productos
-            if (!hasProducts) {
-                productsGrid.innerHTML = `
-                    <div class="no-products-message">
-                        <i class="fas fa-box-open" style="font-size: 3rem; color: #666; margin-bottom: 1rem;"></i>
-                        <h3 style="color: #888; margin-bottom: 0.5rem;">No hay productos</h3>
-                        <p style="color: #666;">Agrega tu primer producto haciendo clic en el botón "Agregar Producto"</p>
-                    </div>
-                `;
+// Función para renderizar una sección de categoría con productos ocultos
+function renderHiddenCategorySection(container, categoryName, products) {
+    const categorySection = document.createElement('div');
+    categorySection.className = 'category-section';
+    
+    categorySection.innerHTML = `
+        <div class="category-header">
+            <h3 class="category-title">${categoryName}</h3>
+            <span class="product-count">${products.length} producto${products.length !== 1 ? 's' : ''} oculto${products.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="category-products-grid" id="hidden-products-${categoryName.replace(/\s+/g, '-').toLowerCase()}">
+            <!-- Los productos ocultos de esta categoría se insertarán aquí -->
+        </div>
+    `;
+
+    container.appendChild(categorySection);
+
+    const productsGrid = categorySection.querySelector('.category-products-grid');
+    
+    // Renderizar productos ocultos de esta categoría
+    products.forEach(product => {
+        const category = categories.find(c => c.id === product.categoria);
+        const categoryName = category ? category.nombre : 'Sin categoría';
+        const images = product.imagenes || (product.icono ? [product.icono] : []);
+        const firstImage = images.length > 0 ? images[0] : null;
+        const isFeatured = product.destacado === 'yes';
+
+        const card = document.createElement('div');
+        card.className = 'product-card hidden-product-card';
+
+
+        let imageHtml = '';
+        if (firstImage) {
+            imageHtml = `<img src="${firstImage}" class="product-image" alt="${product.nombre}" loading="lazy">`;
+        } else {
+            imageHtml = `<div class="product-placeholder"><i class="fas fa-image"></i></div>`;
+        }
+
+        card.innerHTML = `
+            ${imageHtml}
+            <div class="product-info">
+                <div style="width: 100%;display: inline-flex;justify-content: space-between;align-items: center;">
+                    <div class="product-name">${product.nombre}</div>
+                    <span class="image-badge">${images.length} img</span>
+                </div>
+                <div class="product-price">RD$${formatPrice(product.precio)}</div>
+                <div class="product-category">${categoryName}</div>
+                <div style="color: #ff6b6b; font-size: 0.8rem; margin-bottom: 10px;">
+                    <i class="fas fa-eye-slash"></i> Producto oculto
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-sm btn-edit" onclick="editProduct('${product.id}')">Editar</button>
+                    <button class="btn btn-sm btn-delete" onclick="deleteProduct('${product.id}')">Eliminar</button>
+                </div>
+            </div>
+        `;
+        productsGrid.appendChild(card);
+    });
+}
+
+// Modificar la función renderProductsByCategory para excluir productos ocultos
+function renderProductsByCategory(categories, productsByCategory, containerId) {
+    const productsGrid = document.getElementById(containerId);
+    productsGrid.innerHTML = '';
+
+    let hasProducts = false;
+
+    // Primero renderizar categorías ordenadas por positionOrder
+    categories.forEach(category => {
+        const categoryProducts = productsByCategory[category.id];
+        if (categoryProducts && categoryProducts.products.length > 0) {
+            renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
+            hasProducts = true;
+        }
+    });
+
+    // Luego productos sin categoría
+    const noCategoryProducts = productsByCategory['no-category'];
+    if (noCategoryProducts && noCategoryProducts.products.length > 0) {
+        renderCategorySection(productsGrid, noCategoryProducts.categoryName, noCategoryProducts.products);
+        hasProducts = true;
+    }
+
+    // Finalmente, categorías que no están en la lista ordenada pero tienen productos
+    Object.keys(productsByCategory).forEach(categoryId => {
+        if (categoryId !== 'no-category' && !categories.find(c => c.id === categoryId)) {
+            const categoryProducts = productsByCategory[categoryId];
+            if (categoryProducts && categoryProducts.products.length > 0) {
+                renderCategorySection(productsGrid, categoryProducts.categoryName, categoryProducts.products);
+                hasProducts = true;
             }
         }
+    });
+
+    // Mostrar mensaje si no hay productos
+    if (!hasProducts) {
+        productsGrid.innerHTML = `
+            <div class="no-products-message">
+                <i class="fas fa-box-open" style="font-size: 3rem; color: #666; margin-bottom: 1rem;"></i>
+                <h3 style="color: #888; margin-bottom: 0.5rem;">No hay productos</h3>
+                <p style="color: #666;">Agrega tu primer producto haciendo clic en el botón "Agregar Producto"</p>
+            </div>
+        `;
+    }
+}
 
         // Función para renderizar una sección de categoría con sus productos
         function renderCategorySection(container, categoryName, products) {
             const categorySection = document.createElement('div');
             categorySection.className = 'category-section';
-            
+
             categorySection.innerHTML = `
                 <div class="category-header">
                     <h3 class="category-title">${categoryName}</h3>
@@ -966,7 +1105,7 @@ function loadProducts() {
             container.appendChild(categorySection);
 
             const productsGrid = categorySection.querySelector('.category-products-grid');
-            
+
             // Renderizar productos de esta categoría
             products.forEach(product => {
                 const category = categories.find(c => c.id === product.categoria);
@@ -1005,126 +1144,126 @@ function loadProducts() {
             });
         }
 
-       // En la función saveProduct, agrega el campo visible
-async function saveProduct(e) {
-    e.preventDefault();
+        // En la función saveProduct, agrega el campo visible
+        async function saveProduct(e) {
+            e.preventDefault();
 
-    const name = document.getElementById('productName').value;
-    const price = parseFloat(document.getElementById('productPrice').value);
-    const category = document.getElementById('productCategory').value;
-    const description = quill.root.innerHTML;
-    const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
-    const visible = document.getElementById('productVisible').checked ? 'yes' : 'no'; // NUEVO CAMPO
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const description = quill.root.innerHTML;
+            const featured = document.getElementById('productFeatured').checked ? 'yes' : 'no';
+            const visible = document.getElementById('productVisible').checked ? 'yes' : 'no'; // NUEVO CAMPO
 
-    // Validar campos requeridos
-    if (!name || !price || !category) {
-        alert('Por favor complete todos los campos requeridos');
-        return;
-    }
+            // Validar campos requeridos
+            if (!name || !price || !category) {
+                alert('Por favor complete todos los campos requeridos');
+                return;
+            }
 
-    // Subir nuevas imágenes si existen
-    let newImageUrls = [];
-    if (productImageFiles.length > 0) {
-        try {
-            newImageUrls = await uploadImages(productImageFiles, 'product-images');
-        } catch (error) {
-            console.error("Error uploading product images: ", error);
-            alert("Error al subir las imágenes del producto");
-            return;
+            // Subir nuevas imágenes si existen
+            let newImageUrls = [];
+            if (productImageFiles.length > 0) {
+                try {
+                    newImageUrls = await uploadImages(productImageFiles, 'product-images');
+                } catch (error) {
+                    console.error("Error uploading product images: ", error);
+                    alert("Error al subir las imágenes del producto");
+                    return;
+                }
+            }
+
+            // Combinar imágenes existentes con las nuevas
+            const allImageUrls = [...existingProductImages, ...newImageUrls];
+
+            const productData = {
+                nombre: name,
+                precio: price,
+                categoria: category,
+                descripcion: description,
+                destacado: featured,
+                visible: visible, // NUEVO CAMPO
+                imagenes: allImageUrls,
+                fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Mantener compatibilidad con versión anterior (icono)
+            if (allImageUrls.length > 0) {
+                productData.icono = allImageUrls[0];
+            }
+
+            if (editingProductId) {
+                db.collection('productos').doc(editingProductId).update(productData)
+                    .then(() => {
+                        closeProductModal();
+                        resetProductForm();
+                        loadProducts();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating product: ", error);
+                    });
+            } else {
+                productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+                db.collection('productos').add(productData)
+                    .then(() => {
+                        closeProductModal();
+                        resetProductForm();
+                        loadProducts();
+                    })
+                    .catch((error) => {
+                        console.error("Error adding product: ", error);
+                    });
+            }
         }
-    }
 
-    // Combinar imágenes existentes con las nuevas
-    const allImageUrls = [...existingProductImages, ...newImageUrls];
+        // En la función editProduct, agrega la configuración del switch de visibilidad
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                editingProductId = id;
+                document.getElementById('productId').value = id;
+                document.getElementById('productName').value = product.nombre;
+                document.getElementById('productPrice').value = product.precio;
+                document.getElementById('productCategory').value = product.categoria;
+                document.getElementById('productFeatured').checked = product.destacado === 'yes';
+                document.getElementById('productVisible').checked = product.visible !== 'no'; // NUEVO: Por defecto visible
 
-    const productData = {
-        nombre: name,
-        precio: price,
-        categoria: category,
-        descripcion: description,
-        destacado: featured,
-        visible: visible, // NUEVO CAMPO
-        imagenes: allImageUrls,
-        fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    };
+                if (!quill) {
+                    initQuillEditor();
+                }
+                quill.root.innerHTML = product.descripcion || '';
 
-    // Mantener compatibilidad con versión anterior (icono)
-    if (allImageUrls.length > 0) {
-        productData.icono = allImageUrls[0];
-    }
+                const previewElement = document.getElementById('productImagesPreview');
+                previewElement.innerHTML = '';
+                const images = product.imagenes || (product.icono ? [product.icono] : []);
+                existingProductImages = images;
 
-    if (editingProductId) {
-        db.collection('productos').doc(editingProductId).update(productData)
-            .then(() => {
-                closeProductModal();
-                resetProductForm();
-                loadProducts();
-            })
-            .catch((error) => {
-                console.error("Error updating product: ", error);
-            });
-    } else {
-        productData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
-        db.collection('productos').add(productData)
-            .then(() => {
-                closeProductModal();
-                resetProductForm();
-                loadProducts();
-            })
-            .catch((error) => {
-                console.error("Error adding product: ", error);
-            });
-    }
-}
-
-// En la función editProduct, agrega la configuración del switch de visibilidad
-function editProduct(id) {
-    const product = products.find(p => p.id === id);
-    if (product) {
-        editingProductId = id;
-        document.getElementById('productId').value = id;
-        document.getElementById('productName').value = product.nombre;
-        document.getElementById('productPrice').value = product.precio;
-        document.getElementById('productCategory').value = product.categoria;
-        document.getElementById('productFeatured').checked = product.destacado === 'yes';
-        document.getElementById('productVisible').checked = product.visible !== 'no'; // NUEVO: Por defecto visible
-
-        if (!quill) {
-            initQuillEditor();
-        }
-        quill.root.innerHTML = product.descripcion || '';
-
-        const previewElement = document.getElementById('productImagesPreview');
-        previewElement.innerHTML = '';
-        const images = product.imagenes || (product.icono ? [product.icono] : []);
-        existingProductImages = images;
-
-        if (images.length > 0) {
-            images.forEach((imageUrl, index) => {
-                const imageItem = document.createElement('div');
-                imageItem.className = 'image-preview-item';
-                imageItem.innerHTML = `
+                if (images.length > 0) {
+                    images.forEach((imageUrl, index) => {
+                        const imageItem = document.createElement('div');
+                        imageItem.className = 'image-preview-item';
+                        imageItem.innerHTML = `
                     <img src="${imageUrl}" alt="Preview" loading="lazy">
                     <button type="button" class="remove-image" onclick="removeExistingImage(${index})">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
-                previewElement.appendChild(imageItem);
-            });
-        } else {
-            previewElement.innerHTML = `
+                        previewElement.appendChild(imageItem);
+                    });
+                } else {
+                    previewElement.innerHTML = `
                 <div class="image-preview-item empty">
                     <i class="fas fa-image"></i>
                     <span>Sin imágenes</span>
                 </div>
             `;
-        }
-        updateImageCount();
+                }
+                updateImageCount();
 
-        document.getElementById('productModalTitle').textContent = 'Editar Producto';
-        document.getElementById('productModal').style.display = 'flex';
-    }
-}
+                document.getElementById('productModalTitle').textContent = 'Editar Producto';
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
 
 
 
@@ -1175,35 +1314,35 @@ function editProduct(id) {
             }
         }
 
-function resetProductForm() {
-    document.getElementById('productForm').reset();
-    document.getElementById('productId').value = '';
-    document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
-    document.getElementById('productImagesPreview').innerHTML = `
+        function resetProductForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
+            document.getElementById('productImagesPreview').innerHTML = `
         <div class="image-preview-item empty">
             <i class="fas fa-image"></i>
             <span>Sin imágenes</span>
         </div>
     `;
-    if (quill) {
-        quill.root.innerHTML = '';
-    }
-    productImageFiles = [];
-    existingProductImages = [];
-    editingProductId = null;
-    document.getElementById('productVisible').checked = true; // NUEVO: Por defecto visible
-    updateImageCount();
-}
+            if (quill) {
+                quill.root.innerHTML = '';
+            }
+            productImageFiles = [];
+            existingProductImages = [];
+            editingProductId = null;
+            document.getElementById('productVisible').checked = true; // NUEVO: Por defecto visible
+            updateImageCount();
+        }
 
         // Event listeners
         document.getElementById('productForm').addEventListener('submit', saveProduct);
         document.getElementById('categoryForm').addEventListener('submit', saveCategory);
 
         // Event listener para el botón de mostrar/ocultar contraseña
-        document.getElementById('passwordToggle').addEventListener('click', function() {
+        document.getElementById('passwordToggle').addEventListener('click', function () {
             const passwordInput = document.getElementById('password');
             const icon = this.querySelector('i');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -1219,7 +1358,7 @@ function resetProductForm() {
         document.getElementById('forgotPasswordLink').addEventListener('click', forgotPassword);
 
         // Event listener para presionar Enter en el login
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 // Verificar si estamos en la sección de login
                 const loginSection = document.getElementById('loginSection');
